@@ -7,5 +7,5 @@
 ``Práctica_X``
   Rama para la práctica número X
   
-``Trabajo_``
+``Trabajo_Y``
   Rama para el tabajo Y
