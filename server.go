@@ -1,20 +1,20 @@
 /*
 * AUTOR: Rafael Tolosana Calasanz
+* EDITADO: Jorge Lisa y David Zandundo
 * ASIGNATURA: 30221 Sistemas Distribuidos del Grado en Ingeniería Informática
-*			Escuela de Ingeniería y Arquitectura - Universidad de Zaragoza
+*			  Escuela de Ingeniería y Arquitectura - Universidad de Zaragoza
 * FECHA: septiembre de 2021
 * FICHERO: server.go
 * DESCRIPCIÓN: contiene la funcionalidad esencial para realizar los servidores
-*				correspondientes al trabajo 1
-*/
+*			   correspondientes al trabajo 1
+ */
 package main
 
 import (
-	"encoding/gob"
 	"fmt"
 	"net"
 	"os"
-	"io"
+
 	"./com"
 )
 
@@ -56,5 +56,5 @@ func main() {
 	defer conn.Close()
 	checkError(err)
 
-    // TO DO
+	// TO DO
 }

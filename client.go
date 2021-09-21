@@ -1,19 +1,20 @@
 /*
 * AUTOR: Rafael Tolosana Calasanz
+* EDITADO: Jorge Lisa y David Zandundo
 * ASIGNATURA: 30221 Sistemas Distribuidos del Grado en Ingeniería Informática
-*			Escuela de Ingeniería y Arquitectura - Universidad de Zaragoza
+*			  Escuela de Ingeniería y Arquitectura - Universidad de Zaragoza
 * FECHA: septiembre de 2021
 * FICHERO: client.go
 * DESCRIPCIÓN: cliente completo para los cuatro escenarios de la práctica 1
-*/
+ */
 package main
 
 import (
-    "fmt"
-    "time"
-    "os"
-    "net"
-    "./com"
+	"fmt"
+	"net"
+	"os"
+
+	"./com"
 )
 
 func checkError(err error) {
@@ -23,19 +24,17 @@ func checkError(err error) {
 	}
 }
 
+func main() {
+	endpoint := "155.210.154.200:30000"
 
+	// TODO: crear el intervalo solicitando dos números por teclado
+	interval := com.TPInterval{1000, 70000}
 
-func main(){
-    endpoint := "155.210.154.200:30000"
-    
-    // TODO: crear el intervalo solicitando dos números por teclado
-    interval := com.TPInterval{1000, 70000}
+	tcpAddr, err := net.ResolveTCPAddr("tcp", endpoint)
+	checkError(err)
 
-    tcpAddr, err := net.ResolveTCPAddr("tcp", endpoint)
-    checkError(err)
+	conn, err := net.DialTCP("tcp", nil, tcpAddr)
+	checkError(err)
 
-    conn, err := net.DialTCP("tcp", nil, tcpAddr)
-    checkError(err)
-
-    // la variable conn es de tipo *net.TCPconn
+	// la variable conn es de tipo *net.TCPconn
 }
