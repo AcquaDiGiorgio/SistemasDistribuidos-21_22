@@ -1,11 +1,11 @@
 # SistemasDistribuidos-21_22
 ## Ramas
-> Main
+''Main''
   Rama principal. No debe contener Código
   Uso como tablón de ideas, anuncios, etc
 
-> Práctica_X
+''Práctica_X''
   Rama para la práctica número X
   
-> Trabajo_Y
+''Trabajo_Y''
   Rama para el tabajo Y
