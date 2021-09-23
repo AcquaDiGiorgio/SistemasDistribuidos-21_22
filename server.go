@@ -47,6 +47,8 @@ func FindPrimes(interval com.TPInterval) (primes []int) {
 	return primes
 }
 
+// para ejecutar, hacer en la terminal: GO111MODULE=off go run server.go
+
 func main() {
 
 	listener, err := net.Listen(CONN_TYPE, CONN_HOST+":"+CONN_PORT)

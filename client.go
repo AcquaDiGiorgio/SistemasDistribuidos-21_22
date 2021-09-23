@@ -24,6 +24,8 @@ func checkError(err error) {
 	}
 }
 
+// para ejecutar, hacer en la terminal: GO111MODULE=off go run client.go
+
 func main() {
 	endpoint := "155.210.154.200:30000"
 
