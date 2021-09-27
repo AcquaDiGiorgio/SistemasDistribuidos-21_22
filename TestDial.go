@@ -64,7 +64,7 @@ func main() {
 
 	// Cierra la conexión cuando termina la ejecución del main
 	defer checkError(conn.Close())
-	
+
 	/*
 		Envío de mensajes
 	*/
@@ -78,5 +78,5 @@ func main() {
 	n, _ := conn.Read(lectura[:])
 
 	fmt.Print("Mesaje Recibido: " + string(lectura[:n]) + "\n")
-	*/
+
 }
