@@ -41,4 +41,5 @@ func main() {
 
 	enc := gob.NewEncoder(conn)
 	enc.Encode(interval)
+
 }
