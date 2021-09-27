@@ -10,6 +10,7 @@
 package main
 
 import (
+	"encoding/gob"
 	"fmt"
 	"net"
 	"os"
@@ -27,7 +28,7 @@ func checkError(err error) {
 // para ejecutar, hacer en la terminal: GO111MODULE=off go run client.go
 
 func main() {
-	endpoint := "155.210.154.200:30000"
+	endpoint := "localhost:30000"
 
 	// TODO: crear el intervalo solicitando dos números por teclado
 	interval := com.TPInterval{1000, 70000}
@@ -38,5 +39,6 @@ func main() {
 	conn, err := net.DialTCP("tcp", nil, tcpAddr)
 	checkError(err)
 
-	// la variable conn es de tipo *net.TCPconn
+	enc := gob.NewEncoder(conn)
+	enc.Encode(interval)
 }

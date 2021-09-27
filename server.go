@@ -11,6 +11,7 @@
 package main
 
 import (
+	"encoding/gob"
 	"fmt"
 	"net"
 	"os"
@@ -47,7 +48,9 @@ func FindPrimes(interval com.TPInterval) (primes []int) {
 	return primes
 }
 
-// para ejecutar, hacer en la terminal: GO111MODULE=off go run server.go
+const CONN_TYPE = "tcp"
+const CONN_HOST = "localhost"
+const CONN_PORT = "30000"
 
 func main() {
 
@@ -58,5 +61,11 @@ func main() {
 	defer conn.Close()
 	checkError(err)
 
-	// TO DO
+	dec := gob.NewDecoder(conn)
+	var interval com.TPInterval
+	err = dec.Decode(&interval)
+
+	checkError(err)
+
+	fmt.Print(interval.A)
 }
