@@ -59,11 +59,12 @@ func read(conn net.Conn) []uint16 {
 
 func main() {
 	conn, err := net.Dial("tcp", "localhost:8080")
+	checkError(err)
 	conn.SetDeadline(time.Now().Add(time.Hour))
 
 	// Cierra la conexión cuando termina la ejecución del main
-	defer conn.Close()
-	checkError(err)
+	defer checkError(conn.Close())
+	
 	/*
 		Envío de mensajes
 	*/
@@ -77,4 +78,5 @@ func main() {
 	n, _ := conn.Read(lectura[:])
 
 	fmt.Print("Mesaje Recibido: " + string(lectura[:n]) + "\n")
+	*/
 }
