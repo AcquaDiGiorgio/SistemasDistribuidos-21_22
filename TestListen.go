@@ -47,7 +47,7 @@ func main() {
 			/*
 				Envío de mensajes
 			*/
-			b := []byte("Adios")   // terminador x000 == \0 en Java o C || También valdría \000
+			b := []byte("Adios")
 			trueW, _ := c.Write(b) // Escribimos a través de la conexión
 			fmt.Print("Bytes Escritos - ", trueW, "\n")
 		}(conn) // Parámetro que pasamos a la función embebida

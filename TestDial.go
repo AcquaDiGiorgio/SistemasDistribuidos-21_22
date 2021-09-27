@@ -63,7 +63,7 @@ func main() {
 	conn.SetDeadline(time.Now().Add(time.Hour))
 
 	// Cierra la conexión cuando termina la ejecución del main
-	defer checkError(conn.Close())
+	defer conn.Close()
 
 	/*
 		Envío de mensajes
