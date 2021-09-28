@@ -15,7 +15,7 @@ import (
 	"net"
 	"os"
 
-	"./com"
+	"main/com"
 )
 
 func checkError(err error) {
