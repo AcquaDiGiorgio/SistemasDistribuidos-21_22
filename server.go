@@ -11,9 +11,7 @@
 package main
 
 import (
-	"encoding/gob"
 	"fmt"
-	"net"
 	"os"
 
 	"main/com"
@@ -48,24 +46,39 @@ func FindPrimes(interval com.TPInterval) (primes []int) {
 	return primes
 }
 
+func codificarRerspuesta(reply com.Reply) (codigo []byte) {
+	codigo = make([]byte, len(reply.Primes)+1)
+	codigo[0] = byte(reply.Id)
+
+	for i := 1; i < len(codigo); i++ {
+		codigo[i] = byte(reply.Primes[i-1])
+	}
+	return
+}
+
+func descodificarPeticion(codigo []byte) (reply com.Request) {
+	reply.Id = int(codigo[0])
+	reply.Interval.A = int(codigo[1])
+	reply.Interval.B = int(codigo[2])
+	return
+}
+
 const CONN_TYPE = "tcp"
 const CONN_HOST = "localhost"
 const CONN_PORT = "30000"
 
 func main() {
+	/*
+		listener, err := net.Listen(CONN_TYPE, CONN_HOST+":"+CONN_PORT)
+		checkError(err)
 
-	listener, err := net.Listen(CONN_TYPE, CONN_HOST+":"+CONN_PORT)
-	checkError(err)
+		conn, err := listener.Accept()
+		defer conn.Close()
+		checkError(err)
 
-	conn, err := listener.Accept()
-	defer conn.Close()
-	checkError(err)
+		checkError(err)
+	*/
 
-	dec := gob.NewDecoder(conn)
-	var interval com.TPInterval
-	err = dec.Decode(&interval)
-
-	checkError(err)
-
-	fmt.Print(interval.A)
+	peticion := []byte{1, 232, 96}
+	fmt.Println(descodificarPeticion(peticion))
 }
