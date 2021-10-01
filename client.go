@@ -12,6 +12,8 @@ package main
 import (
 	"fmt"
 	"main/com"
+	"math/big"
+	"net"
 	"os"
 )
 
@@ -22,41 +24,79 @@ func checkError(err error) {
 	}
 }
 
-func codificarPeticion(request com.Request) (codigo [3]byte) {
-	codigo[0] = byte(request.Id)
-	codigo[1] = byte(request.Interval.A)
-	codigo[2] = byte(request.Interval.B)
+func int_to_byte(ent int) (byt []byte) {
+
+	var s = big.NewInt(int64(ent))
+	b := s.Bytes()
+
+	byt = make([]byte, 4)
+	var pos = 0
+
+	for j := 0; j < 4; j++ {
+		if j < (4 - len(b)) {
+			byt[j] = 0x0
+		} else {
+			byt[j] = b[pos]
+			pos++
+		}
+	}
+
+	return
+}
+
+func byte_to_int(byt []byte) (ent int) {
+	var r = big.NewInt(0).SetBytes(byt)
+	ent = int(r.Int64())
+	return
+}
+
+func codificarPeticion(request com.Request) (codigo []byte) {
+	codigo = append(codigo, int_to_byte(request.Id)...)
+	codigo = append(codigo, int_to_byte(request.Interval.A)...)
+	codigo = append(codigo, int_to_byte(request.Interval.B)...)
 	return
 }
 
 func descodificarRespuesta(codigo []byte) (reply com.Reply) {
-	reply.Id = int(codigo[0])
+	reply.Id = byte_to_int(codigo[0:4])
+	totPrimos := len(codigo)/4 - 1
+	reply.Primes = make([]int, totPrimos)
 
-	reply.Primes = make([]int, len(codigo)-1)
-
-	for i := 1; i < len(codigo); i++ {
-		reply.Primes[i-1] = int(codigo[i])
+	for i := 0; i < totPrimos; i++ {
+		ini := 4 * (i + 1)
+		fin := ini + 4
+		reply.Primes[i] = byte_to_int(codigo[ini:fin])
 	}
+
 	return
 }
 
 func main() {
-	//endpoint := "localhost:30000"
+	endpoint := "155.210.154.200:30000"
 
 	// TODO: crear el intervalo solicitando dos números por teclado
-	interval := com.TPInterval{1000, 700000}
+	interval := com.TPInterval{1, 10}
 	request := com.Request{1, interval}
 	peticion := codificarPeticion(request)
+
 	fmt.Println(peticion)
 
-	codigo := []byte{0xF, 0x2, 0x3, 0x4, 0x5, 0x6, 0xA}
-	respuesta := descodificarRespuesta(codigo)
+	tcpAddr, err := net.ResolveTCPAddr("tcp", endpoint)
+	checkError(err)
+
+	conn, err := net.DialTCP("tcp", nil, tcpAddr)
+	checkError(err)
+	/*
+		Envío de mensajes
+	*/
+	trueW, _ := conn.Write(peticion)
+	fmt.Print("Bytes Escritos - ", trueW, "\n")
+	/*
+		Recepción de mensajes
+	*/
+	var codigo [512]byte
+	n, _ := conn.Read(codigo[:])
+
+	respuesta := descodificarRespuesta(codigo[:n])
 	fmt.Println(respuesta)
-
-	//tcpAddr, err := net.ResolveTCPAddr("tcp", endpoint)
-	//checkError(err)
-
-	//conn, err := net.DialTCP("tcp", nil, tcpAddr)
-	//checkError(err)
-
 }

@@ -12,7 +12,11 @@ package main
 
 import (
 	"fmt"
+	"math/big"
+	"net"
 	"os"
+	"sync"
+	"time"
 
 	"main/com"
 )
@@ -46,39 +50,96 @@ func FindPrimes(interval com.TPInterval) (primes []int) {
 	return primes
 }
 
-func codificarRerspuesta(reply com.Reply) (codigo []byte) {
-	codigo = make([]byte, len(reply.Primes)+1)
-	codigo[0] = byte(reply.Id)
+func int_to_byte(ent int) (byt []byte) {
 
-	for i := 1; i < len(codigo); i++ {
-		codigo[i] = byte(reply.Primes[i-1])
+	var s = big.NewInt(int64(ent))
+	b := s.Bytes()
+
+	byt = make([]byte, 4)
+	var pos = 0
+
+	for j := 0; j < 4; j++ {
+		if j < (4 - len(b)) {
+			byt[j] = 0x0
+		} else {
+			byt[j] = b[pos]
+			pos++
+		}
 	}
+
+	return
+}
+
+func byte_to_int(byt []byte) (ent int) {
+	var r = big.NewInt(0).SetBytes(byt)
+	ent = int(r.Int64())
+	return
+}
+
+func codificarRerspuesta(reply com.Reply) (codigo []byte) {
+
+	codigo = append(codigo, int_to_byte(reply.Id)...)
+
+	for i := 0; i < len(reply.Primes); i++ {
+		codigo = append(codigo, int_to_byte(reply.Primes[i])...)
+	}
+
 	return
 }
 
 func descodificarPeticion(codigo []byte) (reply com.Request) {
-	reply.Id = int(codigo[0])
-	reply.Interval.A = int(codigo[1])
-	reply.Interval.B = int(codigo[2])
+	reply.Id = byte_to_int(codigo[0:4])
+	reply.Interval.A = byte_to_int(codigo[4:8])
+	reply.Interval.B = byte_to_int(codigo[8:12])
 	return
 }
 
+func thread(c net.Conn, wg sync.WaitGroup) {
+	// Cierra la conexión cuando termina la ejecución de la función integrada (la conexión con un cliente)
+	defer c.Close()
+	// Decimos al semaforo que hemos terminado cuando termiene el thread
+	defer wg.Done()
+	defer fmt.Print("Cerramos Conexión\n")
+	/*
+		Recepción de mensajes
+	*/
+	var codigo [512]byte                         // buffer de max 512 bytes
+	n, _ := c.Read(codigo[:])                    // Leemos todo el buffer
+	recibido := descodificarPeticion(codigo[:n]) // Mostramos hasta el tam leido
+	/*
+		Buscamos los primos
+	*/
+	var respuesta com.Reply
+	respuesta.Id = recibido.Id
+	respuesta.Primes = FindPrimes(recibido.Interval)
+
+	mensaje := codificarRerspuesta(respuesta)
+	/*
+		Envío de mensajes
+	*/
+	c.Write(mensaje) // Escribimos a través de la conexión
+}
+
 const CONN_TYPE = "tcp"
-const CONN_HOST = "localhost"
+const CONN_HOST = "155.210.154.200"
 const CONN_PORT = "30000"
 
 func main() {
-	/*
-		listener, err := net.Listen(CONN_TYPE, CONN_HOST+":"+CONN_PORT)
-		checkError(err)
+	listener, err := net.Listen(CONN_TYPE, CONN_HOST+":"+CONN_PORT)
+	checkError(err)
+	defer listener.Close()
+	var wg sync.WaitGroup
 
+	for i := 0; i < 2; i++ {
+		// Abrimos conexión con un Cliente y comprobamos que todo esté correcto
 		conn, err := listener.Accept()
-		defer conn.Close()
 		checkError(err)
+		// Añadimos un proceso a la espera
+		wg.Add(1)
+		// Tiempo Límite que puede estar una conexión mantenida (1 hora en este caso)
+		conn.SetDeadline(time.Now().Add(time.Hour))
 
-		checkError(err)
-	*/
-
-	peticion := []byte{1, 232, 96}
-	fmt.Println(descodificarPeticion(peticion))
+		go thread(conn, wg)
+	}
+	wg.Wait()
 }
