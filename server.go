@@ -15,7 +15,6 @@ import (
 	"math/big"
 	"net"
 	"os"
-	"sync"
 	"time"
 
 	"main/com"
@@ -94,12 +93,9 @@ func descodificarPeticion(codigo []byte) (reply com.Request) {
 	return
 }
 
-func thread(c net.Conn, wg sync.WaitGroup) {
+func thread(c net.Conn) {
 	// Cierra la conexión cuando termina la ejecución de la función integrada (la conexión con un cliente)
 	defer c.Close()
-	// Decimos al semaforo que hemos terminado cuando termiene el thread
-	defer wg.Done()
-	defer fmt.Print("Cerramos Conexión\n")
 	/*
 		Recepción de mensajes
 	*/
@@ -128,18 +124,13 @@ func main() {
 	listener, err := net.Listen(CONN_TYPE, CONN_HOST+":"+CONN_PORT)
 	checkError(err)
 	defer listener.Close()
-	var wg sync.WaitGroup
 
-	for i := 0; i < 2; i++ {
+	for {
 		// Abrimos conexión con un Cliente y comprobamos que todo esté correcto
 		conn, err := listener.Accept()
 		checkError(err)
-		// Añadimos un proceso a la espera
-		wg.Add(1)
 		// Tiempo Límite que puede estar una conexión mantenida (1 hora en este caso)
 		conn.SetDeadline(time.Now().Add(time.Hour))
-
-		go thread(conn, wg)
+		go thread(conn)
 	}
-	wg.Wait()
 }
