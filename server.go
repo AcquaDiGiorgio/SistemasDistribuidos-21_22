@@ -99,7 +99,7 @@ func thread(c net.Conn) {
 	/*
 		Recepción de mensajes
 	*/
-	var codigo [512]byte                         // buffer de max 512 bytes
+	var codigo [12]byte                          // buffer de max 512 bytes
 	n, _ := c.Read(codigo[:])                    // Leemos todo el buffer
 	recibido := descodificarPeticion(codigo[:n]) // Mostramos hasta el tam leido
 	/*
@@ -117,7 +117,7 @@ func thread(c net.Conn) {
 }
 
 const CONN_TYPE = "tcp"
-const CONN_HOST = "155.210.154.200"
+const CONN_HOST = "localhost"
 const CONN_PORT = "30000"
 
 func main() {

@@ -1,0 +1,18 @@
+1º) Desde las opciones de Windows 10 -> Apps -> Optional Features
+	Si no está OpenSSH Cleint y OpenSSH Server, ir a Add a Feature (arriba del todo)
+	y descargar ambas.
+	
+2º) Hacer Windows+R y escribir services.msc
+	Buscar los servicios OpenSSH Authentication Agent y OpenSSH SSH Server
+	Click derecho -> Start
+	Click derecho -> Propiedades -> Startup type: Automatic
+	
+!! Antes de hacer el siguiente paso, si al ejecutar el ssh pide confiar en hendrix, escribir "yes"
+	
+3º) Abrir PowerShell y ejecutar: 
+	ssh-keygen [generará una clave pública en /Users/"USUARIO"/.ssh]
+	cat ~\.ssh\id_rsa.pub | ssh aXXXXXX@hendrix-ssh.cps.unizar.es "cat >> .ssh/authorized_keys"
+	  \
+	   \_ [Copia tu clave pública en el fichero de claves autorizadas de tu hendrix]
+
+TODO CONFIGURADO PARA ACCEDER A HENDRIX DESDE UN WINDOWS
