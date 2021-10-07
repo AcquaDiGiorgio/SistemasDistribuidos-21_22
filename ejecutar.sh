@@ -1,2 +1,2 @@
-$(go run server.go $)
-echo $(go run client.go $1 $2)
+$(/usr/local/go/bin/go run server.go &)
+echo $(/usr/local/go/bin/go run client.go $1 $2)
