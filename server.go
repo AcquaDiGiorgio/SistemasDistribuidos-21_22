@@ -108,8 +108,8 @@ func thread(c net.Conn) {
 	var respuesta com.Reply
 	respuesta.Id = recibido.Id
 	respuesta.Primes = FindPrimes(recibido.Interval)
-
 	mensaje := codificarRerspuesta(respuesta)
+
 	/*
 		Envío de mensajes
 	*/
@@ -117,10 +117,18 @@ func thread(c net.Conn) {
 }
 
 const CONN_TYPE = "tcp"
-const CONN_HOST = "localhost"
-const CONN_PORT = "30000"
 
 func main() {
+	args := os.Args[1:]
+
+	if len(args) != 2 {
+		fmt.Println("Número de parámetros incorrecto, ejecutar como:\n\tgo run server.go IP PORT")
+		os.Exit(1)
+	}
+
+	CONN_HOST := args[0]
+	CONN_PORT := args[1]
+
 	listener, err := net.Listen(CONN_TYPE, CONN_HOST+":"+CONN_PORT)
 	checkError(err)
 	defer listener.Close()

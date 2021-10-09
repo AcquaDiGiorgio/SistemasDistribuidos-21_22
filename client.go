@@ -72,28 +72,29 @@ func descodificarRespuesta(codigo []byte) (reply com.Reply) {
 	return
 }
 
-const BUFF_SIZE = 524288 // 2^19 bytes -- Hasta 131.072 enteros de tamaño 8 bytes
-const MAX_INT_SIZE = 65535
+const BUFF_SIZE = 524288        // 2^19 bytes -- Hasta 131.072 enteros de tamaño 8 bytes
+const MAX_INT_SIZE = 4294967296 // entero de 8 bytes
 
 func main() {
+
 	args := os.Args[1:]
 
-	if len(args) != 2 {
-		fmt.Println("Número de parámetros incorrecto, ejecutar como:\n\tgo run client.go intervalo_ini intervalo_fin")
+	if len(args) != 4 {
+		fmt.Println("Número de parámetros incorrecto, ejecutar como:\n\tgo run client.go IP PORT intervalo_ini intervalo_fin")
 		os.Exit(1)
 	}
 
-	endpoint := "localhost:30000"
+	endpoint := args[0] + ":" + args[1]
 
-	ini, _ := strconv.Atoi(args[0])
-	fin, _ := strconv.Atoi(args[1])
+	ini, _ := strconv.Atoi(args[2])
+	fin, _ := strconv.Atoi(args[3])
 
 	if (ini > MAX_INT_SIZE) || (fin > MAX_INT_SIZE) || (ini < 0) || (fin < 0) {
-		fmt.Println("El intervalo debe ser de números enteros positivos de tamaño menor o igual a 4 bytes")
+		fmt.Println("El intervalo debe ser de números enteros positivos de tamaño menor o igual a 8 bytes")
 		os.Exit(2)
 	}
 
-	if ini < fin {
+	if ini > fin {
 		aux := ini
 		ini = fin
 		fin = aux
@@ -117,5 +118,6 @@ func main() {
 	n, _ := conn.Read(codigo[:])
 
 	respuesta := descodificarRespuesta(codigo[:n])
+	fmt.Print("Primos encontrados: ")
 	fmt.Println(respuesta.Primes)
 }
