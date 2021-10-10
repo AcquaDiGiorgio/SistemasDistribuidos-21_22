@@ -42,7 +42,7 @@ func main() {
 		hostServ,
 		22,
 		RSA,
-		"Fsw5zw")
+		"")
 	if err != nil {
 		log.Printf("SSH init error %v", err)
 		return
@@ -53,7 +53,7 @@ func main() {
 		hostClie,
 		22,
 		RSA,
-		"Fsw5zw")
+		"")
 
 	if err != nil {
 		log.Printf("SSH init error %v", err)
