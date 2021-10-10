@@ -48,16 +48,13 @@ func FindPrimes(interval com.TPInterval) (primes []int) {
 	return primes
 }
 
-const CONN_TYPE = "tcp"
-const CONN_HOST = "localhost"
-const CONN_PORT = "30000"
-
 func AtenderCliente(canal chan net.Conn) {
 	var peticion com.Request
 	var respuesta com.Reply
 
 	//Lee de canal una conexion por iteracion y lo guarda en conn. Sale del bucle cuando esta vacio.
-	for conn := range canal {
+	for {
+		conn := <-canal
 		dec := gob.NewDecoder(conn)
 		dec.Decode(&peticion)
 
@@ -70,6 +67,10 @@ func AtenderCliente(canal chan net.Conn) {
 		conn.Close()
 	}
 }
+
+const CONN_TYPE = "tcp"
+const CONN_HOST = "localhost"
+const CONN_PORT = "30000"
 
 func main() {
 	pool := 5                    //Tamaño de la pool de gorutines

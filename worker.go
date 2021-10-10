@@ -54,7 +54,7 @@ const CONN_PORT = "8000"
 func main() {
 	listener, err := net.Listen(CONN_TYPE, CONN_HOST+":"+CONN_PORT)
 	checkError(err)
-	//defer listener.Close()
+	defer listener.Close()
 
 	var peticion com.Request
 	var respuesta com.Reply
@@ -72,8 +72,6 @@ func main() {
 		//Envia al master el array
 		enc := gob.NewEncoder(conn)
 		enc.Encode(respuesta)
-
 		conn.Close()
-
 	}
 }

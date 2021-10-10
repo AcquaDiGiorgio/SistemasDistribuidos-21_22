@@ -55,7 +55,7 @@ const CONN_PORT = "30000"
 func main() {
 	listener, err := net.Listen(CONN_TYPE, CONN_HOST+":"+CONN_PORT)
 	checkError(err)
-	//defer listener.Close()
+	defer listener.Close()
 
 	var peticion com.Request
 	var respuesta com.Reply

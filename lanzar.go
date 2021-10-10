@@ -6,6 +6,10 @@ import (
 	"main/com"
 	"os"
 	"strconv"
+	"strings"
+	"syscall"
+
+	"golang.org/x/term"
 )
 
 const GO = "/usr/local/go/bin/go"
@@ -34,15 +38,16 @@ func main() {
 	ip := "155.210.154." + args[1]
 	hostClie := "lab102-" + args[2] + ".cps.unizar.es"
 
-	//fmt.Print("Introduzca la Contraseña: ")
-	//pass, err := terminal.ReadPassword(0)
+	fmt.Print("Introduzca la Contraseña: ")
+	pass, err := term.ReadPassword(int(syscall.Stdin))
 
 	sshServ, err := com.NewSshClient(
 		args[0],
 		hostServ,
 		22,
 		RSA,
-		"")
+		strings.TrimSpace(string(pass)))
+
 	if err != nil {
 		log.Printf("SSH init error %v", err)
 		return
@@ -53,7 +58,7 @@ func main() {
 		hostClie,
 		22,
 		RSA,
-		"")
+		strings.TrimSpace(string(pass)))
 
 	if err != nil {
 		log.Printf("SSH init error %v", err)
@@ -62,15 +67,13 @@ func main() {
 		var ini int
 		var fin int
 
-		fmt.Print("Introduzca el pincipio del Intervalo: ")
+		fmt.Print("\nIntroduzca el pincipio del Intervalo: ")
 		fmt.Scanln(&ini)
 		fmt.Print("Introduzca el final del Intervalo: ")
 		fmt.Scanln(&fin)
 
 		argsServ := ip + " " + args[3]
 		argsClie := ip + " " + args[3] + " " + strconv.Itoa(ini) + " " + strconv.Itoa(fin)
-
-		fmt.Println(argsClie)
 
 		go lanzar(sshServ, "server "+argsServ)
 		lanzar(sshClie, "client "+argsClie)

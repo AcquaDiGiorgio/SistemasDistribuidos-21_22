@@ -81,17 +81,17 @@ func AtenderCliente(canal chan net.Conn, dirWorker string) {
 const CONN_TYPE = "tcp"
 const CONN_HOST = "localhost"
 const CONN_PORT = "30000"
+const POOL = 5
 
 func main() {
-	pool := 5                    //Tamaño de la pool de gorutines
 	canal := make(chan net.Conn) //Canal que pasa las tareas a las gorutines
-	workers := [...]string{"localhost:8000", "localhost:8001", "localhost:8002", "localhost:8003", "localhost:8004"}
+	workers := [POOL]string{"localhost:8000", "localhost:8001", "localhost:8002", "localhost:8003", "localhost:8004"}
 
 	listener, err := net.Listen(CONN_TYPE, CONN_HOST+":"+CONN_PORT)
 	checkError(err)
-	//defer listener.Close()
+	defer listener.Close()
 
-	for i := 0; i < pool; i++ {
+	for i := 0; i < POOL; i++ {
 		go AtenderCliente(canal, workers[i]) //Crea la pool gorutines
 	}
 
