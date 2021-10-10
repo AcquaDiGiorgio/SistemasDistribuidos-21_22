@@ -104,8 +104,6 @@ func main() {
 	request := com.Request{1, interval}
 	peticion := codificarPeticion(request)
 
-	fmt.Println(peticion)
-
 	tcpAddr, err := net.ResolveTCPAddr("tcp", endpoint)
 	checkError(err)
 
