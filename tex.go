@@ -83,7 +83,7 @@ func costeIntervalo(interval com.TPInterval) {
 	}
 	if fin > interval.B {
 		coste = FindPrimes(com.TPInterval{ini, interval.B})
-		fmt.Printf("If %d -> %d: %.3f\n", fin, interval.B, coste)
+		fmt.Printf("If %d -> %d: %.3f\n", ini, interval.B, coste)
 	}
 }
 
