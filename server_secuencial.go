@@ -59,6 +59,7 @@ func main() {
 
 	var peticion com.Request
 	var respuesta com.Reply
+
 	for {
 		conn, err := listener.Accept()
 		checkError(err)

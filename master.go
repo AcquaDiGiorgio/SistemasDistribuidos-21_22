@@ -13,6 +13,7 @@ package main
 import (
 	"encoding/gob"
 	"fmt"
+	"math"
 	"net"
 	"os"
 
@@ -26,26 +27,25 @@ func checkError(err error) {
 	}
 }
 
-// PRE: verdad
-// POST: IsPrime devuelve verdad si n es primo y falso en caso contrario
-func IsPrime(n int) (foundDivisor bool) {
-	foundDivisor = false
-	for i := 2; (i < n) && !foundDivisor; i++ {
-		foundDivisor = (n%i == 0)
-	}
-	return !foundDivisor
+func siguiente(ini int) (fin int) {
+	ini64 := float64(ini)
+	fin = ini + int(26000-785*math.Pow(ini64, 0.3))
+	return
 }
 
-// PRE: interval.A < interval.B
-// POST: FindPrimes devuelve todos los números primos comprendidos en el
-// 		intervalo [interval.A, interval.B]
-func FindPrimes(interval com.TPInterval) (primes []int) {
-	for i := interval.A; i <= interval.B; i++ {
-		if IsPrime(i) {
-			primes = append(primes, i)
-		}
+func descomponerTarea(interval com.TPInterval) (intervalos []com.TPInterval) {
+	ini := interval.A
+	fin := siguiente(ini)
+
+	for fin <= interval.B {
+		intervalos = append(intervalos, com.TPInterval{ini, fin})
+		ini = fin + 1
+		fin = siguiente(ini)
 	}
-	return primes
+	if fin > interval.B {
+		intervalos = append(intervalos, com.TPInterval{ini, interval.B})
+	}
+	return
 }
 
 func AtenderCliente(canal chan net.Conn, dirWorker string) {

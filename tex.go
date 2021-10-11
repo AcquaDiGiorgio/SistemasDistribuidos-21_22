@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"main/com"
+	"math"
 	"time"
 )
 
@@ -29,7 +30,7 @@ func FindPrimes(interval com.TPInterval) float64 {
 	}
 	end := time.Now()
 	val := end.Sub(start)
-	fmt.Println(val.Seconds())
+	//fmt.Println(val.Seconds())
 	return val.Seconds()
 }
 
@@ -64,6 +65,45 @@ func texGorutine() {
 	fmt.Println(val / 25)
 }
 
+func siguiente(ini int) (fin int) {
+	ini64 := float64(ini)
+	fin = ini + int(26000-785*math.Pow(ini64, 0.3))
+	return
+}
+
+func costeIntervalo(interval com.TPInterval) {
+	ini := interval.A
+	fin := siguiente(ini)
+	var coste float64 = 0
+	for fin <= interval.B {
+		fmt.Printf("Bucle %d -> %d: %.3f\n", ini, fin, coste)
+		coste = FindPrimes(com.TPInterval{ini, fin})
+		ini = fin + 1
+		fin = siguiente(ini)
+	}
+	if fin > interval.B {
+		coste = FindPrimes(com.TPInterval{ini, interval.B})
+		fmt.Printf("If %d -> %d: %.3f\n", fin, interval.B, coste)
+	}
+}
+
+func descomponerTarea(interval com.TPInterval) (intervalos []com.TPInterval) {
+	ini := interval.A
+	fin := siguiente(ini)
+
+	for fin <= interval.B {
+		intervalos = append(intervalos, com.TPInterval{ini, fin})
+		ini = fin + 1
+		fin = siguiente(ini)
+	}
+	if fin > interval.B {
+		intervalos = append(intervalos, com.TPInterval{ini, interval.B})
+	}
+	return
+}
+
 func main() {
-	texGorutine()
+	interval := com.TPInterval{1000, 70000}
+	intervalos := descomponerTarea(interval)
+	fmt.Println(intervalos)
 }
