@@ -50,7 +50,7 @@ func FindPrimes(interval com.TPInterval) (primes []int) {
 }
 
 func int_to_byte(ent int) (byt []byte) {
-
+	byt = nil
 	var s = big.NewInt(int64(ent))
 	b := s.Bytes()
 
@@ -77,12 +77,13 @@ func byte_to_int(byt []byte) (ent int) {
 
 func codificarRerspuesta(reply com.Reply) (codigo []byte) {
 
+	codigo = nil
 	codigo = append(codigo, int_to_byte(reply.Id)...)
 
 	for i := 0; i < len(reply.Primes); i++ {
 		codigo = append(codigo, int_to_byte(reply.Primes[i])...)
 	}
-
+	fmt.Println(len(codigo))
 	return
 }
 
@@ -99,8 +100,9 @@ func thread(c net.Conn) {
 	/*
 		Recepción de mensajes
 	*/
-	var codigo [12]byte                          // buffer de max 512 bytes
-	n, _ := c.Read(codigo[:])                    // Leemos todo el buffer
+	var codigo [12]byte       // buffer de max 12 bytes
+	n, _ := c.Read(codigo[:]) // Leemos todo el buffer
+	fmt.Println(n, codigo[:n])
 	recibido := descodificarPeticion(codigo[:n]) // Mostramos hasta el tam leido
 	/*
 		Buscamos los primos
@@ -109,11 +111,10 @@ func thread(c net.Conn) {
 	respuesta.Id = recibido.Id
 	respuesta.Primes = FindPrimes(recibido.Interval)
 	mensaje := codificarRerspuesta(respuesta)
-
 	/*
 		Envío de mensajes
 	*/
-	c.Write(mensaje) // Escribimos a través de la conexión
+	c.Write(mensaje)
 }
 
 const CONN_TYPE = "tcp"

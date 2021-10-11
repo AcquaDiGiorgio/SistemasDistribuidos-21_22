@@ -26,7 +26,7 @@ func checkError(err error) {
 }
 
 func int_to_byte(ent int) (byt []byte) {
-
+	byt = nil
 	var s = big.NewInt(int64(ent))
 	b := s.Bytes()
 
@@ -52,6 +52,7 @@ func byte_to_int(byt []byte) (ent int) {
 }
 
 func codificarPeticion(request com.Request) (codigo []byte) {
+	codigo = nil
 	codigo = append(codigo, int_to_byte(request.Id)...)
 	codigo = append(codigo, int_to_byte(request.Interval.A)...)
 	codigo = append(codigo, int_to_byte(request.Interval.B)...)
@@ -72,8 +73,7 @@ func descodificarRespuesta(codigo []byte) (reply com.Reply) {
 	return
 }
 
-const BUFF_SIZE = 524288        // 2^19 bytes -- Hasta 131.072 enteros de tamaño 8 bytes
-const MAX_INT_SIZE = 4294967296 // entero de 8 bytes
+const BUFF_SIZE = 524288 // 2^19 bytes -- Hasta 131.072 enteros de tamaño 8 bytes
 
 func main() {
 
@@ -88,11 +88,6 @@ func main() {
 
 	ini, _ := strconv.Atoi(args[2])
 	fin, _ := strconv.Atoi(args[3])
-
-	if (ini > MAX_INT_SIZE) || (fin > MAX_INT_SIZE) || (ini < 0) || (fin < 0) {
-		fmt.Println("El intervalo debe ser de números enteros positivos de tamaño menor o igual a 8 bytes")
-		os.Exit(2)
-	}
 
 	if ini > fin {
 		aux := ini
@@ -116,6 +111,9 @@ func main() {
 	n, _ := conn.Read(codigo[:])
 
 	respuesta := descodificarRespuesta(codigo[:n])
-	fmt.Print("Primos encontrados: ")
-	fmt.Println(respuesta.Primes)
+	fmt.Println("Primos encontrados: ")
+	for i := 0; i < len(respuesta.Primes); i++ {
+		fmt.Printf("%d - ", respuesta.Primes[i])
+	}
+
 }

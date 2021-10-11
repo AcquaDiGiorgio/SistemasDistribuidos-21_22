@@ -8,22 +8,38 @@ import (
 	"strconv"
 	"strings"
 	"syscall"
+	"time"
 
 	"golang.org/x/term"
 )
 
-const GO = "/usr/local/go/bin/go"
-const PATH = "~/SSDD/"
+const GO = "/usr/local/go/bin/go run "
+const PATH = "~/SSDD/Trabajo1/"
 const RSA = "/Users/jorge/.ssh/id_rsa"
 
-func lanzar(ssh *com.SshClient, file string) {
+func lanzar(ssh *com.SshClient, file string, salida bool) {
 	output, err := ssh.RunCommand(PATH + file)
-	fmt.Println(output)
 	if err != nil {
 		log.Printf("SSH run command error %v", err)
 		return
 	}
+	if salida {
+		fmt.Println(output)
+	}
+}
 
+func crearSSH(usuario string, host string, pass string) (ssh *com.SshClient) {
+	ssh, err := com.NewSshClient(
+		usuario,
+		host,
+		22,
+		RSA,
+		strings.TrimSpace(pass))
+	if err != nil {
+		log.Printf("SSH init error %v", err)
+		os.Exit(1)
+	}
+	return
 }
 
 func main() {
@@ -41,41 +57,27 @@ func main() {
 	fmt.Print("Introduzca la Contraseña: ")
 	pass, err := term.ReadPassword(int(syscall.Stdin))
 
-	sshServ, err := com.NewSshClient(
-		args[0],
-		hostServ,
-		22,
-		RSA,
-		strings.TrimSpace(string(pass)))
-
 	if err != nil {
-		log.Printf("SSH init error %v", err)
-		return
+		fmt.Fprintf(os.Stderr, "Password error: %s", err.Error())
+		os.Exit(1)
 	}
 
-	sshClie, err := com.NewSshClient(
-		args[0],
-		hostClie,
-		22,
-		RSA,
-		strings.TrimSpace(string(pass)))
+	sshServ := crearSSH(args[0], hostServ, string(pass))
+	sshClie := crearSSH(args[0], hostClie, string(pass))
 
-	if err != nil {
-		log.Printf("SSH init error %v", err)
+	var ini int
+	var fin int
 
-	} else {
-		var ini int
-		var fin int
+	fmt.Print("\nIntroduzca el pincipio del Intervalo: ")
+	fmt.Scanln(&ini)
+	fmt.Print("Introduzca el final del Intervalo: ")
+	fmt.Scanln(&fin)
 
-		fmt.Print("\nIntroduzca el pincipio del Intervalo: ")
-		fmt.Scanln(&ini)
-		fmt.Print("Introduzca el final del Intervalo: ")
-		fmt.Scanln(&fin)
+	argsServ := ip + " " + args[3]
+	argsClie := ip + " " + args[3] + " " + strconv.Itoa(ini) + " " + strconv.Itoa(fin)
 
-		argsServ := ip + " " + args[3]
-		argsClie := ip + " " + args[3] + " " + strconv.Itoa(ini) + " " + strconv.Itoa(fin)
+	go lanzar(sshServ, "server "+argsServ, false)
+	time.Sleep(1 * time.Second)
+	lanzar(sshClie, "client "+argsClie, true)
 
-		go lanzar(sshServ, "server "+argsServ)
-		lanzar(sshClie, "client "+argsClie)
-	}
 }
