@@ -48,11 +48,16 @@ func FindPrimes(interval com.TPInterval) (primes []int) {
 }
 
 const CONN_TYPE = "tcp"
-const CONN_HOST = "localhost"
-const CONN_PORT = "8000"
 
 func main() {
-	listener, err := net.Listen(CONN_TYPE, CONN_HOST+":"+CONN_PORT)
+	args := os.Args[1:]
+
+	if len(args) != 1 {
+		fmt.Println("Número de parámetros incorrecto, ejecutar como:\n\tgo run worker.go ip:port")
+		os.Exit(1)
+	}
+
+	listener, err := net.Listen(CONN_TYPE, args[0])
 	checkError(err)
 	defer listener.Close()
 
@@ -62,15 +67,15 @@ func main() {
 		conn, err := listener.Accept()
 		checkError(err)
 
-		//Recibe del master la peticion para el calculo
 		dec := gob.NewDecoder(conn)
-		dec.Decode(&peticion)
+		enc := gob.NewEncoder(conn)
 
+		//Recibe del master la peticion para el calculo
+		dec.Decode(&peticion)
 		respuesta.Id = peticion.Id
 		respuesta.Primes = FindPrimes(peticion.Interval)
 
-		//Envia al master el array
-		enc := gob.NewEncoder(conn)
+		//Envia al master el array y cierra
 		enc.Encode(respuesta)
 		conn.Close()
 	}

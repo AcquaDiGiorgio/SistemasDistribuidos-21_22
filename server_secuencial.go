@@ -50,7 +50,7 @@ func FindPrimes(interval com.TPInterval) (primes []int) {
 
 const CONN_TYPE = "tcp"
 const CONN_HOST = "localhost"
-const CONN_PORT = "30000"
+const CONN_PORT = "8009"
 
 func main() {
 	listener, err := net.Listen(CONN_TYPE, CONN_HOST+":"+CONN_PORT)
@@ -59,20 +59,29 @@ func main() {
 
 	var peticion com.Request
 	var respuesta com.Reply
+	var fallo bool
 
 	for {
+		fallo = false
 		conn, err := listener.Accept()
 		checkError(err)
-
 		dec := gob.NewDecoder(conn)
-		dec.Decode(&peticion)
-
-		respuesta.Id = peticion.Id
-		respuesta.Primes = FindPrimes(peticion.Interval) //Calcula los primos
-
 		enc := gob.NewEncoder(conn)
-		enc.Encode(respuesta)
 
-		conn.Close()
+		for !fallo {
+
+			err = dec.Decode(&peticion)
+
+			if err != nil {
+				fallo = true
+				continue
+			}
+
+			respuesta.Id = peticion.Id
+			respuesta.Primes = FindPrimes(peticion.Interval)
+
+			enc.Encode(respuesta)
+		}
 	}
+
 }
