@@ -7,6 +7,23 @@ Si el servidor ha recibido el segmento, confirma el establecimiento de la conexi
 
 Para finalizar, el cliente confirma la recepción del segmento SYN-ACK mediante el envío de un paquete ACK propio, que en este caso cuenta con el número de secuencia del servidor después de sumarle 1. En este punto también puede transmitir ya los primeros datos al servidor.
 
+-- 
+
+(1). Crear un conector (socket)
+
+(2). Enlace de dirección IP y número de puerto del lado del servidor
+
+(3). Utilice el método Listen () para abrir el lado del servidor de supervisión
+
+(4). Utilice el método Accept () para intentar establecer una conexión con el lado cliente-servidor
+
+(5). Utilice el método Connect () para establecer una conexión con el servidor-cliente
+
+(5). Utilice el método Send () para enviar un mensaje al host conectado
+
+(6). Utilice el método Recive () para recibir mensajes del host que estableció la conexión (conexión confiable)
+
+--
 
 ## ¿Qué es big endian o little endian? 
 Sistema de codificación de los bits dentro de un byte que determina el orden 
