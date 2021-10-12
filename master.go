@@ -48,13 +48,18 @@ func descomponerTarea(interval com.TPInterval) (intervalos []com.TPInterval) {
 	return
 }
 
+func LanzarWorker(workers string) {
+
+}
+
 func AtenderCliente(canal chan net.Conn, dirWorker string) {
 	var peticion com.Request
 	var respuesta com.Reply
 
-	//Lee de canal una conexion por iteracion y lo guarda en conn. Sale del bucle cuando esta vacio.
-	for conn := range canal {
+	//Lee de canal una conexion por iteracion y lo guarda en conn.
+	for {
 
+		conn := <-canal
 		//Recibe del cliente la peticion con los datos
 		dec := gob.NewDecoder(conn)
 		dec.Decode(&peticion)
@@ -92,13 +97,13 @@ func main() {
 	defer listener.Close()
 
 	for i := 0; i < POOL; i++ {
-		go AtenderCliente(canal, workers[i]) //Crea la pool gorutines
+		LanzarWorker(workers[i])
+		go AtenderCliente(canal, workers[i])
 	}
 
 	for {
 		conn, err := listener.Accept()
 		checkError(err)
-
 		canal <- conn //Manda la conexion por el canal hacia las gorutines
 	}
 }

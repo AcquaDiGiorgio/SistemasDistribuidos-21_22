@@ -6,32 +6,34 @@
 * FICHERO: definitions.go
 * DESCRIPCIÓN: contiene las definiciones de estructuras de datos necesarias para
 *			la práctica 1
-*/
+ */
 package com
 
-import "time"
+import (
+	"time"
+)
 
 type TPInterval struct {
-    A int
-    B int
+	A int
+	B int
 }
 
 type Request struct {
-    Id int
-    Interval TPInterval
+	Id       int
+	Interval TPInterval
 }
 
 type TimeRequest struct {
-    Id int
-    T time.Time
+	Id int
+	T  time.Time
 }
 
 type Reply struct {
-    Id int
-    Primes []int
+	Id     int
+	Primes []int
 }
 
 type TimeReply struct {
-    Id int
-    T time.Time
+	Id int
+	T  time.Time
 }
