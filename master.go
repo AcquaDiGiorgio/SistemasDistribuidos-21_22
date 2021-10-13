@@ -73,50 +73,49 @@ func LanzarWorker(worker string, ip string, usuario string, pass string) {
 }
 
 func AtenderCliente(canal chan net.Conn, dirWorker string) {
-	var peticion com.Request
-	var respuesta com.Reply
+	work, err := net.Dial("tcp", dirWorker)
+	checkError(err)
+
+	workEnvio := gob.NewEncoder(work)
+	workRecepcion := gob.NewDecoder(work)
 
 	//Lee de canal una conexion por iteracion y lo guarda en conn.
 	for {
+		fmt.Println("Nueva conexión!")
 		conn := <-canal
-		for {
-			clienteRecepcion := gob.NewDecoder(conn)
-			clienteEnvio := gob.NewEncoder(conn)
+		i := 1
+		fallo := false
 
-			fmt.Println("Atiendo cliente")
+		clienteEnvio := gob.NewEncoder(conn)
+		clienteRecepcion := gob.NewDecoder(conn)
+
+		for !fallo {
+			var peticion com.Request
+			var respuesta com.Reply
+
 			//Recibe del cliente la peticion con los datos
 
 			err := clienteRecepcion.Decode(&peticion)
 			if err != nil {
+				fallo = true
 				continue
 			}
-			fmt.Println("Cliente me da: ", peticion.Interval)
 
-			//Le envia al worker los datos
-			work, err := net.Dial("tcp", dirWorker)
+			fmt.Println("Atiendo petición", i)
+			i++
 
-			checkError(err)
+			// Envío la petición y recibo la respuesta del worker
+			workEnvio.Encode(peticion)
+			workRecepcion.Decode(&respuesta)
 
-			workRecepcion := gob.NewEncoder(work)
-			workEnvio := gob.NewDecoder(work)
-
-			fmt.Println("Envío al worker")
-
-			workRecepcion.Encode(peticion)
-			workEnvio.Decode(&respuesta)
-
-			fmt.Println("Recibo del worker: ", respuesta.Primes)
-
-			//Enviar solucion al cliente
 			clienteEnvio.Encode(respuesta)
 		}
 	}
-
 }
 
 const CONN_TYPE = "tcp"
 const CONN_HOST = "localhost"
-const CONN_PORT = "8005"
+const CONN_PORT = "8003"
 const POOL = 6
 
 func main() {
@@ -139,9 +138,9 @@ func main() {
 			LanzarWorker(com.HOSTS[i], com.IPs[i], user, passStr)
 			go AtenderCliente(canal, com.IPs[i])
 		}
+		LanzarWorker(com.HOSTS[0], com.IPs[0], user, passStr)
 	*/
-	//LanzarWorker(com.HOSTS[0], com.IPs[0], user, passStr)
-	go AtenderCliente(canal, "localhost:8006")
+	go AtenderCliente(canal, "localhost:8004")
 
 	fmt.Println("\nWorkers en ejecución")
 

@@ -63,20 +63,21 @@ func main() {
 
 	var peticion com.Request
 	var respuesta com.Reply
-	for {
-		conn, err := listener.Accept()
-		checkError(err)
+	conn, err := listener.Accept()
+	checkError(err)
 
-		dec := gob.NewDecoder(conn)
-		enc := gob.NewEncoder(conn)
+	dec := gob.NewDecoder(conn)
+	enc := gob.NewEncoder(conn)
+
+	for {
 
 		//Recibe del master la peticion para el calculo
-		dec.Decode(&peticion)
+		err = dec.Decode(&peticion)
+
 		respuesta.Id = peticion.Id
 		respuesta.Primes = FindPrimes(peticion.Interval)
 
 		//Envia al master el array y cierra
 		enc.Encode(respuesta)
-		conn.Close()
 	}
 }

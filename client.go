@@ -18,9 +18,9 @@ import (
 	"main/com"
 )
 
-func checkError(err error, funci string) {
+func checkError(err error) {
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Fatal error: %s at %s", err.Error(), funci)
+		fmt.Fprintf(os.Stderr, "Fatal error: %s", err.Error())
 		os.Exit(1)
 	}
 }
@@ -36,7 +36,7 @@ func sendRequest(id int, interval com.TPInterval, encoder *gob.Encoder, addChan 
 	request := com.Request{id, interval}
 	timeReq := com.TimeRequest{id, time.Now()}
 	err := encoder.Encode(request)
-	checkError(err, "sendRequest")
+	checkError(err)
 	addChan <- timeReq
 }
 
@@ -47,7 +47,7 @@ func sendRequest(id int, interval com.TPInterval, encoder *gob.Encoder, addChan 
 // indica que ha llegado una respuesta de una petición. En la respuesta, se obtiene también el timestamp de la recepción.
 // Antes de eliminar una petición se imprime por la salida estándar el id de una petición y el tiempo transcurrido, observado
 // por el cliente (tiempo de transmisión + tiempo de overheads + tiempo de ejecución efectivo)
-func handleRequests(addChan chan com.TimeRequest, delChan chan com.TimeReply) {
+func handleRequests(addChan chan com.TimeRequest, delChan chan com.TimeReply, endChan chan bool) {
 	requests := make(map[int]time.Time)
 	for {
 		select {
@@ -56,6 +56,9 @@ func handleRequests(addChan chan com.TimeRequest, delChan chan com.TimeReply) {
 		case reply := <-delChan:
 			fmt.Println(reply.Id, " ", reply.T.Sub(requests[reply.Id]))
 			delete(requests, reply.Id)
+			if reply.Id == 60 {
+				endChan <- true
+			}
 		}
 	}
 }
@@ -70,33 +73,34 @@ func receiveReply(decoder *gob.Decoder, delChan chan com.TimeReply) {
 	for {
 		var reply com.Reply
 		err := decoder.Decode(&reply)
-		checkError(err, "RecieveReply")
+		checkError(err)
 		timeReply := com.TimeReply{reply.Id, time.Now()}
 		delChan <- timeReply
 	}
 }
 
 func main() {
-	endpoint := "localhost:8009"
+	endpoint := "localhost:8003"
 	numIt := 10
 	requestTmp := 6
 	interval := com.TPInterval{1000, 70000}
 	tts := 3000 // time to sleep between consecutive requests
 
 	tcpAddr, err := net.ResolveTCPAddr("tcp", endpoint)
-	checkError(err, "Resolve")
+	checkError(err)
 
 	conn, err := net.DialTCP("tcp", nil, tcpAddr)
-	checkError(err, "Dial")
+	checkError(err)
 
 	encoder := gob.NewEncoder(conn)
 	decoder := gob.NewDecoder(conn)
 
 	addChan := make(chan com.TimeRequest)
 	delChan := make(chan com.TimeReply)
+	endChan := make(chan bool)
 
 	go receiveReply(decoder, delChan)
-	go handleRequests(addChan, delChan)
+	go handleRequests(addChan, delChan, endChan)
 
 	for i := 0; i < numIt; i++ {
 		for t := 1; t <= requestTmp; t++ {
@@ -104,4 +108,5 @@ func main() {
 		}
 		time.Sleep(time.Duration(tts) * time.Millisecond)
 	}
+	<-endChan
 }
