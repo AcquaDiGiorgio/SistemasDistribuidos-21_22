@@ -64,6 +64,9 @@ func (s *SshClient) RunCommand(cmd string) error {
 	}
 	defer session.Close()
 
+	// run command and capture stdout/stderr
+	err = session.Start(cmd)
+
 	return err
 }
 

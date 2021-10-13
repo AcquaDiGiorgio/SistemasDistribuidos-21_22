@@ -17,12 +17,16 @@ import (
 	"math"
 	"net"
 	"os"
+	"strings"
+	"syscall"
 
 	"main/com"
+
+	"golang.org/x/term"
 )
 
 const PATH = "~/SSDD/Practica1/"
-const RSA = "/Users/jorge/.ssh/id_rsa"
+const RSA = "/home/a774248/.ssh/id_rsa"
 
 func checkError(err error) {
 	if err != nil {
@@ -50,26 +54,6 @@ func descomponerTarea(interval com.TPInterval) (intervalos []com.TPInterval) {
 		intervalos = append(intervalos, com.TPInterval{ini, interval.B})
 	}
 	return
-}
-
-func LanzarWorker(worker string, ip string, usuario string, pass string) {
-	ssh, err := com.NewSshClient(
-		usuario,
-		worker,
-		22,
-		RSA,
-		pass)
-	if err != nil {
-		log.Printf("SSH init error %v", err)
-		os.Exit(1)
-	}
-
-	err = ssh.RunCommand(PATH + "worker " + ip)
-
-	if err != nil {
-		log.Printf("SSH run command error %v", err)
-		os.Exit(2)
-	}
 }
 
 func AtenderCliente(canal chan net.Conn, dirWorker string) {
@@ -113,36 +97,62 @@ func AtenderCliente(canal chan net.Conn, dirWorker string) {
 	}
 }
 
+func LanzarWorker(worker string, ip string, usuario string, pass string) {
+	ssh, err := com.NewSshClient(
+		usuario,
+		worker,
+		22,
+		RSA,
+		pass)
+	if err != nil {
+		log.Printf("SSH init error %v", err)
+		os.Exit(1)
+	}
+
+	err = ssh.RunCommand(PATH + "worker " + ip + " &")
+
+	if err != nil {
+		log.Printf("SSH run command error %v", err)
+		os.Exit(2)
+	}
+}
+
+func inicializacion(canal chan net.Conn) {
+	var user string
+	fmt.Print("Introduzca el usuario: ")
+	fmt.Scanf("%s", &user)
+
+	fmt.Print("Introduzca la Contraseña: ")
+	pass, err := term.ReadPassword(int(syscall.Stdin))
+	checkError(err)
+
+	passStr := strings.TrimSpace(string(pass))
+
+	for i := 0; i < POOL; i++ {
+		LanzarWorker(com.HOSTS[i], com.IPs[i], user, passStr)
+		fmt.Println("Worker", i, "en ejecución")
+	}
+}
+
 const CONN_TYPE = "tcp"
-const CONN_HOST = "localhost"
-const CONN_PORT = "8003"
+const CONN_HOST = "155.210.154.210"
+const CONN_PORT = "8000"
 const POOL = 6
 
 func main() {
-	/*
-		var user string
-		fmt.Print("Introduzca el usuario: ")
-		fmt.Scanf("%s", &user)
 
-		fmt.Print("Introduzca la Contraseña: ")
-		pass, err := term.ReadPassword(int(syscall.Stdin))
-		passStr := strings.TrimSpace(string(pass))
-	*/
 	canal := make(chan net.Conn) //Canal que pasa las tareas a las gorutines
 
 	listener, err := net.Listen(CONN_TYPE, CONN_HOST+":"+CONN_PORT)
 	checkError(err)
 	defer listener.Close()
-	/*
-		for i := 0; i < POOL; i++ {
-			LanzarWorker(com.HOSTS[i], com.IPs[i], user, passStr)
-			go AtenderCliente(canal, com.IPs[i])
-		}
-		LanzarWorker(com.HOSTS[0], com.IPs[0], user, passStr)
-	*/
-	go AtenderCliente(canal, "localhost:8004")
 
+	inicializacion(canal)
 	fmt.Println("\nWorkers en ejecución")
+
+	for i := 0; i < POOL; i++ {
+		go AtenderCliente(canal, com.IPs[i])
+	}
 
 	for {
 		conn, err := listener.Accept()
