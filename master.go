@@ -124,7 +124,6 @@ func inicializacion(canal chan Mensaje, port string) {
 
 const CONN_TYPE = "tcp"
 const CONN_HOST = "155.210.154.210"
-const CONN_PORT = "8050"
 const POOL = 6
 
 func main() {

@@ -19,6 +19,11 @@ import (
 	"main/com"
 )
 
+type Mensaje struct {
+	encoder *gob.Encoder
+	request com.Request
+}
+
 func checkError(err error) {
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Fatal error: %s", err.Error())
@@ -48,45 +53,37 @@ func FindPrimes(interval com.TPInterval) (primes []int) {
 	return primes
 }
 
-func AtenderCliente(canal chan net.Conn) {
+func AtenderCliente(canal chan Mensaje) {
 
 	for {
-		conn := <-canal
+		msj := <-canal
 
-		fallo := false
+		enc := msj.encoder
+		peticion := msj.request
 
-		dec := gob.NewDecoder(conn)
-		enc := gob.NewEncoder(conn)
-
-		var peticion com.Request
 		var respuesta com.Reply
 
-		for !fallo {
-			err := dec.Decode(&peticion)
+		respuesta.Id = peticion.Id
+		respuesta.Primes = FindPrimes(peticion.Interval)
 
-			if err != nil {
-				fallo = true
-				continue
-			}
-
-			respuesta.Id = peticion.Id
-			respuesta.Primes = FindPrimes(peticion.Interval)
-
-			enc.Encode(respuesta)
-		}
+		enc.Encode(respuesta)
 	}
 
 }
 
 const CONN_TYPE = "tcp"
-const CONN_HOST = "localhost"
-const CONN_PORT = "8002"
+const CONN_HOST = "155.210.154.210"
 
 func main() {
-	pool := 5                    //Tamaño de la pool de gorutines
-	canal := make(chan net.Conn) //Canal que pasa las tareas a las gorutines
+	args := os.Args[1:]
+	if len(args) != 1 {
+		os.Exit(1)
+	}
 
-	listener, err := net.Listen(CONN_TYPE, CONN_HOST+":"+CONN_PORT)
+	pool := 5                   //Tamaño de la pool de gorutines
+	canal := make(chan Mensaje) //Canal que pasa las tareas a las gorutines
+
+	listener, err := net.Listen(CONN_TYPE, CONN_HOST+":"+args[0])
 	checkError(err)
 	//defer listener.Close()
 
@@ -97,6 +94,20 @@ func main() {
 	for {
 		conn, err := listener.Accept()
 		checkError(err)
-		canal <- conn //Manda la conexion por el canal hacia las gorutines
+
+		dec := gob.NewDecoder(conn)
+		enc := gob.NewEncoder(conn)
+
+		var request com.Request
+
+		fallo := false
+		for !fallo {
+			err = dec.Decode(&request)
+			if err != nil {
+				fallo = true
+				continue
+			}
+			canal <- Mensaje{enc, request}
+		}
 	}
 }

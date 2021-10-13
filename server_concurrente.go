@@ -19,6 +19,11 @@ import (
 	"main/com"
 )
 
+type Mensaje struct {
+	encoder *gob.Encoder
+	request com.Request
+}
+
 func checkError(err error) {
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Fatal error: %s", err.Error())
@@ -49,37 +54,28 @@ func FindPrimes(interval com.TPInterval) (primes []int) {
 }
 
 //Funcion que resuelve la peticion
-func AtenderCliente(conn net.Conn) {
+func AtenderCliente(msj Mensaje) {
 
-	fallo := false
+	enc := msj.encoder
+	peticion := msj.request
 
-	var peticion com.Request
 	var respuesta com.Reply
 
-	dec := gob.NewDecoder(conn)
-	enc := gob.NewEncoder(conn)
+	respuesta.Id = peticion.Id
+	respuesta.Primes = FindPrimes(peticion.Interval)
 
-	for !fallo {
-		err := dec.Decode(&peticion)
-
-		if err != nil {
-			fallo = true
-			continue
-		}
-
-		respuesta.Id = peticion.Id
-		respuesta.Primes = FindPrimes(peticion.Interval)
-
-		enc.Encode(respuesta)
-	}
+	enc.Encode(respuesta)
 }
 
 const CONN_TYPE = "tcp"
-const CONN_HOST = "localhost"
-const CONN_PORT = "8001"
+const CONN_HOST = "155.210.154.210"
 
 func main() {
-	listener, err := net.Listen(CONN_TYPE, CONN_HOST+":"+CONN_PORT)
+	args := os.Args[1:]
+	if len(args) != 1 {
+		os.Exit(1)
+	}
+	listener, err := net.Listen(CONN_TYPE, CONN_HOST+":"+args[0])
 	checkError(err)
 	defer listener.Close()
 
@@ -87,6 +83,19 @@ func main() {
 		conn, err := listener.Accept()
 		checkError(err)
 
-		go AtenderCliente(conn) //Por cada peticion, lanaza una gorutine
+		dec := gob.NewDecoder(conn)
+		enc := gob.NewEncoder(conn)
+
+		var request com.Request
+
+		fallo := false
+		for !fallo {
+			err = dec.Decode(&request)
+			if err != nil {
+				fallo = true
+				continue
+			}
+			go AtenderCliente(Mensaje{enc, request})
+		}
 	}
 }
