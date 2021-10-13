@@ -1,7 +1,6 @@
 package com
 
 import (
-	"bytes"
 	"crypto/x509"
 	"encoding/pem"
 	"errors"
@@ -66,12 +65,8 @@ func (s *SshClient) RunCommand(cmd string) (string, error) {
 	defer session.Close()
 
 	// run command and capture stdout/stderr
-	var stdoutBuf bytes.Buffer
-	session.Stdout = &stdoutBuf
-
-	err = session.Run(cmd)
-	return stdoutBuf.String(), err
-
+	out, err := session.CombinedOutput(cmd)
+	return string(out), err
 }
 
 func signerFromPem(pemBytes []byte, password []byte) (ssh.Signer, error) {

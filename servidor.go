@@ -140,6 +140,6 @@ func main() {
 		checkError(err)
 		// Tiempo Límite que puede estar una conexión mantenida (1 hora en este caso)
 		conn.SetDeadline(time.Now().Add(time.Hour))
-		thread(conn)
+		go thread(conn)
 	}
 }

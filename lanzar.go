@@ -13,7 +13,6 @@ import (
 	"golang.org/x/term"
 )
 
-const GO = "/usr/local/go/bin/go run "
 const PATH = "~/SSDD/Trabajo1/"
 const RSA = "/Users/jorge/.ssh/id_rsa"
 
@@ -74,8 +73,8 @@ func main() {
 	argsServ := ip + " " + args[3]
 	argsClie := ip + " " + args[3] + " " + strconv.Itoa(ini) + " " + strconv.Itoa(fin)
 
-	go lanzar(sshServ, "server "+argsServ)
+	go lanzar(sshServ, "servidor "+argsServ)
 	time.Sleep(1 * time.Second)
-	lanzar(sshClie, "client "+argsClie)
+	lanzar(sshClie, "cliente "+argsClie)
 
 }
