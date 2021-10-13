@@ -19,14 +19,20 @@ import (
 	"os"
 	"strings"
 	"syscall"
+	"time"
 
 	"main/com"
 
 	"golang.org/x/term"
 )
 
-const PATH = "~/SSDD/Practica1/"
+const PATH = "/home/a774248/SSDD/Practica1/"
 const RSA = "/home/a774248/.ssh/id_rsa"
+
+type Mensaje struct {
+	encoder *gob.Encoder
+	request com.Request
+}
 
 func checkError(err error) {
 	if err != nil {
@@ -56,48 +62,7 @@ func descomponerTarea(interval com.TPInterval) (intervalos []com.TPInterval) {
 	return
 }
 
-func AtenderCliente(canal chan net.Conn, dirWorker string) {
-	work, err := net.Dial("tcp", dirWorker)
-	checkError(err)
-
-	workEnvio := gob.NewEncoder(work)
-	workRecepcion := gob.NewDecoder(work)
-
-	//Lee de canal una conexion por iteracion y lo guarda en conn.
-	for {
-		fmt.Println("Nueva conexión!")
-		conn := <-canal
-		i := 1
-		fallo := false
-
-		clienteEnvio := gob.NewEncoder(conn)
-		clienteRecepcion := gob.NewDecoder(conn)
-
-		for !fallo {
-			var peticion com.Request
-			var respuesta com.Reply
-
-			//Recibe del cliente la peticion con los datos
-
-			err := clienteRecepcion.Decode(&peticion)
-			if err != nil {
-				fallo = true
-				continue
-			}
-
-			fmt.Println("Atiendo petición", i)
-			i++
-
-			// Envío la petición y recibo la respuesta del worker
-			workEnvio.Encode(peticion)
-			workRecepcion.Decode(&respuesta)
-
-			clienteEnvio.Encode(respuesta)
-		}
-	}
-}
-
-func LanzarWorker(worker string, ip string, usuario string, pass string) {
+func LanzarWorker(worker string, ip string, usuario string, pass string, canal chan Mensaje) {
 	ssh, err := com.NewSshClient(
 		usuario,
 		worker,
@@ -109,15 +74,39 @@ func LanzarWorker(worker string, ip string, usuario string, pass string) {
 		os.Exit(1)
 	}
 
-	err = ssh.RunCommand(PATH + "worker " + ip + " &")
+	err = ssh.RunCommand(PATH + "worker " + ip)
 
 	if err != nil {
 		log.Printf("SSH run command error %v", err)
 		os.Exit(2)
 	}
+
+	time.Sleep(1 * time.Second)
+
+	work, err := net.Dial("tcp", ip)
+	checkError(err)
+
+	workEnvio := gob.NewEncoder(work)
+	workRecepcion := gob.NewDecoder(work)
+
+	fmt.Println("Worker", worker, "preparado")
+	for {
+		msj := <-canal
+
+		enc := msj.encoder
+		peticion := msj.request
+
+		var respuesta com.Reply
+
+		// Envío la petición y recibo la respuesta del worker
+		workEnvio.Encode(peticion)
+		workRecepcion.Decode(&respuesta)
+
+		enc.Encode(respuesta)
+	}
 }
 
-func inicializacion(canal chan net.Conn) {
+func inicializacion(canal chan Mensaje, port string) {
 	var user string
 	fmt.Print("Introduzca el usuario: ")
 	fmt.Scanf("%s", &user)
@@ -129,35 +118,46 @@ func inicializacion(canal chan net.Conn) {
 	passStr := strings.TrimSpace(string(pass))
 
 	for i := 0; i < POOL; i++ {
-		LanzarWorker(com.HOSTS[i], com.IPs[i], user, passStr)
-		fmt.Println("Worker", i, "en ejecución")
+		go LanzarWorker(com.HOSTS[i], com.IPs[i]+port, user, passStr, canal)
 	}
 }
 
 const CONN_TYPE = "tcp"
 const CONN_HOST = "155.210.154.210"
-const CONN_PORT = "8000"
+const CONN_PORT = "8050"
 const POOL = 6
 
 func main() {
 
-	canal := make(chan net.Conn) //Canal que pasa las tareas a las gorutines
+	args := os.Args[1:]
+	if len(args) != 2 {
+		os.Exit(1)
+	}
 
-	listener, err := net.Listen(CONN_TYPE, CONN_HOST+":"+CONN_PORT)
+	canal := make(chan Mensaje) //Canal que pasa las tareas a las gorutines
+
+	listener, err := net.Listen(CONN_TYPE, CONN_HOST+":"+args[0])
 	checkError(err)
 	defer listener.Close()
 
-	inicializacion(canal)
-	fmt.Println("\nWorkers en ejecución")
-
-	for i := 0; i < POOL; i++ {
-		go AtenderCliente(canal, com.IPs[i])
-	}
-
+	inicializacion(canal, args[1])
 	for {
 		conn, err := listener.Accept()
-		fmt.Println("Accepto cleinte") //BORRAR
 		checkError(err)
-		canal <- conn //Manda la conexion por el canal hacia las gorutines
+
+		dec := gob.NewDecoder(conn)
+		enc := gob.NewEncoder(conn)
+
+		var request com.Request
+
+		fallo := false
+		for !fallo {
+			err = dec.Decode(&request)
+			if err != nil {
+				fallo = true
+				continue
+			}
+			canal <- Mensaje{enc, request}
+		}
 	}
 }
