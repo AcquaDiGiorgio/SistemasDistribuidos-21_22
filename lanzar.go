@@ -17,14 +17,12 @@ const GO = "/usr/local/go/bin/go run "
 const PATH = "~/SSDD/Trabajo1/"
 const RSA = "/Users/jorge/.ssh/id_rsa"
 
-func lanzar(ssh *com.SshClient, file string, salida bool) {
+func lanzar(ssh *com.SshClient, file string) {
 	output, err := ssh.RunCommand(PATH + file)
+	fmt.Println(output)
 	if err != nil {
 		log.Printf("SSH run command error %v", err)
 		return
-	}
-	if salida {
-		fmt.Println(output)
 	}
 }
 
@@ -76,8 +74,8 @@ func main() {
 	argsServ := ip + " " + args[3]
 	argsClie := ip + " " + args[3] + " " + strconv.Itoa(ini) + " " + strconv.Itoa(fin)
 
-	go lanzar(sshServ, "server "+argsServ, false)
+	go lanzar(sshServ, "server "+argsServ)
 	time.Sleep(1 * time.Second)
-	lanzar(sshClie, "client "+argsClie, true)
+	lanzar(sshClie, "client "+argsClie)
 
 }
