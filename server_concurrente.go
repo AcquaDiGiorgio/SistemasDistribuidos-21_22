@@ -19,6 +19,8 @@ import (
 	"main/com"
 )
 
+//Struct usado para realizar el envío de mensajes por canal.
+//Consta de un encoder, para devolver el dato y la petición del cliente.
 type Mensaje struct {
 	encoder *gob.Encoder
 	request com.Request
@@ -53,7 +55,8 @@ func FindPrimes(interval com.TPInterval) (primes []int) {
 	return primes
 }
 
-//Funcion que resuelve la peticion
+//Gorutina que acepta un mensaje y calcula sus primos para posteriormente
+//devolverlos al cliente
 func AtenderCliente(msj Mensaje) {
 
 	enc := msj.encoder
@@ -79,6 +82,7 @@ func main() {
 	checkError(err)
 	defer listener.Close()
 
+	//Aceptamos a un cliente
 	for {
 		conn, err := listener.Accept()
 		checkError(err)
@@ -89,12 +93,15 @@ func main() {
 		var request com.Request
 
 		fallo := false
+		//Mientras tenga algo que darnos y no haya cerrado conexión,
+		//acptamos lo que nos dé
 		for !fallo {
 			err = dec.Decode(&request)
 			if err != nil {
 				fallo = true
 				continue
 			}
+
 			go AtenderCliente(Mensaje{enc, request})
 		}
 	}

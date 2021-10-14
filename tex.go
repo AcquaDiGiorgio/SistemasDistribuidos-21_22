@@ -45,10 +45,13 @@ func texFindPrimes() {
 	fmt.Println(sum / 25)
 }
 
+//Función trivial usada para medir costes de ejecución de gorutines
 func trivialFunc() {
 
 }
 
+//Calcula el tiempo de ejecución de gorutines llamando a una función
+//que no hace ningún cálculo
 func texGorutine() {
 	var val time.Duration
 
@@ -65,12 +68,16 @@ func texGorutine() {
 	fmt.Println(val / 25)
 }
 
+//Calcula el siguiente valor de un intrevalo partido
+//usando la fórmula 26000-785*x^0.3
 func siguiente(ini int) (fin int) {
 	ini64 := float64(ini)
 	fin = ini + int(26000-785*math.Pow(ini64, 0.3))
 	return
 }
 
+//Calcula el coste de calcular cada parte de un intervalo
+//descompuesto
 func costeIntervalo(interval com.TPInterval) {
 	ini := interval.A
 	fin := siguiente(ini)
@@ -87,6 +94,7 @@ func costeIntervalo(interval com.TPInterval) {
 	}
 }
 
+//Descompone semi-equitativamente un intervalo
 func descomponerTarea(interval com.TPInterval) (intervalos []com.TPInterval) {
 	ini := interval.A
 	fin := siguiente(ini)

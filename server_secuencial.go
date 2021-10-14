@@ -65,6 +65,7 @@ func main() {
 	var respuesta com.Reply
 	var fallo bool
 
+	//Aceptamos a un cliente
 	for {
 		fallo = false
 		conn, err := listener.Accept()
@@ -73,6 +74,8 @@ func main() {
 		dec := gob.NewDecoder(conn)
 		enc := gob.NewEncoder(conn)
 
+		//Mientras tenga algo que darnos y no haya cerrado conexión,
+		//acptamos lo que nos dé
 		for !fallo {
 
 			err = dec.Decode(&peticion)
@@ -87,5 +90,4 @@ func main() {
 			enc.Encode(respuesta)
 		}
 	}
-
 }

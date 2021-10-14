@@ -29,6 +29,8 @@ import (
 const PATH = "/home/a774248/SSDD/Practica1/"
 const RSA = "/home/a774248/.ssh/id_rsa"
 
+//Struct usado para realizar el envío de mensajes por canal.
+//Consta de un encoder, para devolver el dato y la petición del cliente.
 type Mensaje struct {
 	encoder *gob.Encoder
 	request com.Request
@@ -41,12 +43,16 @@ func checkError(err error) {
 	}
 }
 
+//Calcula el siguiente valor de un intrevalo partido
+//usando la fórmula 26000-785*x^0.3
 func siguiente(ini int) (fin int) {
 	ini64 := float64(ini)
 	fin = ini + int(26000-785*math.Pow(ini64, 0.3))
 	return
 }
 
+//Función capaz de partir el intervalo en subintervalos con una carga de
+//trabajo parcialmente equitativa
 func descomponerTarea(interval com.TPInterval) (intervalos []com.TPInterval) {
 	ini := interval.A
 	fin := siguiente(ini)
@@ -62,7 +68,12 @@ func descomponerTarea(interval com.TPInterval) (intervalos []com.TPInterval) {
 	return
 }
 
+//Gorutina capaz de lanzar por ssh un worker y esperar a que entre por el canal de mensajes
+//una petición del cliente
+//Esta función recibe el host del worker, su ip, el usuario que hace el ssh, su contraseña y
+//el canal por donde se recibirán las peticiones
 func LanzarWorker(worker string, ip string, usuario string, pass string, canal chan Mensaje) {
+	//Creamos el ssh hacia la máquina en la que se encuentra el worker
 	ssh, err := com.NewSshClient(
 		usuario,
 		worker,
@@ -74,13 +85,14 @@ func LanzarWorker(worker string, ip string, usuario string, pass string, canal c
 		os.Exit(1)
 	}
 
+	//Ejecutamos su archivo compilado
 	err = ssh.RunCommand(PATH + "worker " + ip)
-
 	if err != nil {
 		log.Printf("SSH run command error %v", err)
 		os.Exit(2)
 	}
 
+	//Esperamos para que asegurarnos de que el worker está preparado para escuchar
 	time.Sleep(1 * time.Second)
 
 	work, err := net.Dial("tcp", ip)
@@ -106,6 +118,8 @@ func LanzarWorker(worker string, ip string, usuario string, pass string, canal c
 	}
 }
 
+//función que recibiendo un canal de Mensajes y un puerto por donde escuchen
+//los workers, inicializa los workers que se encuentran en el paquete com
 func inicializacion(canal chan Mensaje, port string) {
 	var user string
 	fmt.Print("Introduzca el usuario: ")
@@ -133,13 +147,17 @@ func main() {
 		os.Exit(1)
 	}
 
-	canal := make(chan Mensaje) //Canal que pasa las tareas a las gorutines
+	//Creamos un canal que pasa las tareas a las gorutines
+	canal := make(chan Mensaje)
 
 	listener, err := net.Listen(CONN_TYPE, CONN_HOST+":"+args[0])
 	checkError(err)
 	defer listener.Close()
 
+	//Llama por ssh a los workers y los prepara para escuchar
 	inicializacion(canal, args[1])
+
+	//Aceptamos a un cliente
 	for {
 		conn, err := listener.Accept()
 		checkError(err)
@@ -150,12 +168,17 @@ func main() {
 		var request com.Request
 
 		fallo := false
+		//Mientras tenga algo que darnos y no haya cerrado conexión,
+		//acptamos lo que nos dé
 		for !fallo {
 			err = dec.Decode(&request)
 			if err != nil {
 				fallo = true
 				continue
 			}
+
+			//Enviamos su petición y el lugar por donde le tenemos que reponder
+			//por el canal
 			canal <- Mensaje{enc, request}
 		}
 	}

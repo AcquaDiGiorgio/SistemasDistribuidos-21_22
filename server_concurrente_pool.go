@@ -19,6 +19,8 @@ import (
 	"main/com"
 )
 
+//Struct usado para realizar el envío de mensajes por canal.
+//Consta de un encoder, para devolver el dato y la petición del cliente.
 type Mensaje struct {
 	encoder *gob.Encoder
 	request com.Request
@@ -53,6 +55,8 @@ func FindPrimes(interval com.TPInterval) (primes []int) {
 	return primes
 }
 
+//Gorutina que acepta inifinatamente mensajes a través del canal de mensajes dado
+//y calcula sus primos para posteriormente devolverlos al cliente
 func AtenderCliente(canal chan Mensaje) {
 
 	for {
@@ -85,12 +89,13 @@ func main() {
 
 	listener, err := net.Listen(CONN_TYPE, CONN_HOST+":"+args[0])
 	checkError(err)
-	//defer listener.Close()
 
+	//Crea la pool de gorutines
 	for i := 1; i <= pool; i++ {
-		go AtenderCliente(canal) //Crea la pool de gorutines
+		go AtenderCliente(canal)
 	}
 
+	//Aceptamos a un cliente
 	for {
 		conn, err := listener.Accept()
 		checkError(err)
@@ -101,12 +106,15 @@ func main() {
 		var request com.Request
 
 		fallo := false
+		//Mientras tenga algo que darnos y no haya cerrado conexión,
+		//acptamos lo que nos dé
 		for !fallo {
 			err = dec.Decode(&request)
 			if err != nil {
 				fallo = true
 				continue
 			}
+
 			canal <- Mensaje{enc, request}
 		}
 	}
