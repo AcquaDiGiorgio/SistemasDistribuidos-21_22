@@ -120,7 +120,7 @@ func LanzarWorker(worker string, ip string, usuario string, pass string, canal c
 
 //función que recibiendo un canal de Mensajes y un puerto por donde escuchen
 //los workers, inicializa los workers que se encuentran en el paquete com
-func inicializacion(canal chan Mensaje, port string) {
+func inicializacion(canal chan Mensaje) {
 	var user string
 	fmt.Print("Introduzca el usuario: ")
 	fmt.Scanf("%s", &user)
@@ -131,19 +131,19 @@ func inicializacion(canal chan Mensaje, port string) {
 
 	passStr := strings.TrimSpace(string(pass))
 
-	for i := 0; i < POOL; i++ {
-		go LanzarWorker(com.HOSTS[i], com.IPs[i]+port, user, passStr, canal)
+	for i := 0; i < com.POOL; i++ {
+		go LanzarWorker(com.HOSTS[i], com.IPs[i], user, passStr, canal)
 	}
 }
 
 const CONN_TYPE = "tcp"
-const CONN_HOST = "155.210.154.210"
+const CONN_HOST = "155.210.154.200"
 const POOL = 6
 
 func main() {
 
 	args := os.Args[1:]
-	if len(args) != 2 {
+	if len(args) != 1 {
 		os.Exit(1)
 	}
 
@@ -155,7 +155,7 @@ func main() {
 	defer listener.Close()
 
 	//Llama por ssh a los workers y los prepara para escuchar
-	inicializacion(canal, args[1])
+	inicializacion(canal)
 
 	//Aceptamos a un cliente
 	for {
