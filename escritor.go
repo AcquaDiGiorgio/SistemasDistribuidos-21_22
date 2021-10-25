@@ -19,6 +19,7 @@ func escribir(ra *ra.RASharedDB, done chan bool) {
 		println("Escritor - Postprotocolo")
 		ra.PostProtocol()
 	}
+	done <- true
 }
 
 //PRE: [ID, PathFichero]

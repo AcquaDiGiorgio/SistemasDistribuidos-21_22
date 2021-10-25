@@ -19,6 +19,7 @@ func leer(ra *ra.RASharedDB, done chan bool) {
 		println("Lector - Postprotocolo")
 		ra.PostProtocol()
 	}
+	done <- true
 }
 
 //PRE: [ID, PathFichero]

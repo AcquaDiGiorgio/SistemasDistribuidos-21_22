@@ -58,8 +58,10 @@ func New(me int, usersFile string, accion string) *RASharedDB {
 				return
 			default:
 				dato := ra.ms.Receive()
+				println("Recibo mensaje")
 				switch dato.(type) {
 				case Request: // Recibo una petición de acceso
+					println("Es un request")
 					pet := dato.(Request)
 					ra.HigSeqNum = intMax(ra.HigSeqNum, pet.Clock)
 
@@ -67,7 +69,8 @@ func New(me int, usersFile string, accion string) *RASharedDB {
 					Defer_It := ra.ReqCS &&
 						(pet.Clock > ra.OurSeqNum ||
 							(pet.Clock == ra.OurSeqNum && pet.Pid > ra.Me) ||
-							exclude(ra.Accion, pet.Accion))
+							(pet.Clock > ra.OurSeqNum && exclude(ra.Accion, pet.Accion)) ||
+							(pet.Clock == ra.OurSeqNum && pet.Pid > ra.Me && exclude(ra.Accion, pet.Accion)))
 					ra.Mutex.Unlock()
 
 					if Defer_It {
@@ -77,6 +80,7 @@ func New(me int, usersFile string, accion string) *RASharedDB {
 					}
 
 				case Reply: // Recibo una respuesta
+					println("Es un reply")
 					if ra.ReqCS {
 						ra.OutRepCnt--
 						if ra.OutRepCnt == 0 {
@@ -84,6 +88,7 @@ func New(me int, usersFile string, accion string) *RASharedDB {
 						}
 					}
 				default: // Comorl, que esh lo que é rechibido
+					println("WTF")
 					return
 				}
 			}
@@ -124,7 +129,7 @@ func (ra *RASharedDB) PostProtocol() {
 			ra.ms.Send(j, Reply{})
 		}
 	}
-	ra.OutRepCnt = N
+	ra.OutRepCnt = N - 1
 }
 
 func (ra *RASharedDB) Stop() {
