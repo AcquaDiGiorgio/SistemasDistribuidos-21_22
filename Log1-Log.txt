@@ -1,0 +1,6 @@
+escritor-1 {"escritor-1":1}
+Initialization Complete
+escritor-1 {"escritor-1":2}
+INFO Envio Peticion Acceso
+escritor-1 {"escritor-1":3}
+INFO Recibo Peticion Acceso
