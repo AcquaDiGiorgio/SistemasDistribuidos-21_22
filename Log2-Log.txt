@@ -1,8 +1,0 @@
-lector-2 {"lector-2":1}
-Initialization Complete
-lector-2 {"lector-2":2}
-INFO Envio Peticion Acceso
-lector-2 {"lector-2":3}
-INFO Recibo Peticion Acceso
-lector-2 {"lector-2":4}
-INFO Permito Acceso Def
