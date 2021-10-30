@@ -47,7 +47,7 @@ type RASharedDB struct {
 	Logger *govec.GoLog
 }
 
-const N = 2
+const N = 4
 
 func New(me int, usersFile string, actor string, logger *govec.GoLog) *RASharedDB {
 	messageTypes := []ms.Message{Request{}, Reply{}}
@@ -66,11 +66,9 @@ func New(me int, usersFile string, actor string, logger *govec.GoLog) *RASharedD
 				return
 			default:
 				dato := ra.ms.Receive()
-				println("Recibo Mensaje")
-
+				fmt.Println("LOG: Recibo Mensaje")
 				switch msg := dato.(type) {
 				case Request: // Recibo una petición de acceso
-					println("Es un request")
 
 					ra.HigSeqNum = intMax(ra.HigSeqNum, msg.Clock)
 
@@ -88,16 +86,15 @@ func New(me int, usersFile string, actor string, logger *govec.GoLog) *RASharedD
 					if Defer_It {
 						ra.RepDefd[msg.Pid-1] = true
 					} else {
-						var envioRespuesta = []byte("permito el acceso a la SC")
-						pd := ra.Logger.PrepareSend("Permito Acceso Def", envioRespuesta, govec.GetDefaultLogOptions())
+						var envioRespuesta = []byte("Permito el acceso a la SC")
+						pd := ra.Logger.PrepareSend("Envio Permiso de Acceso", envioRespuesta, govec.GetDefaultLogOptions())
 						ra.ms.Send(msg.Pid, Reply{pd})
 					}
 
 				case Reply: // Recibo una respuesta
-					println("Es un reply")
 
 					var reciboRespuesta []byte
-					ra.Logger.UnpackReceive("Recibo Permiso", msg.PackedData, &reciboRespuesta, govec.GetDefaultLogOptions())
+					ra.Logger.UnpackReceive("Recibo Permiso de Acceso", msg.PackedData, &reciboRespuesta, govec.GetDefaultLogOptions())
 
 					if ra.ReqCS {
 						ra.OutRepCnt--
@@ -149,8 +146,8 @@ func (ra *RASharedDB) PostProtocol() {
 		if ra.RepDefd[j-1] {
 			ra.RepDefd[j-1] = false
 
-			var envioRespuesta = []byte("permito el acceso a la SC")
-			pD := ra.Logger.PrepareSend("Envio Peticion Acceso PP", envioRespuesta, govec.GetDefaultLogOptions())
+			var envioRespuesta = []byte("Permito el acceso a la SC")
+			pD := ra.Logger.PrepareSend("Envio Permiso de Acceso", envioRespuesta, govec.GetDefaultLogOptions())
 			ra.ms.Send(j, Reply{pD})
 		}
 	}

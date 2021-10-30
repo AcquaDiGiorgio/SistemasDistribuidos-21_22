@@ -3,6 +3,8 @@ package main
 import (
 	"main/fm"
 	"main/ra"
+	"os"
+	"strconv"
 
 	"github.com/DistributedClocks/GoVector/govec"
 )
@@ -14,7 +16,8 @@ func escribir(ra *ra.RASharedDB, logger *govec.GoLog) {
 	for i := 0; i < ITERACIONES; i++ {
 		ra.PreProtocol()
 
-		fm.LeerFichero()
+		logger.LogLocalEvent("Escribo en el Fichero", govec.GetDefaultLogOptions())
+		fm.EscribirFichero("Escritor-" + strconv.Itoa(ra.Me) + " [*] Cadena no: " + strconv.Itoa(i) + "\n")
 
 		ra.PostProtocol()
 	}
@@ -22,13 +25,12 @@ func escribir(ra *ra.RASharedDB, logger *govec.GoLog) {
 
 //PRE: [ID, PathFichero]
 func main() {
-	//args := os.Args[1:]
-	//me, _ := strconv.Atoi(args[0])
+	args := os.Args[1:]
+	me, _ := strconv.Atoi(args[0])
 
-	logger := govec.InitGoVector("Escritor", "LogFile", govec.GetDefaultConfig())
-	logger.LogLocalEvent("", govec.GetDefaultLogOptions())
+	logger := govec.InitGoVector(ACTOR+"-"+strconv.Itoa(me), "LOG_"+strconv.Itoa(me), govec.GetDefaultConfig())
 
-	//ra := ra.New(me, args[1], ACTOR, logger)
+	ra := ra.New(me, args[1], ACTOR, logger)
 
-	//escribir(ra, logger)
+	escribir(ra, logger)
 }
