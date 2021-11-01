@@ -29,8 +29,9 @@ func main() {
 	me, _ := strconv.Atoi(args[0])
 
 	logger := govec.InitGoVector(ACTOR+"-"+strconv.Itoa(me), "LOG_"+strconv.Itoa(me), govec.GetDefaultConfig())
-
 	ra := ra.New(me, args[1], ACTOR, logger)
+	defer ra.Stop()
 
 	escribir(ra, logger)
+
 }

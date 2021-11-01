@@ -20,11 +20,11 @@ type Request struct {
 	Clock      int
 	Pid        int
 	Actor      string
-	PackedData []byte
+	PackedData []byte // Información del proceso que ha enviado la petición para poder crear el dibujo con ShiViz
 }
 
 type Reply struct {
-	PackedData []byte
+	PackedData []byte // Información del proceso que ha enviado la respuesta para poder crear el dibujo con ShiViz
 }
 
 type RASharedDB struct {
@@ -62,9 +62,9 @@ func New(me int, usersFile string, actor string, logger *govec.GoLog) *RASharedD
 	go func() {
 		for {
 			select {
-			case <-ra.done:
+			case <-ra.done: // Ya hemos terminado el algoritomo
 				return
-			default:
+			default: // Aún estamos a la espera de mensajes
 				dato := ra.ms.Receive()
 				fmt.Println("LOG: Recibo Mensaje")
 				switch msg := dato.(type) {
@@ -75,6 +75,7 @@ func New(me int, usersFile string, actor string, logger *govec.GoLog) *RASharedD
 					var reciboPeticion []byte
 					ra.Logger.UnpackReceive("Recibo Peticion Acceso", msg.PackedData, &reciboPeticion, govec.GetDefaultLogOptions())
 
+					// Accedo a la lectura de las variables de forma atómica
 					ra.Mutex.Lock()
 					Defer_It := ra.ReqCS &&
 						(msg.Clock > ra.OurSeqNum ||
@@ -83,9 +84,11 @@ func New(me int, usersFile string, actor string, logger *govec.GoLog) *RASharedD
 							(msg.Clock == ra.OurSeqNum && msg.Pid > ra.Me && exclude(ra.Actor, msg.Actor)))
 					ra.Mutex.Unlock()
 
-					if Defer_It {
+					if Defer_It { // Si yo tengo prioridad
+						// Le defiero la respuesta para cuando yo ya haya terminado
 						ra.RepDefd[msg.Pid-1] = true
-					} else {
+					} else { // Si él tiene prioridad
+						// Le permito el acceso
 						var envioRespuesta = []byte("Permito el acceso a la SC")
 						pd := ra.Logger.PrepareSend("Envio Permiso de Acceso", envioRespuesta, govec.GetDefaultLogOptions())
 						ra.ms.Send(msg.Pid, Reply{pd})
@@ -96,10 +99,11 @@ func New(me int, usersFile string, actor string, logger *govec.GoLog) *RASharedD
 					var reciboRespuesta []byte
 					ra.Logger.UnpackReceive("Recibo Permiso de Acceso", msg.PackedData, &reciboRespuesta, govec.GetDefaultLogOptions())
 
+					// Si quiero entrar a la SC (Checkeo por seguridad)
 					if ra.ReqCS {
-						ra.OutRepCnt--
-						if ra.OutRepCnt == 0 {
-							ra.chrep <- true
+						ra.OutRepCnt--         // 1 persona menos a la que esperar respuesta
+						if ra.OutRepCnt == 0 { // Si no hay a quien esperar
+							ra.chrep <- true // Puedo acceder a la SC
 						}
 					}
 
@@ -118,17 +122,21 @@ func New(me int, usersFile string, actor string, logger *govec.GoLog) *RASharedD
 //Post: Realiza  el  PreProtocol  para el  algoritmo de
 //      Ricart-Agrawala Generalizado
 func (ra *RASharedDB) PreProtocol() {
+	// Escritura en las variables en exclusión mutua
 	ra.Mutex.Lock()
 	ra.ReqCS = true
 	ra.OurSeqNum++
 	ra.OutRepCnt--
 	ra.Mutex.Unlock()
 
+	// Para todos los usuarios del sistema de mensajes
 	for j := 1; j <= N; j++ {
+		// Si soy yo, no hago nada
 		if j == ra.Me {
 			continue
 		}
 
+		// Si no soy yo, pido acceso a la SC
 		var envioPeticion = []byte("pido SC")
 		pD := ra.Logger.PrepareSend("Envio Peticion Acceso", envioPeticion, govec.GetDefaultLogOptions())
 		ra.ms.Send(j, Request{ra.OurSeqNum, ra.Me, ra.Actor, pD})
@@ -141,11 +149,15 @@ func (ra *RASharedDB) PreProtocol() {
 //Post: Realiza  el  PostProtocol  para el  algoritmo de
 //      Ricart-Agrawala Generalizado
 func (ra *RASharedDB) PostProtocol() {
+	// Ya no deseo entrar a la SC
 	ra.ReqCS = false
+	// A todos los clientes del Sistema de Mensajes
 	for j := 1; j <= N; j++ {
+		// Si los he diferido
 		if ra.RepDefd[j-1] {
 			ra.RepDefd[j-1] = false
 
+			// Les permito el acceso a la SC
 			var envioRespuesta = []byte("Permito el acceso a la SC")
 			pD := ra.Logger.PrepareSend("Envio Permiso de Acceso", envioRespuesta, govec.GetDefaultLogOptions())
 			ra.ms.Send(j, Reply{pD})

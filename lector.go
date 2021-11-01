@@ -31,6 +31,7 @@ func main() {
 
 	logger := govec.InitGoVector(ACTOR+"-"+strconv.Itoa(me), "LOG_"+strconv.Itoa(me), govec.GetDefaultConfig())
 	ra := ra.New(me, args[1], ACTOR, logger)
+	defer ra.Stop()
 
 	leer(ra, logger)
 }

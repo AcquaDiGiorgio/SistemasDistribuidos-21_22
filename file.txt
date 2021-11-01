@@ -1,4 +1,4 @@
-Escritor-1Cadena nº: 0Escritor-1 [*] Cadena no: 0
+Escritor-1 [*] Cadena no: 0
 Escritor-3 [*] Cadena no: 0
 Escritor-1 [*] Cadena no: 1
 Escritor-3 [*] Cadena no: 1
