@@ -1,9 +1,9 @@
 package fm // file manager
 
 import (
+	"bufio"
 	"fmt"
 	"os"
-	"time"
 )
 
 const PATH = "file.txt"
@@ -17,39 +17,32 @@ func checkError(err error) {
 
 func LeerFichero() string {
 
-	time.Sleep(500 * time.Millisecond)
-	return "Leido jaja"
-	/*
-		var file, err = os.Open(PATH)
-		checkError(err)
-		defer file.Close()
+	file, err := os.OpenFile("file.txt", os.O_APPEND|os.O_RDONLY, 0644)
+	checkError(err)
+	defer file.Close()
 
-		reader := bufio.NewReader(file)
+	reader := bufio.NewReader(file)
 
-		var read string
-		var readError error = nil
-		var str string
+	var read string
+	var readError error = nil
+	var str string
 
-		for readError == nil {
-			read += str
-			str, readError = reader.ReadString('\n')
-		}
+	for readError == nil {
+		read += str
+		str, readError = reader.ReadString('\n')
+	}
 
-		return read
-	*/
+	return read
 }
 
 func EscribirFichero(datos string) {
-	time.Sleep(1 * time.Second)
-	/*
-		file, err := os.Open(PATH)
-		checkError(err)
-		defer file.Close()
+	file, err := os.OpenFile("file.txt", os.O_APPEND|os.O_RDWR, 0644)
+	checkError(err)
+	defer file.Close()
 
-		writter := bufio.NewWriter(file)
-		_, err = writter.WriteString(datos)
-		checkError(err)
+	writter := bufio.NewWriter(file)
+	_, err = writter.WriteString(datos)
+	checkError(err)
 
-		writter.Flush()
-	*/
+	writter.Flush()
 }
