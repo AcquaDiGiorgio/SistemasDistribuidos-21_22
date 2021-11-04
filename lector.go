@@ -6,6 +6,7 @@ import (
 	"main/ra"
 	"os"
 	"strconv"
+	"testing"
 
 	"github.com/DistributedClocks/GoVector/govec"
 )
@@ -14,10 +15,14 @@ const ACTOR = "lector"
 const ITERACIONES = 20
 
 func leer(ra *ra.RASharedDB, logger *govec.GoLog) {
+	var t *testing.T
 	for i := 0; i < ITERACIONES; i++ {
 		ra.PreProtocol()
 
 		logger.LogLocalEvent("Leo del Fichero", govec.GetDefaultLogOptions())
+		t.Log("\tLeo del Fichero")
+		fmt.Println("\tLeo del Fichero")
+		fmt.Println("======================================")
 		fmt.Println(fm.LeerFichero())
 
 		ra.PostProtocol()
@@ -31,7 +36,8 @@ func main() {
 
 	logger := govec.InitGoVector(ACTOR+"-"+strconv.Itoa(me), "LOG_"+strconv.Itoa(me), govec.GetDefaultConfig())
 	ra := ra.New(me, args[1], ACTOR, logger)
-	defer ra.Stop()
 
 	leer(ra, logger)
+	fmt.Println("Termino")
+	ra.Stop()
 }

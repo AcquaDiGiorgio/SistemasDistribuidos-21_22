@@ -2,521 +2,521 @@ escritor-1 {"escritor-1":1}
 Initialization Complete
 escritor-1 {"escritor-1":2}
 INFO Envio Peticion Acceso
-escritor-1 {"escritor-1":3, "lector-2":2}
-INFO Recibo Peticion Acceso
-escritor-1 {"escritor-1":4, "lector-2":2}
+escritor-1 {"escritor-1":3}
 INFO Envio Peticion Acceso
-escritor-1 {"escritor-1":5, "lector-2":2, "escritor-3":2}
+escritor-1 {"escritor-1":4, "escritor-3":2}
 INFO Recibo Peticion Acceso
-escritor-1 {"escritor-1":6, "lector-2":2, "escritor-3":2}
+escritor-1 {"escritor-1":5, "escritor-3":2, "lector-4":2}
+INFO Recibo Peticion Acceso
+escritor-1 {"escritor-3":2, "lector-4":2, "lector-2":2, "escritor-1":6}
+INFO Recibo Peticion Acceso
+escritor-1 {"escritor-1":7, "escritor-3":2, "lector-4":2, "lector-2":2}
 INFO Envio Peticion Acceso
-escritor-1 {"escritor-1":7, "lector-2":5, "escritor-3":2}
+escritor-1 {"escritor-1":8, "escritor-3":2, "lector-4":2, "lector-2":4}
 INFO Recibo Permiso de Acceso
-escritor-1 {"escritor-1":8, "lector-2":5, "escritor-3":2, "lector-4":2}
-INFO Recibo Peticion Acceso
-escritor-1 {"lector-4":2, "escritor-1":9, "lector-2":5, "escritor-3":7}
+escritor-1 {"escritor-1":9, "escritor-3":6, "lector-4":2, "lector-2":4}
 INFO Recibo Permiso de Acceso
-escritor-1 {"escritor-1":10, "lector-2":6, "escritor-3":7, "lector-4":7}
+escritor-1 {"escritor-1":10, "escritor-3":6, "lector-4":8, "lector-2":4}
 INFO Recibo Permiso de Acceso
-escritor-1 {"escritor-1":11, "lector-2":6, "escritor-3":7, "lector-4":7}
+escritor-1 {"escritor-1":11, "escritor-3":6, "lector-4":8, "lector-2":4}
 INFO Escribo en el Fichero
-escritor-1 {"escritor-1":12, "lector-2":6, "escritor-3":7, "lector-4":7}
+escritor-1 {"escritor-3":6, "lector-4":8, "lector-2":4, "escritor-1":12}
 INFO Envio Permiso de Acceso
-escritor-1 {"escritor-1":13, "lector-2":6, "escritor-3":7, "lector-4":7}
+escritor-1 {"lector-2":4, "escritor-1":13, "escritor-3":6, "lector-4":8}
 INFO Envio Permiso de Acceso
-escritor-1 {"escritor-1":14, "lector-2":6, "escritor-3":7, "lector-4":7}
+escritor-1 {"escritor-1":14, "escritor-3":6, "lector-4":8, "lector-2":4}
 INFO Envio Permiso de Acceso
-escritor-1 {"escritor-1":15, "lector-2":6, "escritor-3":7, "lector-4":7}
-INFO Envio Peticion Acceso
-escritor-1 {"escritor-1":16, "lector-2":6, "escritor-3":7, "lector-4":7}
-INFO Envio Peticion Acceso
-escritor-1 {"escritor-1":17, "lector-2":15, "escritor-3":7, "lector-4":7}
+escritor-1 {"escritor-1":15, "escritor-3":8, "lector-4":11, "lector-2":15}
 INFO Recibo Peticion Acceso
-escritor-1 {"escritor-1":18, "lector-2":15, "escritor-3":15, "lector-4":10}
-INFO Recibo Peticion Acceso
-escritor-1 {"escritor-1":19, "lector-2":15, "escritor-3":15, "lector-4":15}
-INFO Recibo Peticion Acceso
-escritor-1 {"escritor-1":20, "lector-2":15, "escritor-3":15, "lector-4":15}
+escritor-1 {"escritor-1":16, "escritor-3":8, "lector-4":11, "lector-2":15}
 INFO Envio Peticion Acceso
-escritor-1 {"escritor-1":21, "lector-2":17, "escritor-3":15, "lector-4":15}
+escritor-1 {"escritor-1":17, "escritor-3":8, "lector-4":11, "lector-2":15}
+INFO Envio Peticion Acceso
+escritor-1 {"escritor-1":18, "escritor-3":15, "lector-4":11, "lector-2":15}
+INFO Recibo Peticion Acceso
+escritor-1 {"escritor-1":19, "escritor-3":15, "lector-4":15, "lector-2":15}
+INFO Recibo Peticion Acceso
+escritor-1 {"escritor-1":20, "escritor-3":15, "lector-4":15, "lector-2":15}
+INFO Envio Peticion Acceso
+escritor-1 {"escritor-1":21, "escritor-3":15, "lector-4":15, "lector-2":19}
 INFO Recibo Permiso de Acceso
-escritor-1 {"escritor-1":22, "lector-2":17, "escritor-3":18, "lector-4":15}
+escritor-1 {"escritor-3":20, "lector-4":15, "lector-2":19, "escritor-1":22}
 INFO Recibo Permiso de Acceso
-escritor-1 {"lector-2":17, "escritor-3":18, "lector-4":19, "escritor-1":23}
+escritor-1 {"escritor-1":23, "escritor-3":20, "lector-4":21, "lector-2":19}
 INFO Recibo Permiso de Acceso
-escritor-1 {"escritor-1":24, "lector-2":17, "escritor-3":18, "lector-4":19}
+escritor-1 {"escritor-1":24, "escritor-3":20, "lector-4":21, "lector-2":19}
 INFO Escribo en el Fichero
-escritor-1 {"escritor-3":18, "lector-4":19, "escritor-1":25, "lector-2":17}
+escritor-1 {"escritor-3":20, "lector-4":21, "lector-2":19, "escritor-1":25}
 INFO Envio Permiso de Acceso
-escritor-1 {"escritor-1":26, "lector-2":17, "escritor-3":18, "lector-4":19}
+escritor-1 {"lector-2":19, "escritor-1":26, "escritor-3":20, "lector-4":21}
 INFO Envio Permiso de Acceso
-escritor-1 {"escritor-1":27, "lector-2":17, "escritor-3":18, "lector-4":19}
+escritor-1 {"escritor-1":27, "escritor-3":20, "lector-4":21, "lector-2":19}
 INFO Envio Permiso de Acceso
-escritor-1 {"escritor-1":28, "lector-2":17, "escritor-3":18, "lector-4":19}
+escritor-1 {"escritor-1":28, "escritor-3":20, "lector-4":21, "lector-2":19}
 INFO Envio Peticion Acceso
-escritor-1 {"escritor-1":29, "lector-2":17, "escritor-3":18, "lector-4":19}
+escritor-1 {"escritor-1":29, "escritor-3":20, "lector-4":21, "lector-2":28}
+INFO Recibo Peticion Acceso
+escritor-1 {"escritor-1":30, "escritor-3":20, "lector-4":21, "lector-2":28}
 INFO Envio Peticion Acceso
-escritor-1 {"escritor-1":30, "lector-2":28, "escritor-3":21, "lector-4":21}
+escritor-1 {"escritor-1":31, "escritor-3":28, "lector-4":23, "lector-2":28}
 INFO Recibo Peticion Acceso
-escritor-1 {"escritor-3":27, "lector-4":28, "escritor-1":31, "lector-2":28}
+escritor-1 {"lector-4":28, "lector-2":28, "escritor-1":32, "escritor-3":28}
 INFO Recibo Peticion Acceso
-escritor-1 {"escritor-1":32, "lector-2":28, "escritor-3":28, "lector-4":28}
-INFO Recibo Peticion Acceso
-escritor-1 {"escritor-1":33, "lector-2":28, "escritor-3":28, "lector-4":28}
+escritor-1 {"escritor-1":33, "escritor-3":28, "lector-4":28, "lector-2":28}
 INFO Envio Peticion Acceso
-escritor-1 {"escritor-1":34, "lector-2":31, "escritor-3":28, "lector-4":28}
+escritor-1 {"escritor-1":34, "escritor-3":28, "lector-4":28, "lector-2":31}
 INFO Recibo Permiso de Acceso
-escritor-1 {"escritor-1":35, "lector-2":31, "escritor-3":31, "lector-4":28}
+escritor-1 {"escritor-1":35, "escritor-3":33, "lector-4":28, "lector-2":31}
 INFO Recibo Permiso de Acceso
-escritor-1 {"lector-2":32, "escritor-3":31, "lector-4":34, "escritor-1":36}
+escritor-1 {"lector-4":34, "lector-2":32, "escritor-1":36, "escritor-3":33}
 INFO Recibo Permiso de Acceso
-escritor-1 {"escritor-1":37, "lector-2":32, "escritor-3":31, "lector-4":34}
+escritor-1 {"escritor-1":37, "escritor-3":33, "lector-4":34, "lector-2":32}
 INFO Escribo en el Fichero
-escritor-1 {"escritor-1":38, "lector-2":32, "escritor-3":31, "lector-4":34}
+escritor-1 {"escritor-1":38, "escritor-3":33, "lector-4":34, "lector-2":32}
 INFO Envio Permiso de Acceso
-escritor-1 {"lector-2":32, "escritor-3":31, "lector-4":34, "escritor-1":39}
+escritor-1 {"escritor-1":39, "escritor-3":33, "lector-4":34, "lector-2":32}
 INFO Envio Permiso de Acceso
-escritor-1 {"escritor-1":40, "lector-2":32, "escritor-3":31, "lector-4":34}
+escritor-1 {"escritor-1":40, "escritor-3":33, "lector-4":34, "lector-2":32}
 INFO Envio Permiso de Acceso
-escritor-1 {"lector-2":32, "escritor-3":31, "lector-4":34, "escritor-1":41}
+escritor-1 {"escritor-1":41, "escritor-3":33, "lector-4":34, "lector-2":32}
 INFO Envio Peticion Acceso
-escritor-1 {"escritor-1":42, "lector-2":40, "escritor-3":40, "lector-4":41}
+escritor-1 {"lector-2":41, "escritor-1":42, "escritor-3":33, "lector-4":34}
 INFO Recibo Peticion Acceso
-escritor-1 {"escritor-1":43, "lector-2":40, "escritor-3":40, "lector-4":41}
+escritor-1 {"lector-4":34, "lector-2":41, "escritor-1":43, "escritor-3":33}
 INFO Envio Peticion Acceso
-escritor-1 {"escritor-3":41, "lector-4":41, "escritor-1":44, "lector-2":40}
+escritor-1 {"lector-4":36, "lector-2":41, "escritor-1":44, "escritor-3":41}
 INFO Recibo Peticion Acceso
-escritor-1 {"escritor-1":45, "lector-2":41, "escritor-3":41, "lector-4":41}
+escritor-1 {"lector-4":41, "lector-2":41, "escritor-1":45, "escritor-3":41}
 INFO Recibo Peticion Acceso
-escritor-1 {"escritor-1":46, "lector-2":41, "escritor-3":41, "lector-4":41}
+escritor-1 {"lector-4":41, "lector-2":41, "escritor-1":46, "escritor-3":41}
 INFO Envio Peticion Acceso
-escritor-1 {"escritor-1":47, "lector-2":44, "escritor-3":41, "lector-4":41}
+escritor-1 {"escritor-1":47, "escritor-3":41, "lector-4":41, "lector-2":45}
 INFO Recibo Permiso de Acceso
-escritor-1 {"lector-2":44, "escritor-3":45, "lector-4":41, "escritor-1":48}
+escritor-1 {"escritor-1":48, "escritor-3":47, "lector-4":41, "lector-2":45}
 INFO Recibo Permiso de Acceso
-escritor-1 {"escritor-1":49, "lector-2":45, "escritor-3":45, "lector-4":49}
+escritor-1 {"escritor-3":47, "lector-4":47, "lector-2":45, "escritor-1":49}
 INFO Recibo Permiso de Acceso
-escritor-1 {"lector-2":45, "escritor-3":45, "lector-4":49, "escritor-1":50}
+escritor-1 {"escritor-3":47, "lector-4":47, "lector-2":45, "escritor-1":50}
 INFO Escribo en el Fichero
-escritor-1 {"escritor-1":51, "lector-2":45, "escritor-3":45, "lector-4":49}
+escritor-1 {"lector-2":45, "escritor-1":51, "escritor-3":47, "lector-4":47}
 INFO Envio Permiso de Acceso
-escritor-1 {"escritor-1":52, "lector-2":45, "escritor-3":45, "lector-4":49}
+escritor-1 {"lector-2":45, "escritor-1":52, "escritor-3":47, "lector-4":47}
 INFO Envio Permiso de Acceso
-escritor-1 {"escritor-3":45, "lector-4":49, "escritor-1":53, "lector-2":45}
+escritor-1 {"escritor-1":53, "escritor-3":47, "lector-4":47, "lector-2":45}
 INFO Envio Permiso de Acceso
-escritor-1 {"escritor-3":45, "lector-4":49, "escritor-1":54, "lector-2":45}
+escritor-1 {"escritor-3":47, "lector-4":47, "lector-2":45, "escritor-1":54}
 INFO Envio Peticion Acceso
-escritor-1 {"escritor-1":55, "lector-2":45, "escritor-3":45, "lector-4":49}
+escritor-1 {"escritor-1":55, "escritor-3":47, "lector-4":47, "lector-2":54}
+INFO Recibo Peticion Acceso
+escritor-1 {"escritor-1":56, "escritor-3":47, "lector-4":47, "lector-2":54}
 INFO Envio Peticion Acceso
-escritor-1 {"escritor-1":56, "lector-2":53, "escritor-3":53, "lector-4":54}
+escritor-1 {"escritor-1":57, "escritor-3":54, "lector-4":49, "lector-2":54}
 INFO Recibo Peticion Acceso
-escritor-1 {"escritor-1":57, "lector-2":53, "escritor-3":54, "lector-4":54}
+escritor-1 {"escritor-1":58, "escritor-3":54, "lector-4":54, "lector-2":54}
 INFO Recibo Peticion Acceso
-escritor-1 {"escritor-1":58, "lector-2":54, "escritor-3":54, "lector-4":54}
-INFO Recibo Peticion Acceso
-escritor-1 {"escritor-1":59, "lector-2":54, "escritor-3":54, "lector-4":54}
+escritor-1 {"escritor-1":59, "escritor-3":54, "lector-4":54, "lector-2":54}
 INFO Envio Peticion Acceso
-escritor-1 {"escritor-1":60, "lector-2":57, "escritor-3":54, "lector-4":54}
+escritor-1 {"escritor-1":60, "escritor-3":54, "lector-4":54, "lector-2":58}
 INFO Recibo Permiso de Acceso
-escritor-1 {"escritor-1":61, "lector-2":57, "escritor-3":54, "lector-4":58}
+escritor-1 {"escritor-1":61, "escritor-3":60, "lector-4":54, "lector-2":58}
 INFO Recibo Permiso de Acceso
-escritor-1 {"escritor-1":62, "lector-2":57, "escritor-3":60, "lector-4":58}
+escritor-1 {"escritor-1":62, "escritor-3":60, "lector-4":60, "lector-2":58}
 INFO Recibo Permiso de Acceso
-escritor-1 {"lector-2":57, "escritor-3":60, "lector-4":58, "escritor-1":63}
+escritor-1 {"escritor-1":63, "escritor-3":60, "lector-4":60, "lector-2":58}
 INFO Escribo en el Fichero
-escritor-1 {"escritor-1":64, "lector-2":57, "escritor-3":60, "lector-4":58}
+escritor-1 {"escritor-1":64, "escritor-3":60, "lector-4":60, "lector-2":58}
 INFO Envio Permiso de Acceso
-escritor-1 {"escritor-1":65, "lector-2":57, "escritor-3":60, "lector-4":58}
+escritor-1 {"escritor-1":65, "escritor-3":60, "lector-4":60, "lector-2":58}
 INFO Envio Permiso de Acceso
-escritor-1 {"lector-4":58, "escritor-1":66, "lector-2":57, "escritor-3":60}
+escritor-1 {"escritor-3":60, "lector-4":60, "lector-2":58, "escritor-1":66}
 INFO Envio Permiso de Acceso
-escritor-1 {"escritor-1":67, "lector-2":57, "escritor-3":60, "lector-4":58}
-INFO Envio Peticion Acceso
-escritor-1 {"lector-4":58, "escritor-1":68, "lector-2":57, "escritor-3":60}
-INFO Envio Peticion Acceso
-escritor-1 {"escritor-1":69, "lector-2":67, "escritor-3":60, "lector-4":60}
+escritor-1 {"lector-4":60, "lector-2":67, "escritor-1":67, "escritor-3":60}
 INFO Recibo Peticion Acceso
-escritor-1 {"escritor-3":67, "lector-4":62, "escritor-1":70, "lector-2":67}
-INFO Recibo Peticion Acceso
-escritor-1 {"lector-4":67, "escritor-1":71, "lector-2":67, "escritor-3":67}
-INFO Recibo Peticion Acceso
-escritor-1 {"lector-2":67, "escritor-3":67, "lector-4":67, "escritor-1":72}
+escritor-1 {"escritor-1":68, "escritor-3":60, "lector-4":60, "lector-2":67}
+INFO Envio Permiso de Acceso
+escritor-1 {"lector-2":67, "escritor-1":69, "escritor-3":60, "lector-4":60}
 INFO Envio Peticion Acceso
-escritor-1 {"escritor-1":73, "lector-2":69, "escritor-3":67, "lector-4":67}
+escritor-1 {"escritor-1":70, "escritor-3":60, "lector-4":60, "lector-2":67}
+INFO Envio Peticion Acceso
+escritor-1 {"escritor-1":71, "escritor-3":67, "lector-4":62, "lector-2":67}
+INFO Recibo Peticion Acceso
+escritor-1 {"escritor-3":67, "lector-4":67, "lector-2":67, "escritor-1":72}
+INFO Recibo Peticion Acceso
+escritor-1 {"lector-2":67, "escritor-1":73, "escritor-3":67, "lector-4":67}
+INFO Envio Peticion Acceso
+escritor-1 {"escritor-3":67, "lector-4":67, "lector-2":72, "escritor-1":74}
 INFO Recibo Permiso de Acceso
-escritor-1 {"lector-2":69, "escritor-3":70, "lector-4":67, "escritor-1":74}
+escritor-1 {"escritor-1":75, "escritor-3":72, "lector-4":67, "lector-2":72}
 INFO Recibo Permiso de Acceso
-escritor-1 {"escritor-1":75, "lector-2":69, "escritor-3":70, "lector-4":71}
+escritor-1 {"lector-2":72, "escritor-1":76, "escritor-3":72, "lector-4":73}
 INFO Recibo Permiso de Acceso
-escritor-1 {"lector-4":71, "escritor-1":76, "lector-2":69, "escritor-3":70}
+escritor-1 {"escritor-1":77, "escritor-3":72, "lector-4":73, "lector-2":72}
 INFO Escribo en el Fichero
-escritor-1 {"lector-4":71, "escritor-1":77, "lector-2":69, "escritor-3":70}
+escritor-1 {"escritor-3":72, "lector-4":73, "lector-2":72, "escritor-1":78}
 INFO Envio Permiso de Acceso
-escritor-1 {"escritor-1":78, "lector-2":69, "escritor-3":70, "lector-4":71}
+escritor-1 {"escritor-1":79, "escritor-3":72, "lector-4":73, "lector-2":72}
 INFO Envio Permiso de Acceso
-escritor-1 {"escritor-1":79, "lector-2":69, "escritor-3":70, "lector-4":71}
+escritor-1 {"escritor-1":80, "escritor-3":72, "lector-4":73, "lector-2":80}
+INFO Recibo Peticion Acceso
+escritor-1 {"lector-2":80, "escritor-1":81, "escritor-3":72, "lector-4":73}
 INFO Envio Permiso de Acceso
-escritor-1 {"lector-4":71, "escritor-1":80, "lector-2":69, "escritor-3":70}
+escritor-1 {"lector-2":80, "escritor-1":82, "escritor-3":72, "lector-4":73}
 INFO Envio Peticion Acceso
-escritor-1 {"escritor-3":70, "lector-4":71, "escritor-1":81, "lector-2":69}
+escritor-1 {"escritor-1":83, "escritor-3":72, "lector-4":73, "lector-2":80}
 INFO Envio Peticion Acceso
-escritor-1 {"lector-2":69, "escritor-3":70, "lector-4":71, "escritor-1":82}
+escritor-1 {"lector-2":80, "escritor-1":84, "escritor-3":80, "lector-4":75}
+INFO Recibo Peticion Acceso
+escritor-1 {"escritor-1":85, "escritor-3":80, "lector-4":80, "lector-2":80}
+INFO Recibo Peticion Acceso
+escritor-1 {"escritor-1":86, "escritor-3":80, "lector-4":80, "lector-2":85}
+INFO Recibo Permiso de Acceso
+escritor-1 {"escritor-1":87, "escritor-3":80, "lector-4":80, "lector-2":85}
 INFO Envio Peticion Acceso
-escritor-1 {"escritor-1":83, "lector-2":80, "escritor-3":73, "lector-4":75}
-INFO Recibo Peticion Acceso
-escritor-1 {"lector-4":75, "escritor-1":84, "lector-2":82, "escritor-3":73}
+escritor-1 {"escritor-1":88, "escritor-3":86, "lector-4":80, "lector-2":85}
 INFO Recibo Permiso de Acceso
-escritor-1 {"escritor-3":79, "lector-4":80, "escritor-1":85, "lector-2":82}
-INFO Recibo Peticion Acceso
-escritor-1 {"escritor-1":86, "lector-2":82, "escritor-3":80, "lector-4":80}
-INFO Recibo Peticion Acceso
-escritor-1 {"lector-4":80, "escritor-1":87, "lector-2":82, "escritor-3":83}
+escritor-1 {"escritor-1":89, "escritor-3":86, "lector-4":86, "lector-2":85}
 INFO Recibo Permiso de Acceso
-escritor-1 {"escritor-1":88, "lector-2":82, "escritor-3":83, "lector-4":84}
-INFO Recibo Permiso de Acceso
-escritor-1 {"escritor-3":83, "lector-4":84, "escritor-1":89, "lector-2":82}
+escritor-1 {"escritor-1":90, "escritor-3":86, "lector-4":86, "lector-2":85}
 INFO Escribo en el Fichero
-escritor-1 {"escritor-1":90, "lector-2":82, "escritor-3":83, "lector-4":84}
+escritor-1 {"escritor-1":91, "escritor-3":86, "lector-4":86, "lector-2":85}
 INFO Envio Permiso de Acceso
-escritor-1 {"escritor-1":91, "lector-2":82, "escritor-3":83, "lector-4":84}
+escritor-1 {"escritor-1":92, "escritor-3":86, "lector-4":86, "lector-2":93}
+INFO Recibo Peticion Acceso
+escritor-1 {"escritor-3":86, "lector-4":86, "lector-2":93, "escritor-1":93}
 INFO Envio Permiso de Acceso
-escritor-1 {"escritor-1":92, "lector-2":82, "escritor-3":83, "lector-4":84}
+escritor-1 {"escritor-1":94, "escritor-3":86, "lector-4":86, "lector-2":93}
 INFO Envio Permiso de Acceso
-escritor-1 {"escritor-1":93, "lector-2":82, "escritor-3":83, "lector-4":84}
+escritor-1 {"escritor-1":95, "escritor-3":86, "lector-4":86, "lector-2":93}
 INFO Envio Peticion Acceso
-escritor-1 {"escritor-1":94, "lector-2":82, "escritor-3":83, "lector-4":84}
+escritor-1 {"escritor-1":96, "escritor-3":86, "lector-4":86, "lector-2":93}
 INFO Envio Peticion Acceso
-escritor-1 {"escritor-3":83, "lector-4":84, "escritor-1":95, "lector-2":82}
+escritor-1 {"escritor-1":97, "escritor-3":86, "lector-4":86, "lector-2":93}
 INFO Envio Peticion Acceso
-escritor-1 {"escritor-1":96, "lector-2":91, "escritor-3":93, "lector-4":88}
-INFO Recibo Peticion Acceso
-escritor-1 {"escritor-1":97, "lector-2":95, "escritor-3":93, "lector-4":88}
+escritor-1 {"lector-4":88, "lector-2":99, "escritor-1":98, "escritor-3":93}
 INFO Recibo Permiso de Acceso
-escritor-1 {"escritor-1":98, "lector-2":95, "escritor-3":93, "lector-4":93}
+escritor-1 {"escritor-1":99, "escritor-3":95, "lector-4":88, "lector-2":99}
 INFO Recibo Peticion Acceso
-escritor-1 {"lector-2":95, "escritor-3":93, "lector-4":93, "escritor-1":99}
+escritor-1 {"escritor-1":100, "escritor-3":95, "lector-4":95, "lector-2":99}
 INFO Recibo Peticion Acceso
-escritor-1 {"escritor-1":100, "lector-2":95, "escritor-3":96, "lector-4":93}
+escritor-1 {"lector-2":99, "escritor-1":101, "escritor-3":97, "lector-4":95}
 INFO Recibo Permiso de Acceso
-escritor-1 {"escritor-1":101, "lector-2":95, "escritor-3":96, "lector-4":97}
+escritor-1 {"escritor-1":102, "escritor-3":97, "lector-4":95, "lector-2":102}
+INFO Recibo Peticion Acceso
+escritor-1 {"escritor-1":103, "escritor-3":97, "lector-4":98, "lector-2":102}
 INFO Recibo Permiso de Acceso
-escritor-1 {"escritor-3":96, "lector-4":97, "escritor-1":102, "lector-2":95}
+escritor-1 {"escritor-1":104, "escritor-3":97, "lector-4":98, "lector-2":102}
 INFO Escribo en el Fichero
-escritor-1 {"lector-2":95, "escritor-3":96, "lector-4":97, "escritor-1":103}
+escritor-1 {"escritor-1":105, "escritor-3":97, "lector-4":98, "lector-2":102}
 INFO Envio Permiso de Acceso
-escritor-1 {"escritor-3":96, "lector-4":97, "escritor-1":104, "lector-2":95}
+escritor-1 {"escritor-1":106, "escritor-3":97, "lector-4":98, "lector-2":102}
 INFO Envio Permiso de Acceso
-escritor-1 {"escritor-3":96, "lector-4":97, "escritor-1":105, "lector-2":95}
+escritor-1 {"lector-4":98, "lector-2":102, "escritor-1":107, "escritor-3":97}
 INFO Envio Permiso de Acceso
-escritor-1 {"escritor-1":106, "lector-2":95, "escritor-3":96, "lector-4":97}
+escritor-1 {"escritor-1":108, "escritor-3":97, "lector-4":98, "lector-2":102}
 INFO Envio Peticion Acceso
-escritor-1 {"escritor-1":107, "lector-2":95, "escritor-3":96, "lector-4":97}
+escritor-1 {"lector-4":98, "lector-2":102, "escritor-1":109, "escritor-3":97}
 INFO Envio Peticion Acceso
-escritor-1 {"lector-2":95, "escritor-3":96, "lector-4":97, "escritor-1":108}
+escritor-1 {"lector-4":103, "lector-2":113, "escritor-1":110, "escritor-3":106}
+INFO Recibo Peticion Acceso
+escritor-1 {"escritor-1":111, "escritor-3":106, "lector-4":103, "lector-2":113}
 INFO Envio Peticion Acceso
-escritor-1 {"escritor-1":109, "lector-2":105, "escritor-3":105, "lector-4":106}
-INFO Recibo Peticion Acceso
-escritor-1 {"escritor-3":105, "lector-4":106, "escritor-1":110, "lector-2":108}
+escritor-1 {"escritor-3":106, "lector-4":103, "lector-2":115, "escritor-1":112}
 INFO Recibo Permiso de Acceso
-escritor-1 {"lector-4":106, "escritor-1":111, "lector-2":108, "escritor-3":106}
+escritor-1 {"lector-2":115, "escritor-1":113, "escritor-3":108, "lector-4":103}
 INFO Recibo Peticion Acceso
-escritor-1 {"escritor-1":112, "lector-2":108, "escritor-3":106, "lector-4":106}
+escritor-1 {"escritor-1":114, "escritor-3":108, "lector-4":108, "lector-2":115}
 INFO Recibo Peticion Acceso
-escritor-1 {"escritor-3":109, "lector-4":106, "escritor-1":113, "lector-2":108}
+escritor-1 {"lector-2":115, "escritor-1":115, "escritor-3":111, "lector-4":108}
 INFO Recibo Permiso de Acceso
-escritor-1 {"lector-2":108, "escritor-3":109, "lector-4":110, "escritor-1":114}
+escritor-1 {"escritor-1":116, "escritor-3":111, "lector-4":114, "lector-2":117}
 INFO Recibo Permiso de Acceso
-escritor-1 {"escritor-1":115, "lector-2":108, "escritor-3":109, "lector-4":110}
+escritor-1 {"lector-2":117, "escritor-1":117, "escritor-3":111, "lector-4":114}
 INFO Escribo en el Fichero
-escritor-1 {"escritor-1":116, "lector-2":108, "escritor-3":109, "lector-4":110}
+escritor-1 {"lector-2":117, "escritor-1":118, "escritor-3":111, "lector-4":114}
 INFO Envio Permiso de Acceso
-escritor-1 {"escritor-1":117, "lector-2":108, "escritor-3":109, "lector-4":110}
+escritor-1 {"lector-4":114, "lector-2":117, "escritor-1":119, "escritor-3":111}
 INFO Envio Permiso de Acceso
-escritor-1 {"escritor-1":118, "lector-2":108, "escritor-3":109, "lector-4":110}
+escritor-1 {"escritor-1":120, "escritor-3":111, "lector-4":114, "lector-2":117}
 INFO Envio Permiso de Acceso
-escritor-1 {"escritor-1":119, "lector-2":108, "escritor-3":109, "lector-4":110}
+escritor-1 {"escritor-1":121, "escritor-3":111, "lector-4":114, "lector-2":117}
 INFO Envio Peticion Acceso
-escritor-1 {"lector-2":108, "escritor-3":109, "lector-4":110, "escritor-1":120}
+escritor-1 {"escritor-1":122, "escritor-3":111, "lector-4":114, "lector-2":117}
 INFO Envio Peticion Acceso
-escritor-1 {"escritor-1":121, "lector-2":119, "escritor-3":112, "lector-4":112}
+escritor-1 {"escritor-1":123, "escritor-3":119, "lector-4":116, "lector-2":126}
 INFO Recibo Peticion Acceso
-escritor-1 {"escritor-1":122, "lector-2":119, "escritor-3":119, "lector-4":114}
-INFO Recibo Peticion Acceso
-escritor-1 {"escritor-1":123, "lector-2":119, "escritor-3":119, "lector-4":119}
-INFO Recibo Peticion Acceso
-escritor-1 {"lector-4":119, "escritor-1":124, "lector-2":119, "escritor-3":119}
+escritor-1 {"lector-2":126, "escritor-1":124, "escritor-3":119, "lector-4":116}
 INFO Envio Peticion Acceso
-escritor-1 {"escritor-1":125, "lector-2":122, "escritor-3":119, "lector-4":119}
+escritor-1 {"escritor-3":121, "lector-4":116, "lector-2":126, "escritor-1":125}
+INFO Recibo Peticion Acceso
+escritor-1 {"lector-2":128, "escritor-1":126, "escritor-3":121, "lector-4":116}
 INFO Recibo Permiso de Acceso
-escritor-1 {"escritor-1":126, "lector-2":122, "escritor-3":123, "lector-4":119}
+escritor-1 {"escritor-1":127, "escritor-3":121, "lector-4":121, "lector-2":128}
+INFO Recibo Peticion Acceso
+escritor-1 {"lector-2":128, "escritor-1":128, "escritor-3":124, "lector-4":121}
 INFO Recibo Permiso de Acceso
-escritor-1 {"lector-4":125, "escritor-1":127, "lector-2":123, "escritor-3":123}
+escritor-1 {"escritor-1":129, "escritor-3":124, "lector-4":124, "lector-2":128}
 INFO Recibo Permiso de Acceso
-escritor-1 {"escritor-1":128, "lector-2":123, "escritor-3":123, "lector-4":125}
+escritor-1 {"escritor-1":130, "escritor-3":124, "lector-4":124, "lector-2":128}
 INFO Escribo en el Fichero
-escritor-1 {"escritor-1":129, "lector-2":123, "escritor-3":123, "lector-4":125}
+escritor-1 {"escritor-1":131, "escritor-3":124, "lector-4":124, "lector-2":128}
 INFO Envio Permiso de Acceso
-escritor-1 {"escritor-1":130, "lector-2":123, "escritor-3":123, "lector-4":125}
+escritor-1 {"lector-2":128, "escritor-1":132, "escritor-3":124, "lector-4":124}
 INFO Envio Permiso de Acceso
-escritor-1 {"lector-4":125, "escritor-1":131, "lector-2":123, "escritor-3":123}
+escritor-1 {"escritor-1":133, "escritor-3":124, "lector-4":124, "lector-2":128}
 INFO Envio Permiso de Acceso
-escritor-1 {"escritor-1":132, "lector-2":123, "escritor-3":123, "lector-4":125}
+escritor-1 {"escritor-1":134, "escritor-3":124, "lector-4":124, "lector-2":128}
 INFO Envio Peticion Acceso
-escritor-1 {"lector-4":125, "escritor-1":133, "lector-2":123, "escritor-3":123}
+escritor-1 {"lector-2":128, "escritor-1":135, "escritor-3":124, "lector-4":124}
 INFO Envio Peticion Acceso
-escritor-1 {"lector-2":130, "escritor-3":132, "lector-4":127, "escritor-1":134}
+escritor-1 {"escritor-1":136, "escritor-3":132, "lector-4":129, "lector-2":139}
 INFO Recibo Peticion Acceso
-escritor-1 {"escritor-1":135, "lector-2":132, "escritor-3":132, "lector-4":127}
-INFO Recibo Peticion Acceso
-escritor-1 {"lector-2":132, "escritor-3":132, "lector-4":132, "escritor-1":136}
-INFO Recibo Peticion Acceso
-escritor-1 {"lector-2":132, "escritor-3":132, "lector-4":132, "escritor-1":137}
+escritor-1 {"escritor-1":137, "escritor-3":132, "lector-4":129, "lector-2":139}
 INFO Envio Peticion Acceso
-escritor-1 {"escritor-1":138, "lector-2":134, "escritor-3":132, "lector-4":132}
+escritor-1 {"escritor-1":138, "escritor-3":134, "lector-4":129, "lector-2":139}
+INFO Recibo Peticion Acceso
+escritor-1 {"escritor-1":139, "escritor-3":134, "lector-4":134, "lector-2":139}
+INFO Recibo Peticion Acceso
+escritor-1 {"lector-2":141, "escritor-1":140, "escritor-3":134, "lector-4":134}
 INFO Recibo Permiso de Acceso
-escritor-1 {"escritor-1":139, "lector-2":134, "escritor-3":135, "lector-4":132}
+escritor-1 {"escritor-1":141, "escritor-3":137, "lector-4":134, "lector-2":141}
 INFO Recibo Permiso de Acceso
-escritor-1 {"escritor-1":140, "lector-2":134, "escritor-3":135, "lector-4":136}
+escritor-1 {"lector-4":137, "lector-2":141, "escritor-1":142, "escritor-3":137}
 INFO Recibo Permiso de Acceso
-escritor-1 {"escritor-1":141, "lector-2":134, "escritor-3":135, "lector-4":136}
+escritor-1 {"lector-4":137, "lector-2":141, "escritor-1":143, "escritor-3":137}
 INFO Escribo en el Fichero
-escritor-1 {"lector-2":134, "escritor-3":135, "lector-4":136, "escritor-1":142}
+escritor-1 {"escritor-1":144, "escritor-3":137, "lector-4":137, "lector-2":141}
 INFO Envio Permiso de Acceso
-escritor-1 {"escritor-3":135, "lector-4":136, "escritor-1":143, "lector-2":134}
+escritor-1 {"escritor-1":145, "escritor-3":137, "lector-4":137, "lector-2":141}
 INFO Envio Permiso de Acceso
-escritor-1 {"lector-4":136, "escritor-1":144, "lector-2":134, "escritor-3":135}
+escritor-1 {"lector-4":137, "lector-2":141, "escritor-1":146, "escritor-3":137}
 INFO Envio Permiso de Acceso
-escritor-1 {"escritor-1":145, "lector-2":134, "escritor-3":135, "lector-4":136}
+escritor-1 {"lector-2":141, "escritor-1":147, "escritor-3":137, "lector-4":137}
 INFO Envio Peticion Acceso
-escritor-1 {"escritor-3":135, "lector-4":136, "escritor-1":146, "lector-2":134}
+escritor-1 {"escritor-1":148, "escritor-3":137, "lector-4":137, "lector-2":141}
 INFO Envio Peticion Acceso
-escritor-1 {"lector-4":136, "escritor-1":147, "lector-2":134, "escritor-3":135}
+escritor-1 {"escritor-1":149, "escritor-3":145, "lector-4":142, "lector-2":152}
+INFO Recibo Peticion Acceso
+escritor-1 {"escritor-1":150, "escritor-3":145, "lector-4":142, "lector-2":152}
 INFO Envio Peticion Acceso
-escritor-1 {"lector-4":140, "escritor-1":148, "lector-2":147, "escritor-3":138}
+escritor-1 {"escritor-1":151, "escritor-3":145, "lector-4":142, "lector-2":154}
 INFO Recibo Permiso de Acceso
-escritor-1 {"escritor-1":149, "lector-2":147, "escritor-3":138, "lector-4":140}
+escritor-1 {"escritor-1":152, "escritor-3":147, "lector-4":142, "lector-2":154}
 INFO Recibo Peticion Acceso
-escritor-1 {"escritor-1":150, "lector-2":147, "escritor-3":144, "lector-4":145}
+escritor-1 {"escritor-1":153, "escritor-3":147, "lector-4":147, "lector-2":154}
 INFO Recibo Peticion Acceso
-escritor-1 {"lector-2":147, "escritor-3":145, "lector-4":145, "escritor-1":151}
-INFO Recibo Peticion Acceso
-escritor-1 {"lector-4":145, "escritor-1":152, "lector-2":147, "escritor-3":148}
+escritor-1 {"escritor-1":154, "escritor-3":149, "lector-4":147, "lector-2":154}
 INFO Recibo Permiso de Acceso
-escritor-1 {"lector-2":147, "escritor-3":148, "lector-4":149, "escritor-1":153}
+escritor-1 {"escritor-1":155, "escritor-3":149, "lector-4":150, "lector-2":154}
 INFO Recibo Permiso de Acceso
-escritor-1 {"lector-4":149, "escritor-1":154, "lector-2":147, "escritor-3":148}
+escritor-1 {"escritor-1":156, "escritor-3":149, "lector-4":150, "lector-2":154}
 INFO Escribo en el Fichero
-escritor-1 {"escritor-1":155, "lector-2":147, "escritor-3":148, "lector-4":149}
+escritor-1 {"escritor-1":157, "escritor-3":149, "lector-4":150, "lector-2":154}
 INFO Envio Permiso de Acceso
-escritor-1 {"escritor-1":156, "lector-2":147, "escritor-3":148, "lector-4":149}
+escritor-1 {"escritor-3":149, "lector-4":150, "lector-2":154, "escritor-1":158}
 INFO Envio Permiso de Acceso
-escritor-1 {"escritor-1":157, "lector-2":147, "escritor-3":148, "lector-4":149}
+escritor-1 {"escritor-3":149, "lector-4":150, "lector-2":154, "escritor-1":159}
 INFO Envio Permiso de Acceso
-escritor-1 {"escritor-1":158, "lector-2":147, "escritor-3":148, "lector-4":149}
+escritor-1 {"escritor-1":160, "escritor-3":149, "lector-4":150, "lector-2":154}
 INFO Envio Peticion Acceso
-escritor-1 {"escritor-1":159, "lector-2":147, "escritor-3":148, "lector-4":149}
+escritor-1 {"escritor-1":161, "escritor-3":149, "lector-4":150, "lector-2":154}
 INFO Envio Peticion Acceso
-escritor-1 {"lector-2":158, "escritor-3":151, "lector-4":151, "escritor-1":160}
+escritor-1 {"escritor-3":158, "lector-4":155, "lector-2":165, "escritor-1":162}
 INFO Recibo Peticion Acceso
-escritor-1 {"escritor-1":161, "lector-2":158, "escritor-3":158, "lector-4":153}
-INFO Recibo Peticion Acceso
-escritor-1 {"escritor-1":162, "lector-2":158, "escritor-3":158, "lector-4":158}
-INFO Recibo Peticion Acceso
-escritor-1 {"escritor-1":163, "lector-2":158, "escritor-3":158, "lector-4":158}
+escritor-1 {"escritor-1":163, "escritor-3":158, "lector-4":155, "lector-2":165}
 INFO Envio Peticion Acceso
-escritor-1 {"escritor-1":164, "lector-2":161, "escritor-3":158, "lector-4":158}
+escritor-1 {"escritor-1":164, "escritor-3":158, "lector-4":155, "lector-2":167}
 INFO Recibo Permiso de Acceso
-escritor-1 {"lector-2":161, "escritor-3":164, "lector-4":158, "escritor-1":165}
+escritor-1 {"escritor-1":165, "escritor-3":160, "lector-4":155, "lector-2":167}
+INFO Recibo Peticion Acceso
+escritor-1 {"escritor-1":166, "escritor-3":160, "lector-4":160, "lector-2":167}
+INFO Recibo Peticion Acceso
+escritor-1 {"escritor-1":167, "escritor-3":162, "lector-4":160, "lector-2":167}
 INFO Recibo Permiso de Acceso
-escritor-1 {"escritor-3":164, "lector-4":166, "escritor-1":166, "lector-2":162}
+escritor-1 {"escritor-1":168, "escritor-3":162, "lector-4":163, "lector-2":167}
 INFO Recibo Permiso de Acceso
-escritor-1 {"lector-4":166, "escritor-1":167, "lector-2":162, "escritor-3":164}
+escritor-1 {"escritor-1":169, "escritor-3":162, "lector-4":163, "lector-2":167}
 INFO Escribo en el Fichero
-escritor-1 {"escritor-1":168, "lector-2":162, "escritor-3":164, "lector-4":166}
+escritor-1 {"escritor-1":170, "escritor-3":162, "lector-4":163, "lector-2":167}
 INFO Envio Permiso de Acceso
-escritor-1 {"lector-4":166, "escritor-1":169, "lector-2":162, "escritor-3":164}
+escritor-1 {"escritor-3":162, "lector-4":163, "lector-2":167, "escritor-1":171}
 INFO Envio Permiso de Acceso
-escritor-1 {"escritor-3":164, "lector-4":166, "escritor-1":170, "lector-2":162}
+escritor-1 {"lector-4":163, "lector-2":167, "escritor-1":172, "escritor-3":162}
 INFO Envio Permiso de Acceso
-escritor-1 {"escritor-1":171, "lector-2":162, "escritor-3":164, "lector-4":166}
+escritor-1 {"escritor-1":173, "escritor-3":162, "lector-4":163, "lector-2":167}
 INFO Envio Peticion Acceso
-escritor-1 {"lector-2":162, "escritor-3":164, "lector-4":166, "escritor-1":172}
+escritor-1 {"escritor-1":174, "escritor-3":162, "lector-4":163, "lector-2":167}
 INFO Envio Peticion Acceso
-escritor-1 {"escritor-1":173, "lector-2":170, "escritor-3":170, "lector-4":171}
+escritor-1 {"escritor-1":175, "escritor-3":171, "lector-4":168, "lector-2":178}
 INFO Recibo Peticion Acceso
-escritor-1 {"escritor-1":174, "lector-2":170, "escritor-3":171, "lector-4":171}
-INFO Recibo Peticion Acceso
-escritor-1 {"lector-2":171, "escritor-3":171, "lector-4":171, "escritor-1":175}
-INFO Recibo Peticion Acceso
-escritor-1 {"lector-2":171, "escritor-3":171, "lector-4":171, "escritor-1":176}
+escritor-1 {"lector-4":168, "lector-2":178, "escritor-1":176, "escritor-3":171}
 INFO Envio Peticion Acceso
-escritor-1 {"escritor-1":177, "lector-2":174, "escritor-3":171, "lector-4":171}
+escritor-1 {"escritor-1":177, "escritor-3":171, "lector-4":168, "lector-2":180}
 INFO Recibo Permiso de Acceso
-escritor-1 {"escritor-1":178, "lector-2":174, "escritor-3":175, "lector-4":171}
+escritor-1 {"escritor-1":178, "escritor-3":173, "lector-4":168, "lector-2":180}
+INFO Recibo Peticion Acceso
+escritor-1 {"lector-4":173, "lector-2":180, "escritor-1":179, "escritor-3":173}
+INFO Recibo Peticion Acceso
+escritor-1 {"lector-2":180, "escritor-1":180, "escritor-3":175, "lector-4":173}
 INFO Recibo Permiso de Acceso
-escritor-1 {"escritor-1":179, "lector-2":175, "escritor-3":175, "lector-4":179}
+escritor-1 {"escritor-1":181, "escritor-3":175, "lector-4":176, "lector-2":180}
 INFO Recibo Permiso de Acceso
-escritor-1 {"escritor-3":175, "lector-4":179, "escritor-1":180, "lector-2":175}
+escritor-1 {"escritor-1":182, "escritor-3":175, "lector-4":176, "lector-2":180}
 INFO Escribo en el Fichero
-escritor-1 {"escritor-1":181, "lector-2":175, "escritor-3":175, "lector-4":179}
+escritor-1 {"lector-2":180, "escritor-1":183, "escritor-3":175, "lector-4":176}
 INFO Envio Permiso de Acceso
-escritor-1 {"escritor-1":182, "lector-2":175, "escritor-3":175, "lector-4":179}
+escritor-1 {"escritor-1":184, "escritor-3":175, "lector-4":176, "lector-2":180}
 INFO Envio Permiso de Acceso
-escritor-1 {"escritor-1":183, "lector-2":175, "escritor-3":175, "lector-4":179}
+escritor-1 {"lector-2":180, "escritor-1":185, "escritor-3":175, "lector-4":176}
 INFO Envio Permiso de Acceso
-escritor-1 {"escritor-3":175, "lector-4":179, "escritor-1":184, "lector-2":175}
+escritor-1 {"escritor-1":186, "escritor-3":175, "lector-4":176, "lector-2":180}
 INFO Envio Peticion Acceso
-escritor-1 {"escritor-1":185, "lector-2":175, "escritor-3":175, "lector-4":179}
+escritor-1 {"lector-4":176, "lector-2":180, "escritor-1":187, "escritor-3":175}
 INFO Envio Peticion Acceso
-escritor-1 {"escritor-1":186, "lector-2":184, "escritor-3":177, "lector-4":179}
+escritor-1 {"lector-2":191, "escritor-1":188, "escritor-3":184, "lector-4":181}
 INFO Recibo Peticion Acceso
-escritor-1 {"escritor-1":187, "lector-2":184, "escritor-3":183, "lector-4":184}
-INFO Recibo Peticion Acceso
-escritor-1 {"escritor-1":188, "lector-2":184, "escritor-3":184, "lector-4":184}
-INFO Recibo Peticion Acceso
-escritor-1 {"escritor-1":189, "lector-2":184, "escritor-3":184, "lector-4":184}
+escritor-1 {"escritor-1":189, "escritor-3":184, "lector-4":181, "lector-2":191}
 INFO Envio Peticion Acceso
-escritor-1 {"escritor-1":190, "lector-2":187, "escritor-3":184, "lector-4":184}
+escritor-1 {"escritor-1":190, "escritor-3":184, "lector-4":181, "lector-2":193}
 INFO Recibo Permiso de Acceso
-escritor-1 {"escritor-1":191, "lector-2":187, "escritor-3":190, "lector-4":184}
+escritor-1 {"escritor-1":191, "escritor-3":186, "lector-4":181, "lector-2":193}
+INFO Recibo Peticion Acceso
+escritor-1 {"escritor-1":192, "escritor-3":186, "lector-4":186, "lector-2":193}
+INFO Recibo Peticion Acceso
+escritor-1 {"escritor-1":193, "escritor-3":188, "lector-4":186, "lector-2":193}
 INFO Recibo Permiso de Acceso
-escritor-1 {"escritor-1":192, "lector-2":188, "escritor-3":190, "lector-4":190}
+escritor-1 {"escritor-1":194, "escritor-3":188, "lector-4":189, "lector-2":193}
 INFO Recibo Permiso de Acceso
-escritor-1 {"lector-4":190, "escritor-1":193, "lector-2":188, "escritor-3":190}
+escritor-1 {"escritor-1":195, "escritor-3":188, "lector-4":189, "lector-2":193}
 INFO Escribo en el Fichero
-escritor-1 {"lector-2":188, "escritor-3":190, "lector-4":190, "escritor-1":194}
+escritor-1 {"lector-2":193, "escritor-1":196, "escritor-3":188, "lector-4":189}
 INFO Envio Permiso de Acceso
-escritor-1 {"escritor-1":195, "lector-2":188, "escritor-3":190, "lector-4":190}
+escritor-1 {"escritor-1":197, "escritor-3":188, "lector-4":189, "lector-2":193}
 INFO Envio Permiso de Acceso
-escritor-1 {"escritor-1":196, "lector-2":188, "escritor-3":190, "lector-4":190}
+escritor-1 {"escritor-1":198, "escritor-3":188, "lector-4":189, "lector-2":193}
 INFO Envio Permiso de Acceso
-escritor-1 {"escritor-1":197, "lector-2":188, "escritor-3":190, "lector-4":190}
+escritor-1 {"lector-2":193, "escritor-1":199, "escritor-3":188, "lector-4":189}
 INFO Envio Peticion Acceso
-escritor-1 {"escritor-1":198, "lector-2":188, "escritor-3":190, "lector-4":190}
+escritor-1 {"lector-2":193, "escritor-1":200, "escritor-3":188, "lector-4":189}
 INFO Envio Peticion Acceso
-escritor-1 {"escritor-1":199, "lector-2":195, "escritor-3":197, "lector-4":192}
+escritor-1 {"lector-2":204, "escritor-1":201, "escritor-3":197, "lector-4":194}
 INFO Recibo Peticion Acceso
-escritor-1 {"escritor-1":200, "lector-2":196, "escritor-3":197, "lector-4":197}
+escritor-1 {"escritor-1":202, "escritor-3":199, "lector-4":194, "lector-2":204}
 INFO Recibo Peticion Acceso
-escritor-1 {"lector-4":197, "escritor-1":201, "lector-2":197, "escritor-3":197}
-INFO Recibo Peticion Acceso
-escritor-1 {"escritor-1":202, "lector-2":197, "escritor-3":197, "lector-4":197}
+escritor-1 {"escritor-1":203, "escritor-3":199, "lector-4":194, "lector-2":204}
 INFO Envio Peticion Acceso
-escritor-1 {"escritor-1":203, "lector-2":200, "escritor-3":197, "lector-4":197}
+escritor-1 {"lector-4":194, "lector-2":206, "escritor-1":204, "escritor-3":199}
 INFO Recibo Permiso de Acceso
-escritor-1 {"escritor-3":201, "lector-4":197, "escritor-1":204, "lector-2":200}
+escritor-1 {"escritor-1":205, "escritor-3":199, "lector-4":199, "lector-2":206}
+INFO Recibo Peticion Acceso
+escritor-1 {"escritor-3":202, "lector-4":199, "lector-2":206, "escritor-1":206}
 INFO Recibo Permiso de Acceso
-escritor-1 {"escritor-1":205, "lector-2":201, "escritor-3":201, "lector-4":205}
+escritor-1 {"escritor-1":207, "escritor-3":202, "lector-4":202, "lector-2":206}
 INFO Recibo Permiso de Acceso
-escritor-1 {"escritor-1":206, "lector-2":201, "escritor-3":201, "lector-4":205}
+escritor-1 {"escritor-1":208, "escritor-3":202, "lector-4":202, "lector-2":206}
 INFO Escribo en el Fichero
-escritor-1 {"escritor-1":207, "lector-2":201, "escritor-3":201, "lector-4":205}
+escritor-1 {"escritor-1":209, "escritor-3":202, "lector-4":202, "lector-2":206}
 INFO Envio Permiso de Acceso
-escritor-1 {"escritor-1":208, "lector-2":201, "escritor-3":201, "lector-4":205}
+escritor-1 {"escritor-1":210, "escritor-3":202, "lector-4":202, "lector-2":206}
 INFO Envio Permiso de Acceso
-escritor-1 {"escritor-1":209, "lector-2":201, "escritor-3":201, "lector-4":205}
+escritor-1 {"escritor-1":211, "escritor-3":202, "lector-4":202, "lector-2":206}
 INFO Envio Permiso de Acceso
-escritor-1 {"lector-4":205, "escritor-1":210, "lector-2":201, "escritor-3":201}
+escritor-1 {"lector-4":202, "lector-2":206, "escritor-1":212, "escritor-3":202}
 INFO Envio Peticion Acceso
-escritor-1 {"lector-2":201, "escritor-3":201, "lector-4":205, "escritor-1":211}
+escritor-1 {"lector-2":206, "escritor-1":213, "escritor-3":202, "lector-4":202}
 INFO Envio Peticion Acceso
-escritor-1 {"lector-4":205, "escritor-1":212, "lector-2":208, "escritor-3":210}
+escritor-1 {"escritor-1":214, "escritor-3":210, "lector-4":207, "lector-2":217}
 INFO Recibo Peticion Acceso
-escritor-1 {"escritor-1":213, "lector-2":210, "escritor-3":210, "lector-4":205}
-INFO Recibo Peticion Acceso
-escritor-1 {"escritor-1":214, "lector-2":210, "escritor-3":210, "lector-4":210}
-INFO Recibo Peticion Acceso
-escritor-1 {"escritor-3":210, "lector-4":210, "escritor-1":215, "lector-2":210}
+escritor-1 {"escritor-3":210, "lector-4":207, "lector-2":217, "escritor-1":215}
 INFO Envio Peticion Acceso
-escritor-1 {"escritor-1":216, "lector-2":213, "escritor-3":210, "lector-4":210}
+escritor-1 {"escritor-1":216, "escritor-3":212, "lector-4":207, "lector-2":217}
+INFO Recibo Peticion Acceso
+escritor-1 {"escritor-1":217, "escritor-3":212, "lector-4":207, "lector-2":219}
 INFO Recibo Permiso de Acceso
-escritor-1 {"escritor-1":217, "lector-2":213, "escritor-3":216, "lector-4":210}
+escritor-1 {"escritor-1":218, "escritor-3":212, "lector-4":212, "lector-2":219}
+INFO Recibo Peticion Acceso
+escritor-1 {"escritor-1":219, "escritor-3":215, "lector-4":212, "lector-2":219}
 INFO Recibo Permiso de Acceso
-escritor-1 {"escritor-3":216, "lector-4":214, "escritor-1":218, "lector-2":213}
+escritor-1 {"escritor-1":220, "escritor-3":215, "lector-4":215, "lector-2":219}
 INFO Recibo Permiso de Acceso
-escritor-1 {"escritor-1":219, "lector-2":213, "escritor-3":216, "lector-4":214}
+escritor-1 {"escritor-1":221, "escritor-3":215, "lector-4":215, "lector-2":219}
 INFO Escribo en el Fichero
-escritor-1 {"lector-2":213, "escritor-3":216, "lector-4":214, "escritor-1":220}
+escritor-1 {"lector-2":219, "escritor-1":222, "escritor-3":215, "lector-4":215}
 INFO Envio Permiso de Acceso
-escritor-1 {"escritor-1":221, "lector-2":213, "escritor-3":216, "lector-4":214}
+escritor-1 {"escritor-1":223, "escritor-3":215, "lector-4":215, "lector-2":219}
 INFO Envio Permiso de Acceso
-escritor-1 {"lector-4":214, "escritor-1":222, "lector-2":213, "escritor-3":216}
+escritor-1 {"escritor-1":224, "escritor-3":215, "lector-4":215, "lector-2":219}
 INFO Envio Permiso de Acceso
-escritor-1 {"lector-4":214, "escritor-1":223, "lector-2":213, "escritor-3":216}
+escritor-1 {"escritor-1":225, "escritor-3":215, "lector-4":215, "lector-2":219}
 INFO Envio Peticion Acceso
-escritor-1 {"lector-4":214, "escritor-1":224, "lector-2":213, "escritor-3":216}
+escritor-1 {"escritor-3":215, "lector-4":215, "lector-2":219, "escritor-1":226}
 INFO Envio Peticion Acceso
-escritor-1 {"escritor-1":225, "lector-2":221, "escritor-3":223, "lector-4":218}
+escritor-1 {"escritor-1":227, "escritor-3":223, "lector-4":220, "lector-2":230}
 INFO Recibo Peticion Acceso
-escritor-1 {"escritor-1":226, "lector-2":222, "escritor-3":223, "lector-4":223}
-INFO Recibo Peticion Acceso
-escritor-1 {"escritor-1":227, "lector-2":223, "escritor-3":223, "lector-4":223}
-INFO Recibo Peticion Acceso
-escritor-1 {"escritor-3":223, "lector-4":223, "escritor-1":228, "lector-2":223}
+escritor-1 {"escritor-1":228, "escritor-3":223, "lector-4":220, "lector-2":230}
 INFO Envio Peticion Acceso
-escritor-1 {"lector-4":223, "escritor-1":229, "lector-2":226, "escritor-3":223}
+escritor-1 {"lector-2":232, "escritor-1":229, "escritor-3":223, "lector-4":220}
 INFO Recibo Permiso de Acceso
-escritor-1 {"escritor-1":230, "lector-2":226, "escritor-3":229, "lector-4":223}
+escritor-1 {"lector-2":232, "escritor-1":230, "escritor-3":225, "lector-4":220}
+INFO Recibo Peticion Acceso
+escritor-1 {"escritor-1":231, "escritor-3":225, "lector-4":225, "lector-2":232}
+INFO Recibo Peticion Acceso
+escritor-1 {"escritor-1":232, "escritor-3":227, "lector-4":225, "lector-2":232}
 INFO Recibo Permiso de Acceso
-escritor-1 {"escritor-1":231, "lector-2":227, "escritor-3":229, "lector-4":231}
+escritor-1 {"escritor-1":233, "escritor-3":227, "lector-4":228, "lector-2":232}
 INFO Recibo Permiso de Acceso
-escritor-1 {"escritor-1":232, "lector-2":227, "escritor-3":229, "lector-4":231}
+escritor-1 {"escritor-1":234, "escritor-3":227, "lector-4":228, "lector-2":232}
 INFO Escribo en el Fichero
-escritor-1 {"lector-4":231, "escritor-1":233, "lector-2":227, "escritor-3":229}
+escritor-1 {"lector-4":228, "lector-2":232, "escritor-1":235, "escritor-3":227}
 INFO Envio Permiso de Acceso
-escritor-1 {"escritor-3":229, "lector-4":231, "escritor-1":234, "lector-2":227}
+escritor-1 {"escritor-1":236, "escritor-3":227, "lector-4":228, "lector-2":232}
 INFO Envio Permiso de Acceso
-escritor-1 {"escritor-1":235, "lector-2":227, "escritor-3":229, "lector-4":231}
+escritor-1 {"escritor-1":237, "escritor-3":227, "lector-4":228, "lector-2":232}
 INFO Envio Permiso de Acceso
-escritor-1 {"escritor-1":236, "lector-2":227, "escritor-3":229, "lector-4":231}
+escritor-1 {"escritor-1":238, "escritor-3":227, "lector-4":228, "lector-2":232}
 INFO Envio Peticion Acceso
-escritor-1 {"escritor-3":229, "lector-4":231, "escritor-1":237, "lector-2":227}
+escritor-1 {"escritor-1":239, "escritor-3":227, "lector-4":228, "lector-2":232}
 INFO Envio Peticion Acceso
-escritor-1 {"escritor-1":238, "lector-2":234, "escritor-3":236, "lector-4":231}
+escritor-1 {"lector-4":233, "lector-2":243, "escritor-1":240, "escritor-3":236}
 INFO Recibo Peticion Acceso
-escritor-1 {"escritor-1":239, "lector-2":235, "escritor-3":236, "lector-4":236}
-INFO Recibo Peticion Acceso
-escritor-1 {"escritor-1":240, "lector-2":236, "escritor-3":236, "lector-4":236}
-INFO Recibo Peticion Acceso
-escritor-1 {"escritor-1":241, "lector-2":236, "escritor-3":236, "lector-4":236}
+escritor-1 {"escritor-1":241, "escritor-3":236, "lector-4":233, "lector-2":243}
 INFO Envio Peticion Acceso
-escritor-1 {"lector-4":236, "escritor-1":242, "lector-2":239, "escritor-3":236}
+escritor-1 {"escritor-3":236, "lector-4":233, "lector-2":245, "escritor-1":242}
 INFO Recibo Permiso de Acceso
-escritor-1 {"escritor-1":243, "lector-2":239, "escritor-3":240, "lector-4":236}
+escritor-1 {"escritor-1":243, "escritor-3":238, "lector-4":233, "lector-2":245}
+INFO Recibo Peticion Acceso
+escritor-1 {"lector-2":245, "escritor-1":244, "escritor-3":238, "lector-4":238}
+INFO Recibo Peticion Acceso
+escritor-1 {"escritor-1":245, "escritor-3":240, "lector-4":238, "lector-2":245}
 INFO Recibo Permiso de Acceso
-escritor-1 {"escritor-3":240, "lector-4":240, "escritor-1":244, "lector-2":239}
+escritor-1 {"lector-2":245, "escritor-1":246, "escritor-3":240, "lector-4":241}
 INFO Recibo Permiso de Acceso
-escritor-1 {"escritor-1":245, "lector-2":239, "escritor-3":240, "lector-4":240}
+escritor-1 {"escritor-1":247, "escritor-3":240, "lector-4":241, "lector-2":245}
 INFO Escribo en el Fichero
-escritor-1 {"lector-2":239, "escritor-3":240, "lector-4":240, "escritor-1":246}
+escritor-1 {"escritor-3":240, "lector-4":241, "lector-2":245, "escritor-1":248}
 INFO Envio Permiso de Acceso
-escritor-1 {"escritor-3":240, "lector-4":240, "escritor-1":247, "lector-2":239}
+escritor-1 {"lector-2":245, "escritor-1":249, "escritor-3":240, "lector-4":241}
 INFO Envio Permiso de Acceso
-escritor-1 {"lector-2":239, "escritor-3":240, "lector-4":240, "escritor-1":248}
+escritor-1 {"escritor-3":240, "lector-4":241, "lector-2":245, "escritor-1":250}
 INFO Envio Permiso de Acceso
-escritor-1 {"escritor-1":249, "lector-2":239, "escritor-3":240, "lector-4":240}
+escritor-1 {"escritor-3":240, "lector-4":241, "lector-2":245, "escritor-1":251}
 INFO Envio Peticion Acceso
-escritor-1 {"lector-2":239, "escritor-3":240, "lector-4":240, "escritor-1":250}
+escritor-1 {"escritor-3":240, "lector-4":241, "lector-2":245, "escritor-1":252}
 INFO Envio Peticion Acceso
-escritor-1 {"escritor-1":251, "lector-2":249, "escritor-3":242, "lector-4":242}
-INFO Recibo Peticion Acceso
-escritor-1 {"escritor-3":248, "lector-4":249, "escritor-1":252, "lector-2":249}
-INFO Recibo Peticion Acceso
-escritor-1 {"escritor-1":253, "lector-2":249, "escritor-3":249, "lector-4":249}
-INFO Recibo Peticion Acceso
-escritor-1 {"lector-2":249, "escritor-3":249, "lector-4":249, "escritor-1":254}
+escritor-1 {"lector-2":245, "escritor-1":253, "escritor-3":240, "lector-4":241}
 INFO Envio Peticion Acceso
-escritor-1 {"escritor-1":255, "lector-2":252, "escritor-3":249, "lector-4":249}
+escritor-1 {"escritor-3":251, "lector-4":246, "lector-2":249, "escritor-1":254}
+INFO Recibo Peticion Acceso
+escritor-1 {"escritor-1":255, "escritor-3":251, "lector-4":246, "lector-2":257}
 INFO Recibo Permiso de Acceso
-escritor-1 {"escritor-1":256, "lector-2":252, "escritor-3":252, "lector-4":249}
+escritor-1 {"escritor-1":256, "escritor-3":251, "lector-4":251, "lector-2":257}
+INFO Recibo Peticion Acceso
+escritor-1 {"lector-4":251, "lector-2":257, "escritor-1":257, "escritor-3":254}
 INFO Recibo Permiso de Acceso
-escritor-1 {"escritor-3":252, "lector-4":255, "escritor-1":257, "lector-2":253}
+escritor-1 {"escritor-3":254, "lector-4":254, "lector-2":257, "escritor-1":258}
 INFO Recibo Permiso de Acceso
-escritor-1 {"escritor-1":258, "lector-2":253, "escritor-3":252, "lector-4":255}
+escritor-1 {"escritor-1":259, "escritor-3":254, "lector-4":254, "lector-2":257}
 INFO Escribo en el Fichero
-escritor-1 {"lector-4":255, "escritor-1":259, "lector-2":253, "escritor-3":252}
+escritor-1 {"lector-4":254, "lector-2":257, "escritor-1":260, "escritor-3":254}
 INFO Envio Permiso de Acceso
-escritor-1 {"escritor-1":260, "lector-2":253, "escritor-3":252, "lector-4":255}
-INFO Envio Permiso de Acceso
-escritor-1 {"escritor-1":261, "lector-2":253, "escritor-3":252, "lector-4":255}
+escritor-1 {"lector-4":254, "lector-2":257, "escritor-1":261, "escritor-3":254}
 INFO Envio Permiso de Acceso

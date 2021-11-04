@@ -66,7 +66,6 @@ func New(me int, usersFile string, actor string, logger *govec.GoLog) *RASharedD
 				return
 			default: // Aún estamos a la espera de mensajes
 				dato := ra.ms.Receive()
-				fmt.Println("LOG: Recibo Mensaje")
 				switch msg := dato.(type) {
 				case Request: // Recibo una petición de acceso
 
@@ -78,9 +77,7 @@ func New(me int, usersFile string, actor string, logger *govec.GoLog) *RASharedD
 					// Accedo a la lectura de las variables de forma atómica
 					ra.Mutex.Lock()
 					Defer_It := ra.ReqCS &&
-						(msg.Clock > ra.OurSeqNum ||
-							(msg.Clock == ra.OurSeqNum && msg.Pid > ra.Me) ||
-							(msg.Clock > ra.OurSeqNum && exclude(ra.Actor, msg.Actor)) ||
+						((msg.Clock > ra.OurSeqNum && exclude(ra.Actor, msg.Actor)) ||
 							(msg.Clock == ra.OurSeqNum && msg.Pid > ra.Me && exclude(ra.Actor, msg.Actor)))
 					ra.Mutex.Unlock()
 
@@ -107,8 +104,9 @@ func New(me int, usersFile string, actor string, logger *govec.GoLog) *RASharedD
 						}
 					}
 
-				default: // Comorl, que esh lo que é rechibido
-					fmt.Printf("WTF %T\n", dato)
+				default: // Recepción de un dato imposible en este algoritmo
+					fmt.Println("Se ha recibo un Dato no deseado")
+					fmt.Printf("Tipo del Dato: %T\n", dato)
 					return
 				}
 			}
@@ -150,7 +148,9 @@ func (ra *RASharedDB) PreProtocol() {
 //      Ricart-Agrawala Generalizado
 func (ra *RASharedDB) PostProtocol() {
 	// Ya no deseo entrar a la SC
+	ra.Mutex.Lock()
 	ra.ReqCS = false
+	ra.Mutex.Unlock()
 	// A todos los clientes del Sistema de Mensajes
 	for j := 1; j <= N; j++ {
 		// Si los he diferido

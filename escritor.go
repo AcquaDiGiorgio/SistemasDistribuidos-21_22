@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"main/fm"
 	"main/ra"
 	"os"
@@ -17,7 +18,8 @@ func escribir(ra *ra.RASharedDB, logger *govec.GoLog) {
 		ra.PreProtocol()
 
 		logger.LogLocalEvent("Escribo en el Fichero", govec.GetDefaultLogOptions())
-		fm.EscribirFichero("Escritor-" + strconv.Itoa(ra.Me) + " [*] Cadena no: " + strconv.Itoa(i) + "\n")
+		fmt.Println("Escribo en el Fichero")
+		fm.EscribirFichero("Escritor-" + strconv.Itoa(ra.Me) + "\tCadena no: " + strconv.Itoa(i) + "\n")
 
 		ra.PostProtocol()
 	}
@@ -30,8 +32,8 @@ func main() {
 
 	logger := govec.InitGoVector(ACTOR+"-"+strconv.Itoa(me), "LOG_"+strconv.Itoa(me), govec.GetDefaultConfig())
 	ra := ra.New(me, args[1], ACTOR, logger)
-	defer ra.Stop()
 
 	escribir(ra, logger)
-
+	fmt.Println("Termino")
+	ra.Stop()
 }
