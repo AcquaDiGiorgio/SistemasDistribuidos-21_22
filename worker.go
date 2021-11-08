@@ -6,11 +6,13 @@
 * FICHERO: worker.go
 * DESCRIPCIÓN: contiene la funcionalidad esencial para realizar los servidores
 *				correspondientes la practica 3
-*/
+ */
 package main
 
 import (
+	"fmt"
 	"log"
+	"main/com"
 	"math/rand"
 	"net"
 	"net/http"
@@ -18,8 +20,6 @@ import (
 	"os"
 	"sync"
 	"time"
-	"fmt"
-	"practica3/com"
 )
 
 const (
