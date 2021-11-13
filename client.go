@@ -38,7 +38,7 @@ func sendRequest(endpoint string, id int, interval com.TPInterval, wg *sync.Wait
 		log.Fatal("dialing:", err)
 	}
 	var reply []int
-	err = client.Call("PrimesImpl.FindPrimes", interval, &reply)
+	err = client.Call("Primes.FindPrimes", interval, &reply)
 	if err != nil {
 		log.Fatal("primes error:", err)
 	}

@@ -12,8 +12,11 @@ import (
 	"bufio"
 	"fmt"
 	"log"
+	"main/com"
+	"net"
+	"net/http"
+	"net/rpc"
 	"os"
-	"practica3/com"
 	"sync"
 	"time"
 )
@@ -24,7 +27,7 @@ const (
 	CRASH    = iota // CRASH == 2
 	OMISSION = iota // IOTA == 3
 
-	WORKERS = "workers.txt"
+	WORKERS      = "workers.txt"
 	MAX_INTENTOS = 10
 )
 
@@ -92,9 +95,9 @@ func ProxyPrimes(worker string, colaTareas chan Tarea) {
 
 	var reply []int
 	c := make(chan error) //Canal de error, para informar del error
-	
+
 	go arrancaWorker() //Arrancamos el worker asociado al proxy y le esperamos
-	time.Sleep(5*time.Second)
+	time.Sleep(5 * time.Second)
 
 	workerCon, err := rpc.DialHTTP("tcp", worker) //Establecemos conexion con el worker asociado
 	if err != nil {
@@ -108,18 +111,18 @@ func ProxyPrimes(worker string, colaTareas chan Tarea) {
 
 //Funcion a la que se conecta el cliente
 func (p *PrimesImpl) FindPrimes(dato com.TPInterval, lista *[]int) error {
-	heAcabado = make(chan bol) //Se crea un canal para saber cuando se ha procesado
-	tarea := Tarea{datos: dato,resultado: lista,fin: heAcabado} //Se crea la tarea para añadirla a la cola
-	done bool = false
+	heAcabado = make(chan bol)                                    //Se crea un canal para saber cuando se ha procesado
+	tarea := Tarea{datos: dato, resultado: lista, fin: heAcabado} //Se crea la tarea para añadirla a la cola
+	done := false
 
 	for i := 0; i < MAX_INTENTOS && done == false; i++ {
 		ColaTareas <- tarea //Ponemos la tarea en la cola
-		done = <- heAcabado //Indica que ha acabado de calcularlo (o que ha habido un error)
+		done = <-heAcabado  //Indica que ha acabado de calcularlo (o que ha habido un error)
 	}
 
 	if done {
 		return nil
-	}else{
+	} else {
 		return error.New("Servidor funciona mal, Problemas con los proxys")
 	}
 }
@@ -153,7 +156,7 @@ func main() {
 			log.Fatal("listen error:", e)
 		}
 		http.Serve(l, nil)
-	}else{
+	} else {
 		fmt.Println("Usage: go run master.go <port>")
 	}
 }

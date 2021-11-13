@@ -12,17 +12,12 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"net"
 	"net/http"
 	"net/rpc"
 	"os"
-	"strings"
-	"syscall"
 
 	"main/com"
-
-	"golang.org/x/term"
 )
 
 const PATH = "/home/a774248/SSDD/Practica1/"
@@ -33,8 +28,8 @@ const CONN_HOST = "155.210.154.200"
 //Struct usado para realizar el envío de mensajes por canal.
 //Consta de un encoder, para devolver el dato y la petición del cliente.
 type Mensaje struct {
-	reply     []int
 	intervalo com.TPInterval
+	reply     *[]int
 }
 
 func checkErrorMaster(err error) {
@@ -47,63 +42,43 @@ func checkErrorMaster(err error) {
 //Gorutina capaz de lanzar por ssh un worker y esperar a que entre por el canal de mensajes
 //una petición del cliente
 //Esta función recibe el host del worker, su ip, el usuario que hace el ssh y su contraseña
-func workerLanzar(worker string, ip string, usuario string, pass string, canal chan Mensaje) {
-	//Creamos el ssh hacia la máquina en la que se encuentra el worker
-	ssh, err := com.NewSshClient(
-		usuario,
-		worker,
-		22,
-		RSA,
-		pass)
-	if err != nil {
-		log.Printf("SSH init error %v", err)
-		os.Exit(1)
+func workerLanzar(worker int, primes *Primes) {
+	callChan := make(chan *rpc.Call)
+	var acceso bool
+
+	client, err := rpc.DialHTTP("tcp", com.Workers[worker].Ip)
+
+	for err != nil {
+		primes.coord.Call("Estado.", worker, &acceso)
+		if acceso {
+			client, err = rpc.DialHTTP("tcp", com.Workers[worker].Host)
+		} else {
+			// Worker no accesible
+			// Wait?
+		}
 	}
 
-	//Ejecutamos su archivo compilado
-	err = ssh.RunCommand(PATH + "worker " + ip)
-	if err != nil {
-		log.Printf("SSH run command error %v", err)
-		os.Exit(2)
-	}
-
-	// Esperar al mensaje del Coordinador (Worker Ready)
-
-	work, err := net.Dial("tcp", ip) // CAMBIAR A RPC
-	checkErrorMaster(err)
-
-	fmt.Println("Worker", worker, "preparado")
 	for {
-		msj := <-canal
-
-		//
+		msj := <-primes.canal
+		primes.coord.Go("Estado.NuevaEntrada", com.Workers[worker], nil, callChan)
+		client.Call()
+		primes.coord.Go("Estado.NuevaSalida", com.Workers[worker], nil, callChan)
 	}
 }
 
-//función que recibiendo un canal de Mensajes y un puerto por donde escuchen
-//los workers, inicializa los workers que se encuentran en el paquete com
-func inicializacion(canal chan Mensaje) {
-	var user string
-	fmt.Print("Introduzca el usuario: ")
-	fmt.Scanf("%s", &user)
-
-	fmt.Print("Introduzca la Contraseña: ")
-	pass, err := term.ReadPassword(int(syscall.Stdin))
-	checkErrorMaster(err)
-
-	passStr := strings.TrimSpace(string(pass))
-
-	for i := 0; i < com.POOL; i++ {
-		go workerLanzar(com.HOSTS[i], com.IPs[i], user, passStr, canal)
-	}
+type Primes struct {
+	canal chan Mensaje
+	coord *rpc.Client
 }
 
-type PrimesImpl struct{}
+const worker = ""
 
-func (p *PrimesImpl) FindPrimes(interval com.TPInterval, primeList *[]int) error {
-	client, err := rpc.DialHTTP("tcp", endpoint)
-
+func (p *Primes) FindPrimes(interval com.TPInterval, primeList *[]int) error {
+	p.canal <- Mensaje{interval, primeList}
+	return nil
 }
+
+const coordinador = ""
 
 func main() {
 
@@ -112,19 +87,28 @@ func main() {
 		os.Exit(1)
 	}
 
-	//Creamos un canal que pasa las tareas a las gorutines
-	canal := make(chan Mensaje)
+	// Nos conectamos con el coordinador
+	conn, err := rpc.DialHTTP("tcp", coordinador)
 
-	primesImpl := new(PrimesImpl)
-	rpc.Register(primesImpl)
+	// Creamos un canal que pasa las tareas a las gorutines
+	primes := new(Primes)
+	primes.canal = make(chan Mensaje)
+	primes.coord = conn
+
+	// Llama por ssh a los workers y los prepara para escuchar
+	for i := 0; i < com.POOL; i++ {
+		go workerLanzar(i, primes)
+	}
+
+	// Registro y Creación del RPC
+	rpc.Register(primes)
 	rpc.HandleHTTP()
 
+	// Inicio Escucha
 	listener, err := net.Listen(CONN_TYPE, CONN_HOST+":"+args[0])
 	checkErrorMaster(err)
 	defer listener.Close()
 
-	//Llama por ssh a los workers y los prepara para escuchar
-	inicializacion(canal)
-
+	// Sirve petiticiones
 	http.Serve(listener, nil)
 }
