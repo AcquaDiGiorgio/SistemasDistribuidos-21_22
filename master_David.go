@@ -10,13 +10,12 @@ package main
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"log"
-	"main/com"
-	"net"
-	"net/http"
 	"net/rpc"
 	"os"
+	"practica3/com"
 	"sync"
 	"time"
 )
@@ -27,8 +26,10 @@ const (
 	CRASH    = iota // CRASH == 2
 	OMISSION = iota // IOTA == 3
 
-	WORKERS      = "workers.txt"
-	MAX_INTENTOS = 10
+	WORKERS          = "workers.txt"
+	MAX_INTENTOS     = 10                        //Numero de intentos
+	MAX_TIMEOUT      = (time.Millisecond * 2000) //Debe calcularse para diferentes desplieges de workers
+	TIMEOUT_OMISSION = (time.Second * 5)         //Si el worker no responde en TIMEOUT_OMISSION se entiende que ha ignorado
 )
 
 type PrimesImpl struct {
@@ -47,6 +48,13 @@ type Tarea struct {
 }
 
 var ColaTareas chan Tarea //Cola de tareas para que las cojan los proxys
+
+func checkError(err error) {
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Fatal error: %s", err.Error())
+		os.Exit(1)
+	}
+}
 
 func isPrime(n int) (foundDivisor bool) {
 	foundDivisor = false
@@ -67,8 +75,6 @@ func findPrimes(interval com.TPInterval) (primes []int) {
 	}
 	return primes
 }
-
-//Lee los workers de un fichero y los guarda en un vector de strings
 func leerWorkers(nombre string) ([]string, error) {
 	fich, err := os.Open(nombre)
 	if err != nil {
@@ -84,36 +90,113 @@ func leerWorkers(nombre string) ([]string, error) {
 	return list, scanner.Err()
 }
 
-//Arranca el worker especificado
 func arrancaWorker(worker string) {
 	//Arranca el worker especificado
-	/* TODO */
+	usuario := "a780500"
+	pass := "xxxxxxxxx"
+	PATH := "/home/a780500/SSDD/Practica3/"
+	RSA := "/home/a780500/.ssh/id_rsa"
+	IP := "localhost:30000"
+	//Creamos el ssh hacia la máquina en la que se encuentra el worker
+	ssh, err := com.NewSshClient(
+		usuario,
+		worker,
+		22,
+		RSA,
+		pass)
+	if err != nil {
+		log.Printf("SSH init error %v", err)
+		os.Exit(1)
+	}
+	//Ejecutamos su archivo compilado
+	err = ssh.RunCommand(PATH + "worker " + IP)
+	if err != nil {
+		log.Printf("SSH run command error %v", err)
+		os.Exit(2)
+	}
+	//Esperamos para que asegurarnos de que el worker está preparado para escuchar
+	time.Sleep(1 * time.Second)
+	//work, err := net.Dial("tcp", IP)
+	//checkError(err)
 }
 
 //Proxys del master
 func ProxyPrimes(worker string, colaTareas chan Tarea) {
-
 	var reply []int
 	c := make(chan error) //Canal de error, para informar del error
 
-	go arrancaWorker() //Arrancamos el worker asociado al proxy y le esperamos
+	go arrancaWorker(worker) //Arrancamos el worker asociado al proxy y le esperamos
 	time.Sleep(5 * time.Second)
 
 	workerCon, err := rpc.DialHTTP("tcp", worker) //Establecemos conexion con el worker asociado
 	if err != nil {
 		log.Fatal("dialing:", err)
 	}
-	fmt.Println(workerDir + " esta listo y conectado")
+	fmt.Println(worker + " esta listo y conectado")
 
-	/* TODO */
+	opcion_omission := 1 //Selecciona la opcion para decidir que hacer cuando hay omision
+	for {
 
+		task := <-colaTareas
+
+		go func() {
+			c <- workerCon.Call("PrimesImpl.FindPrimes", task.datos, &reply)
+		}()
+		select {
+		case fallo := <-c: //Responde a tiempo
+			if fallo != nil { //Si ha habido algun error
+				task.fin <- false //Avisa a FindPrimes que ha habido un error
+				fmt.Println(worker + "ha habido CRASH")
+
+				go arrancaWorker(worker) //Levantamos el worker de nuevo
+				time.Sleep(3 * time.Second)
+				fmt.Println(worker + "se ha levantado de nuevo")
+
+				workerCon, err := rpc.DialHTTP("tcp", worker) //Establecemos conexion con el worker asociado
+				if err != nil {
+					log.Fatal("dialing:", err)
+				}
+				fmt.Println(worker + " esta otra vez listo y conectado")
+			} else {
+				copy(*task.resultado, reply) //Copia el resultado
+				task.fin <- true             //Avisa que ha acabado correctamente
+			}
+		case <-time.After(MAX_TIMEOUT): //El worker ha tenido un fallo de tipo DELAY o OMISSION
+			task.fin <- false //Avisa a FindPrimes que ha habido un error
+			select {
+			case <-c: //La respuesta se ha retrasado (DELAY)
+				fmt.Println(worker + "ha habido DELAY")
+			case <-time.After(TIMEOUT_OMISSION): // Se ha producido una omision (OMISSION)
+				fmt.Println(worker + "ha habido OMISSION")
+
+				if opcion_omission == 1 { //OPCION 1: MATAR AL WORKER Y LEVANTARLO DE NUEVO
+					go func() {
+						var i int
+						workerCon.Call("PrimesImpl.Stop", 1, &i) //Intentamos matarlo
+					}()
+					time.Sleep(time.Second * 2)
+
+					go arrancaWorker(worker) //Hay que volver a levantarlo
+					time.Sleep(5 * time.Second)
+
+					workerCon, err := rpc.DialHTTP("tcp", worker) //Establecemos conexion con el worker asociado
+					if err != nil {
+						log.Fatal("dialing:", err)
+					}
+					fmt.Println(worker + " esta otra vez listo y conectado")
+				} else { //OPCION 2: ESPERAR A QUE RESPONDA
+					<-c
+					fmt.Println(worker + " recuperado")
+				}
+			}
+		}
+	}
 }
 
-//Funcion a la que se conecta el cliente
-func (p *PrimesImpl) FindPrimes(dato com.TPInterval, lista *[]int) error {
-	heAcabado = make(chan bol)                                    //Se crea un canal para saber cuando se ha procesado
-	tarea := Tarea{datos: dato, resultado: lista, fin: heAcabado} //Se crea la tarea para añadirla a la cola
-	done := false
+func (p *PrimesImpl) FindPrimes(dato com.TPInterval, listaRes *[]int) error {
+	heAcabado := make(chan bool)                                     //Se crea un canal para saber cuando se ha procesado
+	tarea := Tarea{datos: dato, resultado: listaRes, fin: heAcabado} //Se crea la tarea para añadirla a la cola
+	var done bool
 
 	for i := 0; i < MAX_INTENTOS && done == false; i++ {
 		ColaTareas <- tarea //Ponemos la tarea en la cola
@@ -123,40 +206,20 @@ func (p *PrimesImpl) FindPrimes(dato com.TPInterval, lista *[]int) error {
 	if done {
 		return nil
 	} else {
-		return error.New("Servidor funciona mal, Problemas con los proxys")
+		return errors.New("Servidor funciona mal, Problemas con los proxys")
 	}
 }
 
-//Funcion Main
 func main() {
-	if len(os.Args) == 1 {
-		ColaTareas = (make(chan Tarea)) //Cola de tareas para que las cojan los proxys
-		listWorkers, err := leerWorkers(WORKERS)
-		if err != nil {
-			log.Fatal("lectura fichero error:", e)
-		}
+	ColaTareas = (make(chan Tarea)) //Cola de tareas para que las cojan los proxys
+	listWorkers, err := leerWorkers(WORKERS)
+	if err != nil {
+		log.Fatal("ERROR LECTURA FICHERO:", e)
+	}
 
-		for _, worker := range listWorkers {
-			go ProxyPrimes(worker, ColaTareas)
-			fmt.Println("SE HA LANZADO EL PROXY DEL WORKER: " + worker)
-			time.Sleep(100 * time.Millisecond)
-		}
-
-		primesImpl := new(PrimesImpl)
-		primesImpl.delayMaxMilisegundos = 4000
-		primesImpl.delayMinMiliSegundos = 2000
-		primesImpl.behaviourPeriod = 4
-		primesImpl.i = 1
-		primesImpl.behaviour = NORMAL
-
-		rpc.Register(primesImpl)
-		rpc.HandleHTTP()
-		l, e := net.Listen("tcp", os.Args[1])
-		if e != nil {
-			log.Fatal("listen error:", e)
-		}
-		http.Serve(l, nil)
-	} else {
-		fmt.Println("Usage: go run master.go <port>")
+	for _, worker := range listWorkers {
+		fmt.Println("SE HA LANZADO EL PROXY DEL WORKER: " + worker)
+		go ProxyPrimes(worker, ColaTareas)
+		time.Sleep(100 * time.Millisecond)
 	}
 }
