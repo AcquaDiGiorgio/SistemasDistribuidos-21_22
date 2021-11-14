@@ -61,29 +61,15 @@ func (e *Estado) LanzarWorker(id int) {
 	e.mutex.Unlock()
 }
 
-func (e *Estado) NuevaEntrada(id int, interval com.TPInterval) {
+// Se acaba de introducir un dato
+func (e *Estado) NuevaEntrada(interval com.TPInterval) {
 	e.mutex.Lock()
 	e.actual_thoughput += aproxThr(interval)
 	e.mutex.Unlock()
-
-	systemCapability := e.checkWorkers()
-
-	switch systemCapability {
-	case POCOS_WORKERS:
-		e.LanzarWorker()
-		break
-
-	case MUCHOS_WORKERS:
-		e.terminarWorker()
-		break
-
-	default:
-		break
-	}
-
 }
 
-func (e *Estado) NuevaSalida(id int, interval com.TPInterval) {
+// Al salir se comprueba si hay que terminar algún worker
+func (e *Estado) NuevaSalida(interval com.TPInterval) {
 	e.mutex.Lock()
 	e.actual_thoughput -= aproxThr(interval)
 	e.mutex.Unlock()
@@ -92,7 +78,7 @@ func (e *Estado) NuevaSalida(id int, interval com.TPInterval) {
 
 	switch systemCapability {
 	case POCOS_WORKERS:
-		e.LanzarWorker()
+		e.relanzarWorker()
 		break
 
 	case MUCHOS_WORKERS:
@@ -102,61 +88,72 @@ func (e *Estado) NuevaSalida(id int, interval com.TPInterval) {
 	default:
 		break
 	}
+
 }
 
-func (e *Estado) PedirWorker(id int) (accesible bool) {
+// Devuelve el estado acutal del worker
+// Preparado / No preparado para recibir tareas
+func (e *Estado) PedirWorker(id int, accesible *bool) {
 	e.mutex.Lock()
-	accesible = e.estadoWorker[id]
+	*accesible = e.estadoWorker[id]
 	e.mutex.Unlock()
-	return
 }
 
 // retVal = worker Iniciado
-func (e *Estado) InformarWorkerCaido(id int) (workIniciado bool) {
+func (e *Estado) InformarWorkerCaido(id int, workIniciado *bool) {
 
 	systemCapability := e.checkWorkers()
 	switch systemCapability {
 
-	// Si hay suficientes workers no lo lanzamos
-	case MUCHOS_WORKERS:
-		workIniciado = false
+	// Si hay pocos workers lo lanzamos
+	case POCOS_WORKERS:
+		e.LanzarWorker(id)
+		*workIniciado = true
 		break
 
+	// Si hay muchos o suficientes workers no lo lanzamos
 	default:
-		e.LanzarWorker()
-		workIniciado = true
+		*workIniciado = false
 		break
 	}
-	return
 }
 
 /*
 	FUNCIONES INTERNAS
 */
 
+// Checkeamos el estado actual del sistema
+// Si hay más workers de los necesarios, devuelve MUCHOS_WORKERS
+// Si hay menos workers de los necesarios, devuelve POCOS_WORKERS
 func (e *Estado) checkWorkers() int {
 	var estadoWorkers int
 	// Calculo del estado
 	return estadoWorkers
 }
 
-func (e *Estado) terminarWorker(id int) {
-	ssh, err := com.NewSshClient(
-		e.user,
-		com.Workers[id].Host,
-		22,
-		RSA,
-		e.pass)
-	if err != nil {
-		log.Printf("SSH init error %v", err)
-		os.Exit(1)
-	}
-
-	err = ssh.RunCommand(PATH + "worker " + com.Workers[id].Ip) // Kill?
-	checkErrorCoord(err)
-
+// Relanzamos el worker con menor id
+func (e *Estado) relanzarWorker() {
+	done := false
 	e.mutex.Lock()
-	e.estadoWorker[id] = true
+	for i := 0; i < com.POOL || done; i++ {
+		if !e.estadoWorker[i] {
+			e.estadoWorker[i] = true
+			done = true
+		}
+	}
+	e.mutex.Unlock()
+}
+
+// Terminamos el worker con mayor id
+func (e *Estado) terminarWorker() {
+	done := false
+	e.mutex.Lock()
+	for i := com.POOL - 1; i >= 0 || done; i-- {
+		if e.estadoWorker[i] {
+			e.estadoWorker[i] = false
+			done = true
+		}
+	}
 	e.mutex.Unlock()
 }
 
@@ -167,7 +164,10 @@ func aproxThr(interval com.TPInterval) int {
 }
 
 func checkErrorCoord(err error) {
-
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Fatal error: %s", err.Error())
+		os.Exit(1)
+	}
 }
 
 func main() {
@@ -180,6 +180,7 @@ func main() {
 	fmt.Print("Introduzca la Contraseña: ")
 	pass, err := term.ReadPassword(int(syscall.Stdin))
 	checkErrorCoord(err)
+
 	e.pass = string(pass)
 
 	for i := 0; i < com.POOL; i++ {

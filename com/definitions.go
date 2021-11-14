@@ -24,16 +24,12 @@ type Worker struct {
 	Host string
 }
 
-const (
-	// Posibles mensajes
-	INFO_ENTRADA  = 0
-	INFO_SALIDA   = 1
-	LANZAR_WORKER = 2
-	PEDIR_WORKER  = 3
+type Salida struct {
+	Id       int
+	Interval TPInterval
+}
 
-	// Otras Constantes
-	POOL = 6
-)
+const POOL = 6
 
 var Workers = [...]Worker{
 	{"lab102-200.cps.unizar.es", "155.210.154.200:30000"},

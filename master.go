@@ -16,20 +16,35 @@ import (
 	"net/http"
 	"net/rpc"
 	"os"
+	"time"
 
 	"main/com"
 )
 
-const PATH = "/home/a774248/SSDD/Practica1/"
-const RSA = "/home/a774248/.ssh/id_rsa"
-const CONN_TYPE = "tcp"
-const CONN_HOST = "155.210.154.200"
+const (
+	PATH        = "/home/a774248/SSDD/Practica1/"
+	RSA         = "/home/a774248/.ssh/id_rsa"
+	CONN_TYPE   = "tcp"
+	CONN_HOST   = "155.210.154.200"
+	COORDINADOR = ""
+	MAX_TIME    = time.Duration(1 * time.Second)
+)
 
 //Struct usado para realizar el envío de mensajes por canal.
 //Consta de un encoder, para devolver el dato y la petición del cliente.
+type Respuesta struct {
+	reply []int
+	err   error
+}
+
 type Mensaje struct {
 	intervalo com.TPInterval
-	reply     *[]int
+	resp      chan Respuesta
+}
+
+type Primes struct {
+	canal chan Mensaje
+	coord *rpc.Client
 }
 
 func checkErrorMaster(err error) {
@@ -43,42 +58,60 @@ func checkErrorMaster(err error) {
 //una petición del cliente
 //Esta función recibe el host del worker, su ip, el usuario que hace el ssh y su contraseña
 func workerLanzar(worker int, primes *Primes) {
-	callChan := make(chan *rpc.Call)
-	var acceso bool
-
-	client, err := rpc.DialHTTP("tcp", com.Workers[worker].Ip)
-
-	for err != nil {
-		primes.coord.Call("Estado.", worker, &acceso)
-		if acceso {
-			client, err = rpc.DialHTTP("tcp", com.Workers[worker].Host)
-		} else {
-			// Worker no accesible
-			// Wait?
-		}
-	}
 
 	for {
-		msj := <-primes.canal
-		primes.coord.Go("Estado.NuevaEntrada", com.Workers[worker], nil, callChan)
-		client.Call()
-		primes.coord.Go("Estado.NuevaSalida", com.Workers[worker], nil, callChan)
+		callChan := make(chan *rpc.Call)
+		var acceso bool
+
+		work, err := rpc.DialHTTP("tcp", com.Workers[worker].Ip)
+
+		for err != nil {
+			primes.coord.Call("Estado.PedirWorker", worker, &acceso)
+			if acceso {
+				work, err = rpc.DialHTTP("tcp", com.Workers[worker].Host)
+			} else {
+				// Worker no accesible
+				// Wait?
+			}
+		}
+
+		for {
+			msj := <-primes.canal // Recibimos la petición del master
+			var respuesta Respuesta
+			// Enviamos al worker el trabajo
+			work.Go("PrimesImpl.FindPrimes", msj.intervalo, &respuesta.reply, callChan)
+			select {
+			case msg := <-callChan: // Recepción del mensaje a tiempo
+				if msg.Error != nil {
+					break
+				}
+			case <-time.After(MAX_TIME): // Más retraso del permitido
+				// Avisamos al coordinador que hemos terminado erróneamente
+				primes.coord.Go("Estado.NuevaSalida", com.Salida{worker, com.TPInterval{-1, -1}}, nil, callChan)
+				// Le pasamos el mensaje a otro worker
+				primes.canal <- msj
+				break
+			}
+			// Avisamos al coordinador que hemos terminado correctamente
+			primes.coord.Go("Estado.NuevaSalida", com.Salida{worker, msj.intervalo}, nil, callChan)
+			// Enviamos la respuesta al master
+			msj.resp <- respuesta
+		}
 	}
 }
 
-type Primes struct {
-	canal chan Mensaje
-	coord *rpc.Client
-}
-
-const worker = ""
-
 func (p *Primes) FindPrimes(interval com.TPInterval, primeList *[]int) error {
-	p.canal <- Mensaje{interval, primeList}
-	return nil
-}
+	resp := make(chan Respuesta)
+	callChan := make(chan *rpc.Call)
 
-const coordinador = ""
+	p.coord.Go("Estado.NuevaEntrada", interval, nil, callChan)
+
+	p.canal <- Mensaje{interval, resp} // Enviamos la petición a un worker
+	respuesta := <-resp                // Esperamos a la respuesta del worker
+	*primeList = respuesta.reply       // Devolvemos la respuesta
+
+	return respuesta.err
+}
 
 func main() {
 
@@ -88,7 +121,7 @@ func main() {
 	}
 
 	// Nos conectamos con el coordinador
-	conn, err := rpc.DialHTTP("tcp", coordinador)
+	conn, err := rpc.DialHTTP("tcp", COORDINADOR)
 
 	// Creamos un canal que pasa las tareas a las gorutines
 	primes := new(Primes)
