@@ -1,18 +1,23 @@
+/*
+* AUTORES: Jorge Lisa y David Zandundo
+* ASIGNATURA: 30221 Sistemas Distribuidos del Grado en Ingeniería Informática
+*			  Escuela de Ingeniería y Arquitectura - Universidad de Zaragoza
+* FECHA: noviembre de 2021
+* FICHERO: coordinador.go
+ */
+
 package main
 
 import (
 	"fmt"
-	"log"
 	"main/com"
 	"math"
 	"net"
 	"net/http"
 	"net/rpc"
 	"os"
+	"os/exec"
 	"sync"
-	"syscall"
-
-	"golang.org/x/term"
 )
 
 const (
@@ -25,14 +30,14 @@ const (
 	LIM_SUP_THR = 2.91
 	LIM_INF_THR = 1.49
 	THR_PEOR    = 1.49
-	ipCoord     = ""
+	ipCoord     = "localhost:30000"
 )
 
 type Estado struct {
 	// Info del estado actual del sistema
 	actual_thoughput float64 // En milisegundos
 	mutex            sync.Mutex
-	estadoWorker     []bool
+	estadoWorker     [com.POOL]bool
 	workersActivos   int
 
 	// Info del usuario para lanzar workers
@@ -44,34 +49,42 @@ type Estado struct {
 	FUNCIONES RPC
 */
 
-func (e *Estado) LanzarWorker(id int, levantado *bool) {
+func (e *Estado) LanzarWorker(id int, levantado *bool) error {
 	*levantado = false
 
 	//Creamos el ssh hacia la máquina en la que se encuentra el worker
-	ssh, err := com.NewSshClient(
-		e.user,
-		com.Workers[id].Host,
-		22,
-		RSA,
-		e.pass)
-	if err != nil {
-		log.Printf("SSH init error %v", err)
-		os.Exit(1)
-	}
+	/*
+		ssh, err := com.NewSshClient(
+			e.user,
+			com.Workers[id].Host,
+			22,
+			RSA,
+			e.pass)
+		if err != nil {
+			log.Printf("SSH init error %v", err)
+			os.Exit(1)
+		}
 
-	err = ssh.RunCommand(PATH + "worker " + com.Workers[id].Ip)
+		err = ssh.RunCommand(PATH + "worker " + com.Workers[id].Ip)
+	*/
+	fmt.Printf("LW: LANZANDO WORKER %d A TRAVÉS DE SSH\n", id)
+	cmd := exec.Command("go run ./worker_configurable " + com.Workers[id].Ip + " 0 0 0")
+	err := cmd.Run()
 
 	if err != nil {
+		fmt.Printf("LW: SSH DEL WORKER %d LANZADO CORRECTAMENTE\n", id)
 		e.mutex.Lock()
 		e.estadoWorker[id] = true
 		e.workersActivos++
 		e.mutex.Unlock()
 		*levantado = true
 	}
+	return err
 }
 
 // Se acaba de introducir un dato
-func (e *Estado) NuevaEntrada(interval com.TPInterval, noReturn interface{}) {
+func (e *Estado) NuevaEntrada(interval com.TPInterval, noReturn *interface{}) error {
+	fmt.Printf("NE: HA LLEGADO EL INTERVALO %d -> %d\n", interval.A, interval.B)
 	e.mutex.Lock()
 	e.actual_thoughput += aproxThr(interval)
 	estado := e.checkWorkers()
@@ -82,10 +95,12 @@ func (e *Estado) NuevaEntrada(interval com.TPInterval, noReturn interface{}) {
 	} else if estado == MUCHOS_WORKERS {
 		e.terminarWorker()
 	}
+	return nil
 }
 
 // Al salir se comprueba si hay que terminar algún worker
-func (e *Estado) NuevaSalida(interval com.TPInterval, noReturn interface{}) {
+func (e *Estado) NuevaSalida(interval com.TPInterval, noReturn *interface{}) error {
+	fmt.Printf("NS: HA SALIDO EL INTERVALO %d -> %d\n", interval.A, interval.B)
 	e.mutex.Lock()
 	e.actual_thoughput -= aproxThr(interval)
 	estado := e.checkWorkers()
@@ -96,27 +111,34 @@ func (e *Estado) NuevaSalida(interval com.TPInterval, noReturn interface{}) {
 	} else if estado == MUCHOS_WORKERS {
 		e.terminarWorker()
 	}
+	return nil
 }
 
 // Devuelve el estado acutal del worker
 // Preparado / No preparado para recibir tareas
-func (e *Estado) PedirWorker(id int, accesible *bool) {
+func (e *Estado) PedirWorker(id int, accesible *bool) error {
 	e.mutex.Lock()
 	*accesible = e.estadoWorker[id]
 	e.mutex.Unlock()
+	return nil
 }
 
 // retVal = worker Iniciado
-func (e *Estado) InformarWorkerCaido(id int, workIniciado *bool) {
+func (e *Estado) InformarWorkerCaido(id int, workIniciado *bool) error {
+	fmt.Printf("IWC: WORKER %d DETECTADO COMO CRASH\n", id)
 	e.mutex.Lock()
 	e.workersActivos--
 	e.mutex.Unlock()
 
 	*workIniciado = false
+	var err error = nil
 
 	if e.checkWorkers() == POCOS_WORKERS {
-		e.LanzarWorker(id, workIniciado)
+		fmt.Printf("IWC: WORKER %d LANZADO TRASH CRASH\n", id)
+		err = e.LanzarWorker(id, workIniciado)
 	}
+
+	return err
 }
 
 /*
@@ -143,8 +165,9 @@ func (e *Estado) checkWorkers() int {
 func (e *Estado) relanzarWorker() {
 	done := false
 	e.mutex.Lock()
-	for i := 0; i < com.POOL || done; i++ {
+	for i := 0; i < com.POOL && !done; i++ {
 		if !e.estadoWorker[i] {
+			fmt.Printf("RW: WORKER %d REALANZADO\n", i)
 			e.estadoWorker[i] = true
 			done = true
 		}
@@ -161,6 +184,7 @@ func (e *Estado) terminarWorker() {
 	e.mutex.Lock()
 	for i := com.POOL - 1; i >= 0 || done; i-- {
 		if e.estadoWorker[i] {
+			fmt.Printf("WORKER %d TERMINADO\n", i)
 			e.estadoWorker[i] = false
 			done = true
 		}
@@ -191,16 +215,16 @@ func checkErrorCoord(err error) {
 func main() {
 
 	e := new(Estado)
+	/*
+			fmt.Print("Introduzca el usuario: ")
+			fmt.Scanf("%s", &e.user)
 
-	fmt.Print("Introduzca el usuario: ")
-	fmt.Scanf("%s", &e.user)
+			fmt.Print("Introduzca la Contraseña: ")
+			pass, err := term.ReadPassword(int(syscall.Stdin))
+			checkErrorCoord(err)
 
-	fmt.Print("Introduzca la Contraseña: ")
-	pass, err := term.ReadPassword(int(syscall.Stdin))
-	checkErrorCoord(err)
-
-	e.pass = string(pass)
-
+		e.pass = string(pass)
+	*/
 	for i := 0; i < com.POOL; i++ {
 		e.estadoWorker[i] = false
 	}
@@ -210,8 +234,8 @@ func main() {
 	rpc.HandleHTTP()
 
 	// Inicio Escucha
-	listener, err := net.Listen("tcp", ipCoord)
-	checkErrorMaster(err)
+	listener, err := net.Listen("tcp", com.ENPOINT_COORD)
+	checkErrorCoord(err)
 	defer listener.Close()
 
 	// Sirve petiticiones

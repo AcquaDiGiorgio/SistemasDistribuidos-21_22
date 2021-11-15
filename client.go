@@ -33,7 +33,7 @@ func checkError(err error) {
 func sendRequest(endpoint string, id int, interval com.TPInterval, wg *sync.WaitGroup) {
 	defer wg.Done()
 	start := time.Now()
-	client, err := rpc.DialHTTP("tcp", endpoint)
+	client, err := rpc.DialHTTP("tcp", com.ENPOINT_MASTER)
 	if err != nil {
 		log.Fatal("dialing:", err)
 	}
@@ -49,8 +49,8 @@ func main() {
 	var tts int
 	var wg *sync.WaitGroup = new(sync.WaitGroup)
 
-	if len(os.Args) == 2 {
-		endpoint := os.Args[1]
+	if len(os.Args) == 1 {
+		endpoint := com.ENPOINT_MASTER //os.Args[1]
 		numIt := 100
 		maxIntvl := 70000
 		minIntvl := 1000
