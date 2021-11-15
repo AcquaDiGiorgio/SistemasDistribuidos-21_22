@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"main/com"
+	"math"
 	"net"
 	"net/http"
 	"net/rpc"
@@ -16,20 +17,23 @@ import (
 
 const (
 	// Estado actual del Sistema
+	SUFIC_WORKERS  = 0
 	POCOS_WORKERS  = -1
 	MUCHOS_WORKERS = 1
 
 	// Otras constantes
-	LIM_SUP_THR = 2.8
-	LIM_INF_THR = 1.4
+	LIM_SUP_THR = 2.91
+	LIM_INF_THR = 1.49
+	THR_PEOR    = 1.49
 	ipCoord     = ""
 )
 
 type Estado struct {
 	// Info del estado actual del sistema
-	actual_thoughput int
+	actual_thoughput float64 // En milisegundos
 	mutex            sync.Mutex
 	estadoWorker     []bool
+	workersActivos   int
 
 	// Info del usuario para lanzar workers
 	user string
@@ -40,7 +44,9 @@ type Estado struct {
 	FUNCIONES RPC
 */
 
-func (e *Estado) LanzarWorker(id int) {
+func (e *Estado) LanzarWorker(id int, levantado *bool) {
+	*levantado = false
+
 	//Creamos el ssh hacia la máquina en la que se encuentra el worker
 	ssh, err := com.NewSshClient(
 		e.user,
@@ -54,41 +60,42 @@ func (e *Estado) LanzarWorker(id int) {
 	}
 
 	err = ssh.RunCommand(PATH + "worker " + com.Workers[id].Ip)
-	checkErrorCoord(err)
 
-	e.mutex.Lock()
-	e.estadoWorker[id] = true
-	e.mutex.Unlock()
+	if err != nil {
+		e.mutex.Lock()
+		e.estadoWorker[id] = true
+		e.workersActivos++
+		e.mutex.Unlock()
+		*levantado = true
+	}
 }
 
 // Se acaba de introducir un dato
-func (e *Estado) NuevaEntrada(interval com.TPInterval) {
+func (e *Estado) NuevaEntrada(interval com.TPInterval, noReturn interface{}) {
 	e.mutex.Lock()
 	e.actual_thoughput += aproxThr(interval)
+	estado := e.checkWorkers()
 	e.mutex.Unlock()
+
+	if estado == POCOS_WORKERS {
+		e.relanzarWorker()
+	} else if estado == MUCHOS_WORKERS {
+		e.terminarWorker()
+	}
 }
 
 // Al salir se comprueba si hay que terminar algún worker
-func (e *Estado) NuevaSalida(interval com.TPInterval) {
+func (e *Estado) NuevaSalida(interval com.TPInterval, noReturn interface{}) {
 	e.mutex.Lock()
 	e.actual_thoughput -= aproxThr(interval)
+	estado := e.checkWorkers()
 	e.mutex.Unlock()
 
-	systemCapability := e.checkWorkers()
-
-	switch systemCapability {
-	case POCOS_WORKERS:
+	if estado == POCOS_WORKERS {
 		e.relanzarWorker()
-		break
-
-	case MUCHOS_WORKERS:
+	} else if estado == MUCHOS_WORKERS {
 		e.terminarWorker()
-		break
-
-	default:
-		break
 	}
-
 }
 
 // Devuelve el estado acutal del worker
@@ -101,20 +108,14 @@ func (e *Estado) PedirWorker(id int, accesible *bool) {
 
 // retVal = worker Iniciado
 func (e *Estado) InformarWorkerCaido(id int, workIniciado *bool) {
+	e.mutex.Lock()
+	e.workersActivos--
+	e.mutex.Unlock()
 
-	systemCapability := e.checkWorkers()
-	switch systemCapability {
+	*workIniciado = false
 
-	// Si hay pocos workers lo lanzamos
-	case POCOS_WORKERS:
-		e.LanzarWorker(id)
-		*workIniciado = true
-		break
-
-	// Si hay muchos o suficientes workers no lo lanzamos
-	default:
-		*workIniciado = false
-		break
+	if e.checkWorkers() == POCOS_WORKERS {
+		e.LanzarWorker(id, workIniciado)
 	}
 }
 
@@ -126,9 +127,16 @@ func (e *Estado) InformarWorkerCaido(id int, workIniciado *bool) {
 // Si hay más workers de los necesarios, devuelve MUCHOS_WORKERS
 // Si hay menos workers de los necesarios, devuelve POCOS_WORKERS
 func (e *Estado) checkWorkers() int {
-	var estadoWorkers int
-	// Calculo del estado
-	return estadoWorkers
+	retVal := SUFIC_WORKERS
+	// Si no podemos meter una tarea de máximo coste introducimos un worker
+	if e.actual_thoughput+THR_PEOR > float64(e.workersActivos)*THR_PEOR {
+		retVal = POCOS_WORKERS
+
+		// Si podemos meter +2 tareas de máximo coste terminamos un worker
+	} else if e.actual_thoughput+2*THR_PEOR < float64(e.workersActivos)*THR_PEOR {
+		retVal = MUCHOS_WORKERS
+	}
+	return retVal
 }
 
 // Relanzamos el worker con menor id
@@ -140,6 +148,9 @@ func (e *Estado) relanzarWorker() {
 			e.estadoWorker[i] = true
 			done = true
 		}
+	}
+	if done {
+		e.workersActivos++
 	}
 	e.mutex.Unlock()
 }
@@ -154,13 +165,20 @@ func (e *Estado) terminarWorker() {
 			done = true
 		}
 	}
+	if done {
+		e.workersActivos--
+	}
 	e.mutex.Unlock()
 }
 
-func aproxThr(interval com.TPInterval) int {
-	var calc int
-	// Calculo aproximado del coste
-	return calc
+func aproxThr(interval com.TPInterval) float64 {
+
+	retVal := 0.0
+	for j := interval.A; j <= interval.B; j += 1000 {
+		retVal += 0.00164 * math.Pow(float64(j), 0.9055)
+	}
+
+	return retVal
 }
 
 func checkErrorCoord(err error) {

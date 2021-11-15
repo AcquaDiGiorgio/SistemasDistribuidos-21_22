@@ -18,9 +18,19 @@ func pedir(id int, client *rpc.Client, wg *sync.WaitGroup) {
 	wg.Done()
 }
 
+func isPrime(n int) (foundDivisor bool) {
+	foundDivisor = false
+
+	for i := 2; (i < n) && !foundDivisor; i++ {
+		foundDivisor = (n%i == 0)
+	}
+	return !foundDivisor
+}
+
 // Comprobación de si RPC es secuencial en servidor
 // Respuesta: No lo es, es concurrente
 func main() {
+
 	client, err := rpc.DialHTTP("tcp", to)
 
 	if err != nil {
@@ -34,4 +44,5 @@ func main() {
 		go pedir(i, client, wg)
 	}
 	wg.Wait()
+
 }

@@ -27,7 +27,7 @@ const (
 	CONN_TYPE   = "tcp"
 	CONN_HOST   = "155.210.154.200"
 	COORDINADOR = ""
-	MAX_TIME    = time.Duration(1 * time.Second)
+	MAX_TIME    = time.Duration(5 * time.Second)
 )
 
 //Struct usado para realizar el envío de mensajes por canal.
@@ -54,6 +54,35 @@ func checkErrorMaster(err error) {
 	}
 }
 
+func trabajar(worker int, primes *Primes, work *rpc.Client, callChan chan *rpc.Call) {
+	for {
+		msj := <-primes.canal // Recibimos la petición del master
+		var respuesta Respuesta
+		// Enviamos al worker el trabajo
+		work.Go("PrimesImpl.FindPrimes", msj.intervalo, &respuesta.reply, callChan)
+		select {
+		case msg := <-callChan: // Recepción del mensaje a tiempo
+			respuesta.err = msg.Error
+			if msg.Error != nil {
+				// Avisamos al coordinador que hemos terminado correctamente
+				primes.coord.Go("Estado.NuevaSalida", com.Salida{worker, msj.intervalo}, nil, callChan)
+				// Enviamos la respuesta al master
+				msj.resp <- respuesta
+			} else {
+				msj.resp <- respuesta
+				return
+			}
+
+			msj.resp <- respuesta
+		case <-time.After(MAX_TIME): // Más retraso del permitido
+			// Le pasamos el mensaje a otro worker
+			primes.canal <- msj
+			time.Sleep(1 * time.Second)
+			break
+		}
+	}
+}
+
 //Gorutina capaz de lanzar por ssh un worker y esperar a que entre por el canal de mensajes
 //una petición del cliente
 //Esta función recibe el host del worker, su ip, el usuario que hace el ssh y su contraseña
@@ -70,33 +99,11 @@ func workerLanzar(worker int, primes *Primes) {
 			if acceso {
 				work, err = rpc.DialHTTP("tcp", com.Workers[worker].Host)
 			} else {
-				// Worker no accesible
-				// Wait?
+				time.Sleep(3 * time.Second)
 			}
 		}
 
-		for {
-			msj := <-primes.canal // Recibimos la petición del master
-			var respuesta Respuesta
-			// Enviamos al worker el trabajo
-			work.Go("PrimesImpl.FindPrimes", msj.intervalo, &respuesta.reply, callChan)
-			select {
-			case msg := <-callChan: // Recepción del mensaje a tiempo
-				if msg.Error != nil {
-					break
-				}
-			case <-time.After(MAX_TIME): // Más retraso del permitido
-				// Avisamos al coordinador que hemos terminado erróneamente
-				primes.coord.Go("Estado.NuevaSalida", com.Salida{worker, com.TPInterval{-1, -1}}, nil, callChan)
-				// Le pasamos el mensaje a otro worker
-				primes.canal <- msj
-				break
-			}
-			// Avisamos al coordinador que hemos terminado correctamente
-			primes.coord.Go("Estado.NuevaSalida", com.Salida{worker, msj.intervalo}, nil, callChan)
-			// Enviamos la respuesta al master
-			msj.resp <- respuesta
-		}
+		trabajar(worker, primes, work, callChan)
 	}
 }
 
@@ -108,8 +115,9 @@ func (p *Primes) FindPrimes(interval com.TPInterval, primeList *[]int) error {
 
 	p.canal <- Mensaje{interval, resp} // Enviamos la petición a un worker
 	respuesta := <-resp                // Esperamos a la respuesta del worker
-	*primeList = respuesta.reply       // Devolvemos la respuesta
-
+	if respuesta.err != nil {
+		*primeList = respuesta.reply // Devolvemos la respuesta
+	}
 	return respuesta.err
 }
 
