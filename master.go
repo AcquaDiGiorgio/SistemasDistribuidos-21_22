@@ -94,12 +94,17 @@ func workerLanzar(worker int, primes *Primes) {
 
 		for !accesoPermitido {
 			for !accesoPermitido {
+				fmt.Printf("Pido acceso al Worker %d\n", worker)
 				primes.coord.Call("Estado.PedirWorker", worker, &accesoPermitido)
+				fmt.Println("Puedo acceder?", accesoPermitido)
 				time.Sleep(3 * time.Second)
 			}
+			fmt.Printf("Hago Dial al Worker %d\n", worker)
 			work, err = rpc.DialHTTP("tcp", com.Workers[worker].Ip)
 			if err != nil {
+				fmt.Printf("Informo que el Worker %d está caído\n", worker)
 				primes.coord.Call("Estado.InformarWorkerCaido", worker, &accesoPermitido)
+				fmt.Println("Tras caer, puedo?", accesoPermitido)
 			}
 		}
 
@@ -138,10 +143,10 @@ func main() {
 	primes.coord = conn
 
 	var errSSH bool
-	callChan := make(chan *rpc.Call, 10)
 	// Llama por ssh a los workers y los prepara para escuchar
 	for i := 0; i < com.POOL; i++ {
-		primes.coord.Go("Estado.LanzarWorker", i, errSSH, callChan)
+		primes.coord.Call("Estado.LanzarWorker", i, &errSSH)
+		fmt.Println(errSSH)
 		go workerLanzar(i, primes)
 	}
 

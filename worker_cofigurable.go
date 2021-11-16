@@ -72,6 +72,7 @@ func findPrimes(interval com.TPInterval) (primes []int) {
 // POST: FindPrimes devuelve todos los números primos comprendidos en el
 // 		intervalo [interval.A, interval.B]
 func (p *PrimesImpl) FindPrimes(interval com.TPInterval, primeList *[]int) error {
+	fmt.Println("Cock and Ball Torture")
 	p.mutex.Lock()
 	if p.i%p.behaviourPeriod == 0 {
 		p.behaviourPeriod = rand.Intn(20-2) + 2
@@ -114,7 +115,7 @@ func (p *PrimesImpl) FindPrimes(interval com.TPInterval, primeList *[]int) error
 
 func main() {
 	// args: [ip, can_crash(0|1), can_ommit(0|1), can_delay(0|1)]
-	if len(os.Args) == 2 {
+	if len(os.Args) == 5 {
 		time.Sleep(10 * time.Second)
 		rand.Seed(time.Now().UnixNano())
 		primesImpl := new(PrimesImpl)

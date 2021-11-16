@@ -30,6 +30,7 @@ const (
 	ENPOINT_MASTER = "localhost:2230"
 )
 
+/*
 var Workers = [POOL]Worker{
 	{"", "localhost:2222"},
 	{"", "localhost:2223"},
@@ -37,8 +38,8 @@ var Workers = [POOL]Worker{
 	{"", "localhost:2225"},
 	{"", "localhost:2226"},
 	{"", "localhost:2227"}}
+*/
 
-/*
 var Workers = [POOL]Worker{
 	{"lab102-200.cps.unizar.es", "155.210.154.200:30000"},
 	{"lab102-200.cps.unizar.es", "155.210.154.200:30001"},
@@ -46,4 +47,4 @@ var Workers = [POOL]Worker{
 	{"lab102-200.cps.unizar.es", "155.210.154.200:30003"},
 	{"lab102-200.cps.unizar.es", "155.210.154.200:30004"},
 	{"lab102-199.cps.unizar.es", "155.210.154.200:30000"}}
-*/
+*

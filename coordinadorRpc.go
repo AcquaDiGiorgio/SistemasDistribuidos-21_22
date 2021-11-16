@@ -16,7 +16,6 @@ import (
 	"net/http"
 	"net/rpc"
 	"os"
-	"os/exec"
 	"sync"
 )
 
@@ -27,9 +26,8 @@ const (
 	MUCHOS_WORKERS = 1
 
 	// Otras constantes
-	LIM_SUP_THR = 2.91
-	LIM_INF_THR = 1.49
-	THR_PEOR    = 1.49
+	LIM_SUP_THR = 2910 // Doble del caso peor
+	THR_PEOR    = 1490 // Caso peor
 	ipCoord     = "localhost:30000"
 )
 
@@ -50,43 +48,41 @@ type Estado struct {
 */
 
 func (e *Estado) LanzarWorker(id int, levantado *bool) error {
-	*levantado = false
 
 	//Creamos el ssh hacia la máquina en la que se encuentra el worker
-	/*
-		ssh, err := com.NewSshClient(
-			e.user,
-			com.Workers[id].Host,
-			22,
-			RSA,
-			e.pass)
-		if err != nil {
-			log.Printf("SSH init error %v", err)
-			os.Exit(1)
-		}
-
-		err = ssh.RunCommand(PATH + "worker " + com.Workers[id].Ip)
-	*/
 	fmt.Printf("LW: LANZANDO WORKER %d A TRAVÉS DE SSH\n", id)
-	cmd := exec.Command("go run ./worker_configurable " + com.Workers[id].Ip + " 0 0 0")
-	err := cmd.Run()
+
+	ssh, err := com.NewSshClient(
+		e.user,
+		com.Workers[id].Host,
+		22,
+		RSA,
+		e.pass)
+	if err != nil {
+		*levantado = false
+		return err
+	}
+
+	err = ssh.RunCommand(PATH + "worker " + com.Workers[id].Ip)
 
 	if err != nil {
-		fmt.Printf("LW: SSH DEL WORKER %d LANZADO CORRECTAMENTE\n", id)
 		e.mutex.Lock()
 		e.estadoWorker[id] = true
 		e.workersActivos++
 		e.mutex.Unlock()
-		*levantado = true
+		fmt.Printf("LW: SSH DEL WORKER %d LANZADO CORRECTAMENTE\n", id)
+		fmt.Println(e.estadoWorker[id])
 	}
-	return err
+	*levantado = e.estadoWorker[id]
+	return nil // cambiar a err
 }
 
 // Se acaba de introducir un dato
 func (e *Estado) NuevaEntrada(interval com.TPInterval, noReturn *interface{}) error {
-	fmt.Printf("NE: HA LLEGADO EL INTERVALO %d -> %d\n", interval.A, interval.B)
 	e.mutex.Lock()
+	fmt.Printf("NE: HA LLEGADO EL INTERVALO %d -> %d\n", interval.A, interval.B)
 	e.actual_thoughput += aproxThr(interval)
+	fmt.Printf("NE: ACTUAL THR %f\n", e.actual_thoughput)
 	estado := e.checkWorkers()
 	e.mutex.Unlock()
 
@@ -119,6 +115,7 @@ func (e *Estado) NuevaSalida(interval com.TPInterval, noReturn *interface{}) err
 func (e *Estado) PedirWorker(id int, accesible *bool) error {
 	e.mutex.Lock()
 	*accesible = e.estadoWorker[id]
+	fmt.Println(e.estadoWorker[id])
 	e.mutex.Unlock()
 	return nil
 }
