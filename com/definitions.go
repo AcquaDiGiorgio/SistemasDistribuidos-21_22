@@ -25,7 +25,7 @@ type Worker struct {
 }
 
 const (
-	POOL           = 3
+	POOL           = 4
 	ENPOINT_MASTER = "155.210.154.192:30001"
 	ENPOINT_COORD  = "155.210.154.195:30000"
 )

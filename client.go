@@ -42,7 +42,7 @@ func sendRequest(endpoint string, id int, interval com.TPInterval, wg *sync.Wait
 	if err != nil {
 		log.Fatal("primes error:", err)
 	}
-	fmt.Println(id, " ", time.Since(start))
+	fmt.Println(id, " ", time.Since(start).Milliseconds())
 }
 
 func main() {

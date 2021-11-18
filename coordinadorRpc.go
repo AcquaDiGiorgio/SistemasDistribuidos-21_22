@@ -8,18 +8,15 @@
 
 package main
 
-/*
 import (
 	"fmt"
 	"main/com"
+	"math"
 	"net"
 	"net/http"
 	"net/rpc"
 	"os"
 	"sync"
-	"syscall"
-
-	"golang.org/x/term"
 )
 
 const (
@@ -47,14 +44,9 @@ type Estado struct {
 	pass string
 }
 
-
 // FUNCIONES RPC
 
-
 func (e *Estado) LanzarWorker(id int, levantado *bool) error {
-
-	//Creamos el ssh hacia la máquina en la que se encuentra el worker
-	fmt.Printf("LW: LANZANDO WORKER %d A TRAVÉS DE SSH\n", id)
 
 	ssh, err := com.NewSshClient(
 		e.user,
@@ -74,7 +66,6 @@ func (e *Estado) LanzarWorker(id int, levantado *bool) error {
 		e.estadoWorker[id] = true
 		e.workersActivos++
 		e.mutex.Unlock()
-		fmt.Printf("LW: SSH DEL WORKER %d LANZADO CORRECTAMENTE\n", id)
 		fmt.Println(e.estadoWorker[id])
 	}
 	*levantado = e.estadoWorker[id]
@@ -84,9 +75,7 @@ func (e *Estado) LanzarWorker(id int, levantado *bool) error {
 // Se acaba de introducir un dato
 func (e *Estado) NuevaEntrada(interval com.TPInterval, noReturn *interface{}) error {
 	e.mutex.Lock()
-	fmt.Printf("NE: HA LLEGADO EL INTERVALO %d -> %d\n", interval.A, interval.B)
 	e.actual_thoughput += aproxThr(interval)
-	fmt.Printf("NE: ACTUAL THR %f\n", e.actual_thoughput)
 	estado := e.checkWorkers()
 	e.mutex.Unlock()
 
@@ -100,7 +89,6 @@ func (e *Estado) NuevaEntrada(interval com.TPInterval, noReturn *interface{}) er
 
 // Al salir se comprueba si hay que terminar algún worker
 func (e *Estado) NuevaSalida(interval com.TPInterval, noReturn *interface{}) error {
-	fmt.Printf("NS: HA SALIDO EL INTERVALO %d -> %d\n", interval.A, interval.B)
 	e.mutex.Lock()
 	e.actual_thoughput -= aproxThr(interval)
 	estado := e.checkWorkers()
@@ -126,7 +114,6 @@ func (e *Estado) PedirWorker(id int, accesible *bool) error {
 
 // retVal = worker Iniciado
 func (e *Estado) InformarWorkerCaido(id int, workIniciado *bool) error {
-	fmt.Printf("IWC: WORKER %d DETECTADO COMO CRASH\n", id)
 	e.mutex.Lock()
 	e.workersActivos--
 	e.mutex.Unlock()
@@ -135,16 +122,13 @@ func (e *Estado) InformarWorkerCaido(id int, workIniciado *bool) error {
 	var err error = nil
 
 	if e.checkWorkers() == POCOS_WORKERS {
-		fmt.Printf("IWC: WORKER %d LANZADO TRASH CRASH\n", id)
 		err = e.LanzarWorker(id, workIniciado)
 	}
 
 	return err
 }
 
-
 //FUNCIONES INTERNAS
-
 
 // Checkeamos el estado actual del sistema
 // Si hay más workers de los necesarios, devuelve MUCHOS_WORKERS
@@ -168,7 +152,6 @@ func (e *Estado) relanzarWorker() {
 	e.mutex.Lock()
 	for i := 0; i < com.POOL && !done; i++ {
 		if !e.estadoWorker[i] {
-			fmt.Printf("RW: WORKER %d REALANZADO\n", i)
 			e.estadoWorker[i] = true
 			done = true
 		}
@@ -196,7 +179,6 @@ func (e *Estado) terminarWorker() {
 	e.mutex.Unlock()
 }
 
-
 func aproxThr(interval com.TPInterval) float64 {
 
 	retVal := 0.0
@@ -206,7 +188,6 @@ func aproxThr(interval com.TPInterval) float64 {
 
 	return retVal
 }
-
 
 func checkErrorCoord(err error) {
 	if err != nil {
@@ -218,8 +199,6 @@ func checkErrorCoord(err error) {
 func main() {
 
 	e := new(Estado)
-
-
 
 	for i := 0; i < com.POOL; i++ {
 		e.estadoWorker[i] = false
@@ -237,4 +216,3 @@ func main() {
 	// Sirve petiticiones
 	http.Serve(listener, nil)
 }
-*/

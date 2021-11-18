@@ -57,7 +57,6 @@ func checkError(err error) {
 func (p *Primes) lanzarWorker(id int) error {
 
 	//Creamos el ssh hacia la máquina en la que se encuentra el worker
-	fmt.Printf("LANZANDO WORKER %d A TRAVÉS DE SSH\n", id) // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 	ssh, err := com.NewSshClient(
 		p.user,
@@ -67,8 +66,7 @@ func (p *Primes) lanzarWorker(id int) error {
 		p.pass)
 
 	if err == nil {
-		fmt.Printf("WORKER %d LANZANDO CORRECTAMENTE\n", id)
-		err = ssh.RunCommand(PATH + "worker_configurable " + com.Workers[id].Ip + " 0 0 0")
+		err = ssh.RunCommand(PATH + "worker " + com.Workers[id].Ip)
 	}
 
 	return err
@@ -80,19 +78,22 @@ func trabajar(id int, primes *Primes, worker *rpc.Client) { // ELIMINAR ID
 		msj := <-primes.canal              // Recibimos la petición del master
 		aprxDur := aproxThr(msj.intervalo) // Calculamos el coste aproximado
 
-		fmt.Printf("INTERVALO %d -> %d RECIBIDO POR EL WORKER %d\n", msj.intervalo.A, msj.intervalo.B, id) // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-
 		var respuesta Respuesta
 
 		worker.Go("PrimesImpl.FindPrimes", msj.intervalo, &respuesta.reply, callChan) // Enviamos al worker el trabajo
 
 		select {
-		case msg := <-callChan: // Recepción del mensaje a tiempo
-			respuesta.err = msg.Error
-			msj.resp <- respuesta
-			if msg.Error != nil { // CRASH
-				// Terminamos de Trabajar
+		case mensajeWorker := <-callChan: // Recepción del mensaje a tiempo
+			respuesta.err = mensajeWorker.Error
+
+			if mensajeWorker.Error != nil { // CRASH
+				primes.canal <- msj
+				primes.lanzarWorker(id)
+				time.Sleep(10 * time.Second)
 				return
+
+			} else {
+				msj.resp <- respuesta
 			}
 			break
 
@@ -115,23 +116,21 @@ func ejecutarWorker(id int, primes *Primes) {
 			continue
 		}
 
-		fmt.Printf("WORKER %d EN MARCHA\n", id) // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 		trabajar(id, primes, worker)
 	}
 }
 
 // Función RPC que conecta el cliente y el worker
 func (p *Primes) FindPrimes(interval com.TPInterval, primeList *[]int) error {
-	fmt.Printf("RECIBIDO INTERVALO %d -> %d DEL CLIENTE\n", interval.A, interval.B) // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 	resp := make(chan Respuesta)
 
-	p.canal <- Mensaje{interval, resp}         // Enviamos la petición a un worker
-	respuesta := <-resp                        // Esperamos a la respuesta del worker
-	fmt.Printf("RECIBO RESPUESTA DEL CANAL\n") // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+	p.canal <- Mensaje{interval, resp} // Enviamos la petición a un worker
+	respuesta := <-resp                // Esperamos a la respuesta del worker
 
 	if respuesta.err != nil {
 		*primeList = respuesta.reply // Devolvemos la respuesta
 	}
+
 	return respuesta.err
 }
 
@@ -157,6 +156,7 @@ func main() {
 	fmt.Print("Introduzca la Contraseña: ")
 	pass, err := term.ReadPassword(int(syscall.Stdin))
 	checkError(err)
+	fmt.Println()
 
 	primes.pass = string(pass)
 
