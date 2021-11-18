@@ -74,7 +74,8 @@ func (p *Primes) lanzarWorker(id int) error {
 	return err
 }
 
-func trabajar(id int, primes *Primes, worker *rpc.Client, callChan chan *rpc.Call) {
+func trabajar(id int, primes *Primes, worker *rpc.Client) { // ELIMINAR ID
+	callChan := make(chan *rpc.Call, 10)
 	for {
 		msj := <-primes.canal              // Recibimos la petición del master
 		aprxDur := aproxThr(msj.intervalo) // Calculamos el coste aproximado
@@ -107,18 +108,15 @@ func trabajar(id int, primes *Primes, worker *rpc.Client, callChan chan *rpc.Cal
 //Gorutina capaz de lanzar por ssh un worker y esperar a que entre por el canal de mensajes
 //una petición del cliente
 //Esta función recibe el host del worker, su ip, el usuario que hace el ssh y su contraseña
-func ejecutarWorker(worker int, primes *Primes) {
+func ejecutarWorker(id int, primes *Primes) {
 	for {
-		callChan := make(chan *rpc.Call, 10)
-		var work *rpc.Client
-
-		work, err := rpc.DialHTTP("tcp", com.Workers[worker].Ip)
+		worker, err := rpc.DialHTTP("tcp", com.Workers[id].Ip)
 		if err != nil {
 			continue
 		}
 
-		fmt.Printf("WORKER %d EN MARCHA\n", worker) // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-		trabajar(worker, primes, work, callChan)
+		fmt.Printf("WORKER %d EN MARCHA\n", id) // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+		trabajar(id, primes, worker)
 	}
 }
 
@@ -164,10 +162,11 @@ func main() {
 
 	// Llama por ssh a los workers y los prepara para escuchar
 	for i := 0; i < com.POOL; i++ {
-		primes.lanzarWorker(i)
+		checkError(primes.lanzarWorker(i))
+	}
+	for i := 0; i < com.POOL; i++ {
 		go ejecutarWorker(i, primes)
 	}
-
 	// Registro y Creación del RPC
 	rpc.Register(primes)
 	rpc.HandleHTTP()

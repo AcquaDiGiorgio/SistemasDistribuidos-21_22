@@ -86,19 +86,6 @@ func (p *PrimesImpl) FindPrimes(interval com.TPInterval, primeList *[]int) error
 			p.behaviour = NORMAL
 		}
 		p.i = 0
-
-		fmt.Println()
-		switch p.behaviour {
-		case 0:
-			fmt.Println("NORMAL")
-		case 1:
-			fmt.Println("DELAY")
-		case 2:
-			fmt.Println("CRASH")
-		case 3:
-			fmt.Println("OMISSION")
-		}
-		fmt.Println("----------------")
 	}
 	p.i++
 	p.mutex.Unlock()
@@ -109,20 +96,16 @@ func (p *PrimesImpl) FindPrimes(interval com.TPInterval, primeList *[]int) error
 		//time.Sleep(time.Duration(seconds) * time.Millisecond)
 		*primeList = findPrimes(interval)
 	case CRASH:
-		fmt.Println("PETO")
 		//os.Exit(1)
 	case OMISSION:
 		option := rand.Intn(100)
 		if option > 65 {
-			fmt.Println("10s")
 			//time.Sleep(time.Duration(10000) * time.Second)
 			*primeList = findPrimes(interval)
 		} else {
-			fmt.Println("Instant")
 			*primeList = findPrimes(interval)
 		}
 	case NORMAL:
-		fmt.Println("Actuo")
 		*primeList = findPrimes(interval)
 	default:
 		*primeList = findPrimes(interval)
