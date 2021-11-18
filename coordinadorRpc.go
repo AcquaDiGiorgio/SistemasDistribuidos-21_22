@@ -8,15 +8,18 @@
 
 package main
 
+/*
 import (
 	"fmt"
 	"main/com"
-	"math"
 	"net"
 	"net/http"
 	"net/rpc"
 	"os"
 	"sync"
+	"syscall"
+
+	"golang.org/x/term"
 )
 
 const (
@@ -28,7 +31,8 @@ const (
 	// Otras constantes
 	LIM_SUP_THR = 2910 // Doble del caso peor
 	THR_PEOR    = 1490 // Caso peor
-	ipCoord     = "localhost:30000"
+	PATH        = "/home/a774248/SSDD/Practica3/"
+	RSA         = "/home/a774248/.ssh/id_rsa"
 )
 
 type Estado struct {
@@ -43,9 +47,9 @@ type Estado struct {
 	pass string
 }
 
-/*
-	FUNCIONES RPC
-*/
+
+// FUNCIONES RPC
+
 
 func (e *Estado) LanzarWorker(id int, levantado *bool) error {
 
@@ -138,9 +142,9 @@ func (e *Estado) InformarWorkerCaido(id int, workIniciado *bool) error {
 	return err
 }
 
-/*
-	FUNCIONES INTERNAS
-*/
+
+//FUNCIONES INTERNAS
+
 
 // Checkeamos el estado actual del sistema
 // Si hay más workers de los necesarios, devuelve MUCHOS_WORKERS
@@ -192,6 +196,7 @@ func (e *Estado) terminarWorker() {
 	e.mutex.Unlock()
 }
 
+
 func aproxThr(interval com.TPInterval) float64 {
 
 	retVal := 0.0
@@ -201,6 +206,7 @@ func aproxThr(interval com.TPInterval) float64 {
 
 	return retVal
 }
+
 
 func checkErrorCoord(err error) {
 	if err != nil {
@@ -212,16 +218,9 @@ func checkErrorCoord(err error) {
 func main() {
 
 	e := new(Estado)
-	/*
-			fmt.Print("Introduzca el usuario: ")
-			fmt.Scanf("%s", &e.user)
 
-			fmt.Print("Introduzca la Contraseña: ")
-			pass, err := term.ReadPassword(int(syscall.Stdin))
-			checkErrorCoord(err)
 
-		e.pass = string(pass)
-	*/
+
 	for i := 0; i < com.POOL; i++ {
 		e.estadoWorker[i] = false
 	}
@@ -238,3 +237,4 @@ func main() {
 	// Sirve petiticiones
 	http.Serve(listener, nil)
 }
+*/

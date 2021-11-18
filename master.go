@@ -10,20 +10,23 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"net"
 	"net/http"
 	"net/rpc"
 	"os"
+	"syscall"
 	"time"
 
 	"main/com"
+
+	"golang.org/x/term"
 )
 
 const (
-	PATH      = "/home/a774248/SSDD/Practica1/"
-	RSA       = "/home/a774248/.ssh/id_rsa"
-	CONN_TYPE = "tcp"
-	MAX_TIME  = time.Duration(5 * time.Second)
+	MAX_TIME = time.Duration(2921 * time.Millisecond)
+	PATH     = "/home/a774248/SSDD/Practica3/"
+	RSA      = "/home/a774248/.ssh/id_rsa"
 )
 
 //Struct usado para realizar el envío de mensajes por canal.
@@ -40,42 +43,62 @@ type Mensaje struct {
 
 type Primes struct {
 	canal chan Mensaje
-	coord *rpc.Client
+	user  string
+	pass  string
 }
 
-func checkErrorMaster(err error) {
+func checkError(err error) {
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Fatal error: %s", err.Error())
 		os.Exit(1)
 	}
 }
 
+func (p *Primes) lanzarWorker(id int) error {
+
+	//Creamos el ssh hacia la máquina en la que se encuentra el worker
+	fmt.Printf("LANZANDO WORKER %d A TRAVÉS DE SSH\n", id) // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+	ssh, err := com.NewSshClient(
+		p.user,
+		com.Workers[id].Host,
+		22,
+		RSA,
+		p.pass)
+
+	if err == nil {
+		fmt.Printf("WORKER %d LANZANDO CORRECTAMENTE\n", id)
+		err = ssh.RunCommand(PATH + "worker_configurable " + com.Workers[id].Ip + " 0 0 0")
+	}
+
+	return err
+}
+
 func trabajar(id int, primes *Primes, worker *rpc.Client, callChan chan *rpc.Call) {
 	for {
-		msj := <-primes.canal // Recibimos la petición del master
-		fmt.Printf("INTERVALO %d -> %d RECIBIDO POR EL WORKER %d\n", msj.intervalo.A, msj.intervalo.B, id)
+		msj := <-primes.canal              // Recibimos la petición del master
+		aprxDur := aproxThr(msj.intervalo) // Calculamos el coste aproximado
+
+		fmt.Printf("INTERVALO %d -> %d RECIBIDO POR EL WORKER %d\n", msj.intervalo.A, msj.intervalo.B, id) // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 		var respuesta Respuesta
-		// Enviamos al worker el trabajo
-		worker.Go("PrimesImpl.FindPrimes", msj.intervalo, &respuesta.reply, callChan) //NIL POINTER DEREFERENCE
+
+		worker.Go("PrimesImpl.FindPrimes", msj.intervalo, &respuesta.reply, callChan) // Enviamos al worker el trabajo
+
 		select {
 		case msg := <-callChan: // Recepción del mensaje a tiempo
 			respuesta.err = msg.Error
-			if msg.Error != nil {
-				// Avisamos al coordinador que hemos terminado correctamente
-				primes.coord.Go("Estado.NuevaSalida", msj.intervalo, nil, callChan)
-				// Enviamos la respuesta al master
-				msj.resp <- respuesta
-			} else {
-				msj.resp <- respuesta
+			msj.resp <- respuesta
+			if msg.Error != nil { // CRASH
+				// Terminamos de Trabajar
 				return
 			}
+			break
 
-			msj.resp <- respuesta
-		case <-time.After(MAX_TIME): // Más retraso del permitido
-			// Le pasamos el mensaje a otro worker
+		case <-time.After(MAX_TIME + aprxDur): // Más retraso del permitido
+			// Le pasamos el mensaje a otro worker y esperamos 0.250s
 			primes.canal <- msj
-			time.Sleep(1 * time.Second)
+			time.Sleep(250 * time.Millisecond)
 			break
 		}
 	}
@@ -84,70 +107,65 @@ func trabajar(id int, primes *Primes, worker *rpc.Client, callChan chan *rpc.Cal
 //Gorutina capaz de lanzar por ssh un worker y esperar a que entre por el canal de mensajes
 //una petición del cliente
 //Esta función recibe el host del worker, su ip, el usuario que hace el ssh y su contraseña
-func workerLanzar(worker int, primes *Primes) {
-
+func ejecutarWorker(worker int, primes *Primes) {
 	for {
 		callChan := make(chan *rpc.Call, 10)
-		var accesoPermitido bool = false
 		var work *rpc.Client
-		var err error
 
-		for !accesoPermitido {
-			for !accesoPermitido {
-				fmt.Printf("Pido acceso al Worker %d\n", worker)
-				primes.coord.Call("Estado.PedirWorker", worker, &accesoPermitido)
-				fmt.Println("Puedo acceder?", accesoPermitido)
-				time.Sleep(3 * time.Second)
-			}
-			fmt.Printf("Hago Dial al Worker %d\n", worker)
-			work, err = rpc.DialHTTP("tcp", com.Workers[worker].Ip)
-			if err != nil {
-				fmt.Printf("Informo que el Worker %d está caído\n", worker)
-				primes.coord.Call("Estado.InformarWorkerCaido", worker, &accesoPermitido)
-				fmt.Println("Tras caer, puedo?", accesoPermitido)
-			}
+		work, err := rpc.DialHTTP("tcp", com.Workers[worker].Ip)
+		if err != nil {
+			continue
 		}
 
-		fmt.Printf("WORKER %d EN MARCHA\n", worker)
+		fmt.Printf("WORKER %d EN MARCHA\n", worker) // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 		trabajar(worker, primes, work, callChan)
 	}
 }
 
+// Función RPC que conecta el cliente y el worker
 func (p *Primes) FindPrimes(interval com.TPInterval, primeList *[]int) error {
-	fmt.Printf("RECIBIDO INTERVALO %d -> %d DEL CLIENTE\n", interval.A, interval.B)
-
+	fmt.Printf("RECIBIDO INTERVALO %d -> %d DEL CLIENTE\n", interval.A, interval.B) // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 	resp := make(chan Respuesta)
-	callChan := make(chan *rpc.Call, 10)
 
-	p.coord.Go("Estado.NuevaEntrada", interval, nil, callChan)
+	p.canal <- Mensaje{interval, resp}         // Enviamos la petición a un worker
+	respuesta := <-resp                        // Esperamos a la respuesta del worker
+	fmt.Printf("RECIBO RESPUESTA DEL CANAL\n") // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
-	fmt.Printf("ENVÍO EL INTERVALO %d -> %d AL CANAL\n", interval.A, interval.B)
-	p.canal <- Mensaje{interval, resp} // Enviamos la petición a un worker
-	respuesta := <-resp                // Esperamos a la respuesta del worker
-	fmt.Printf("RECIBO RESPUESTA DEL CANAL\n")
 	if respuesta.err != nil {
 		*primeList = respuesta.reply // Devolvemos la respuesta
 	}
 	return respuesta.err
 }
 
-func main() {
+func aproxThr(interval com.TPInterval) time.Duration {
 
-	// Nos conectamos con el coordinador
-	conn, err := rpc.DialHTTP("tcp", com.ENPOINT_COORD)
-	checkErrorMaster(err)
+	retVal := 0.0
+	for j := interval.A; j <= interval.B; j += 1000 {
+		retVal += 0.00164 * math.Pow(float64(j), 0.9055)
+	}
+
+	return time.Duration(int(retVal) * int(time.Millisecond))
+}
+
+func main() {
 
 	// Creamos un canal que pasa las tareas a las gorutines
 	primes := new(Primes)
 	primes.canal = make(chan Mensaje)
-	primes.coord = conn
 
-	var errSSH bool
+	fmt.Print("Introduzca el usuario: ")
+	fmt.Scanf("%s", &primes.user)
+
+	fmt.Print("Introduzca la Contraseña: ")
+	pass, err := term.ReadPassword(int(syscall.Stdin))
+	checkError(err)
+
+	primes.pass = string(pass)
+
 	// Llama por ssh a los workers y los prepara para escuchar
 	for i := 0; i < com.POOL; i++ {
-		primes.coord.Call("Estado.LanzarWorker", i, &errSSH)
-		fmt.Println(errSSH)
-		go workerLanzar(i, primes)
+		primes.lanzarWorker(i)
+		go ejecutarWorker(i, primes)
 	}
 
 	// Registro y Creación del RPC
@@ -155,8 +173,8 @@ func main() {
 	rpc.HandleHTTP()
 
 	// Inicio Escucha
-	listener, err := net.Listen(CONN_TYPE, com.ENPOINT_MASTER)
-	checkErrorMaster(err)
+	listener, err := net.Listen("tcp", com.ENPOINT_MASTER)
+	checkError(err)
 	defer listener.Close()
 
 	// Sirve petiticiones

@@ -72,7 +72,6 @@ func findPrimes(interval com.TPInterval) (primes []int) {
 // POST: FindPrimes devuelve todos los números primos comprendidos en el
 // 		intervalo [interval.A, interval.B]
 func (p *PrimesImpl) FindPrimes(interval com.TPInterval, primeList *[]int) error {
-	fmt.Println("Cock and Ball Torture")
 	p.mutex.Lock()
 	if p.i%p.behaviourPeriod == 0 {
 		p.behaviourPeriod = rand.Intn(20-2) + 2
@@ -87,25 +86,43 @@ func (p *PrimesImpl) FindPrimes(interval com.TPInterval, primeList *[]int) error
 			p.behaviour = NORMAL
 		}
 		p.i = 0
+
+		fmt.Println()
+		switch p.behaviour {
+		case 0:
+			fmt.Println("NORMAL")
+		case 1:
+			fmt.Println("DELAY")
+		case 2:
+			fmt.Println("CRASH")
+		case 3:
+			fmt.Println("OMISSION")
+		}
+		fmt.Println("----------------")
 	}
 	p.i++
 	p.mutex.Unlock()
 	switch p.behaviour {
 	case DELAY:
 		seconds := rand.Intn(p.delayMaxMilisegundos-p.delayMinMiliSegundos) + p.delayMinMiliSegundos
-		time.Sleep(time.Duration(seconds) * time.Millisecond)
+		fmt.Println(seconds)
+		//time.Sleep(time.Duration(seconds) * time.Millisecond)
 		*primeList = findPrimes(interval)
 	case CRASH:
-		os.Exit(1)
+		fmt.Println("PETO")
+		//os.Exit(1)
 	case OMISSION:
 		option := rand.Intn(100)
 		if option > 65 {
-			time.Sleep(time.Duration(10000) * time.Second)
+			fmt.Println("10s")
+			//time.Sleep(time.Duration(10000) * time.Second)
 			*primeList = findPrimes(interval)
 		} else {
+			fmt.Println("Instant")
 			*primeList = findPrimes(interval)
 		}
 	case NORMAL:
+		fmt.Println("Actuo")
 		*primeList = findPrimes(interval)
 	default:
 		*primeList = findPrimes(interval)
@@ -127,6 +144,7 @@ func main() {
 		primesImpl.can_crash, _ = strconv.Atoi(os.Args[2])
 		primesImpl.can_ommit, _ = strconv.Atoi(os.Args[3])
 		primesImpl.can_delay, _ = strconv.Atoi(os.Args[4])
+
 		rand.Seed(time.Now().UnixNano())
 
 		rpc.Register(primesImpl)

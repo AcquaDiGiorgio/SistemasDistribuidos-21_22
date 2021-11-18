@@ -25,9 +25,9 @@ type Worker struct {
 }
 
 const (
-	POOL           = 6
-	ENPOINT_COORD  = "localhost:2229"
-	ENPOINT_MASTER = "localhost:2230"
+	POOL           = 3
+	ENPOINT_MASTER = "155.210.154.192:30001"
+	ENPOINT_COORD  = "155.210.154.195:30000"
 )
 
 /*
@@ -40,11 +40,10 @@ var Workers = [POOL]Worker{
 	{"", "localhost:2227"}}
 */
 
-var Workers = [POOL]Worker{
+var Workers = [...]Worker{
 	{"lab102-200.cps.unizar.es", "155.210.154.200:30000"},
 	{"lab102-200.cps.unizar.es", "155.210.154.200:30001"},
 	{"lab102-200.cps.unizar.es", "155.210.154.200:30002"},
 	{"lab102-200.cps.unizar.es", "155.210.154.200:30003"},
 	{"lab102-200.cps.unizar.es", "155.210.154.200:30004"},
 	{"lab102-199.cps.unizar.es", "155.210.154.200:30000"}}
-*
