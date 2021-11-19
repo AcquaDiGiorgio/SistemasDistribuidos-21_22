@@ -42,7 +42,7 @@ const (
 
 	// Ubicar, en esta constante, nombre de fichero de vuestra clave privada local
 	// emparejada con la clave pública en authorized_keys de máquinas remotas
-
+ 
 	PRIVKEYFILE = "id_ed25519"
 )
 

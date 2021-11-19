@@ -22,15 +22,13 @@ package raft
 
 // type AplicaOperacion
 
-
 import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"net/rpc"
 	"os"
 	"sync"
-
-	"raft/internal/comun/rpctimeout"
 )
 
 //  false deshabilita por completo los logs de depuracion
@@ -43,34 +41,39 @@ const kLogToStdout = true
 // Cambiar esto para salida de logs en un directorio diferente
 const kLogOutputDir = "./logs_raft/"
 
-
 // A medida que el nodo Raft conoce las operaciones de las  entradas de registro
 // comprometidas, envía un AplicaOperacion, con cada una de ellas, al canal
-// "canalAplicar" (funcion NuevoNodo) de la maquina de estados 
+// "canalAplicar" (funcion NuevoNodo) de la maquina de estados
 type AplicaOperacion struct {
-	indice int  // en la entrada de registro
+	indice    int // en la entrada de registro
 	operacion interface{}
 }
-
 
 // Tipo de dato Go que representa un solo nodo (réplica) de raft
 //
 type NodoRaft struct {
-	mux   sync.Mutex       // Mutex para proteger acceso a estado compartido
+	mux sync.Mutex // Mutex para proteger acceso a estado compartido
 
-	nodos []string // Conexiones RPC a todos los nodos (réplicas) Raft
+	nodos []*rpc.Client // Conexiones RPC a todos los nodos (réplicas) Raft
 	yo    int           // this peer's index into peers[]
 	// Utilización opcional de este logger para depuración
 	// Cada nodo Raft tiene su propio registro de trazas (logs)
 	logger *log.Logger
 
+	candidaturaActual int
+	masterActual      int
+	entradas          []interface{}
 
-	// Vuestros datos aqui.
-	
-	// mirar figura 2 para descripción del estado que debe mantenre un nodo Raft
+	ultimaEntrada             int
+	ultimaEntradaComprometida int
 }
 
-
+func inicializacion(nodo NodoRaft) {
+	for id := range nodo.nodos {
+		var respuesta RespuestaPeticionVoto
+		nodo.nodos[id].Call("NodoRaft.PedirVoto", ArgsPeticionVoto{}, &respuesta)
+	}
+}
 
 // Creacion de un nuevo nodo de eleccion
 //
@@ -86,36 +89,38 @@ type NodoRaft struct {
 //
 // NuevoNodo() debe devolver resultado rápido, por lo que se deberían
 // poner en marcha Gorutinas para trabajos de larga duracion
-func NuevoNodo(nodos []*rpc.Client, yo int, canalAplicar chan AplicaOperacion)
-			*NodoRaft {
+func NuevoNodo(nodos []*rpc.Client, yo int,
+	canalAplicar chan AplicaOperacion) *NodoRaft {
+
 	nr := &NodoRaft{}
 	nr.nodos = nodos
 	nr.yo = yo
 
 	if kEnableDebugLogs {
-		nombreNodo := nodos[yo].String()
+		nombreNodo := string(yo) // nodos[yo].String()
 		logPrefix := fmt.Sprintf("%s ", nombreNodo)
 		if kLogToStdout {
 			rf.logger = log.New(os.Stdout, nombreNodo,
-								log.Lmicroseconds|log.Lshortfile)
+				log.Lmicroseconds|log.Lshortfile)
 		} else {
 			err := os.MkdirAll(kLogOutputDir, os.ModePerm)
 			if err != nil {
 				panic(err.Error())
 			}
 			logOutputFile, err := os.OpenFile(fmt.Sprintf("%s/%s.txt",
-			  kLogOutputDir, logPrefix), os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
+				kLogOutputDir, logPrefix), os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
 			if err != nil {
 				panic(err.Error())
 			}
-			nr.logger = log.New(logOutputFile, logPrefix, log.Lmicroseconds|log.Lshortfile)
+			nr.logger = log.New(logOutputFile, logPrefix,
+				log.Lmicroseconds|log.Lshortfile)
 		}
 		nr.logger.Println("logger initialized")
 	} else {
 		nr.logger = log.New(ioutil.Discard, "", 0)
 	}
 
-	// Your initialization code here (2A, 2B)
+	inicializacion(*nr)
 
 	return nr
 }
@@ -137,10 +142,8 @@ func (nr *NodoRaft) ObtenerEstado() (int, int, bool) {
 	var yo int
 	var mandato int
 	var esLider bool
-	
 
 	// Vuestro codigo aqui
-	
 
 	return yo, mandato, esLider
 }
@@ -152,11 +155,11 @@ func (nr *NodoRaft) ObtenerEstado() (int, int, bool) {
 // Si el nodo no es el lider, devolver falso
 // Sino, comenzar la operacion de consenso sobre la operacion y devolver con
 // rapidez
-// 
+//
 // No hay garantia que esta operacion consiga comprometerse n una entrada de
 // de registro, dado que el lider puede fallar y la entrada ser reemplazada
 // en el futuro.
-// Primer valor devuelto es el indice del registro donde se va a colocar 
+// Primer valor devuelto es el indice del registro donde se va a colocar
 // la operacion si consigue comprometerse.
 // El segundo valor es el mandato en curso
 // El tercer valor es true si el nodo cree ser el lider
@@ -164,14 +167,11 @@ func (nr *NodoRaft) SometerOperacion(operacion interface{}) (int, int, bool) {
 	indice := -1
 	mandato := -1
 	EsLider := true
-	
 
 	// Vuestro codigo aqui
-	
 
 	return indice, mandato, EsLider
 }
-
 
 //
 // ArgsPeticionVoto
@@ -184,7 +184,10 @@ func (nr *NodoRaft) SometerOperacion(operacion interface{}) (int, int, bool) {
 // Nombres de campos deben comenzar con letra mayuscula !
 //
 type ArgsPeticionVoto struct {
-	// Vuestros datos aqui
+	CandidaturaActual int
+	Candidato         int
+	UltimaEntrada     int
+	UltimaCandidatura int
 }
 
 //
@@ -199,7 +202,8 @@ type ArgsPeticionVoto struct {
 //
 //
 type RespuestaPeticionVoto struct {
-	// Vuestros datos aqui
+	Candidatura    int
+	VotoGrantizado bool
 }
 
 //
@@ -211,7 +215,6 @@ type RespuestaPeticionVoto struct {
 func (nr *NodoRaft) PedirVoto(args *ArgsPeticionVoto, reply *RespuestaPeticionVoto) {
 	// Vuestro codigo aqui
 }
-
 
 // Ejemplo de código enviarPeticionVoto
 //
@@ -240,12 +243,10 @@ func (nr *NodoRaft) PedirVoto(args *ArgsPeticionVoto, reply *RespuestaPeticionVo
 // Y que la estructura de recuperacion de resultado sea un puntero a estructura
 // y no la estructura misma.
 //
-func (nr *NodoRaft) enviarPeticionVoto(nodo int, args *RequestVoteArgs,
-												reply *RequestVoteReply) bool {
-	
+func (nr *NodoRaft) enviarPeticionVoto(nodo int, args *ArgsPeticionVoto,
+	reply *RespuestaPeticionVoto) (ok bool) {
 
 	// Completar....
-	
-	return ok
-}
 
+	return
+}
