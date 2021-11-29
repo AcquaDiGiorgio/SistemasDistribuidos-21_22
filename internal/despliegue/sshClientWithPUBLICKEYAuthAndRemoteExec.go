@@ -127,7 +127,7 @@ func ExecMutipleNodes(cmd string,
 
 	//Read private key file for user
 	pkey, err := ioutil.ReadFile(
-						  filepath.Join(os.Getenv("HOME"), ".ssh", privKeyFile))
+		filepath.Join(os.Getenv("HOME"), ".ssh", privKeyFile))
 	if err != nil {
 		log.Fatalf("unable to read private key: %v", err)
 	}
@@ -139,6 +139,6 @@ func ExecMutipleNodes(cmd string,
 	}
 
 	for _, hostname := range hosts {
-		go execOneHost(hostname, results, signer, cmd)
+		go execOneNode(hostname, results, signer, cmd)
 	}
 }

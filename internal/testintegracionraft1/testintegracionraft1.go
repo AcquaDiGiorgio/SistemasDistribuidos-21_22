@@ -2,11 +2,9 @@ package testintegracionraft1
 
 import (
 	"fmt"
-	"log"
-	"math/rand"
 	"os"
 	"path/filepath"
-	"strconv"
+	"raft/internal/despliegue"
 	"testing"
 	"time"
 )
@@ -28,9 +26,6 @@ const (
 	REPLICA2 = MAQUINA2 + ":" + PUERTOREPLICA2
 	REPLICA3 = MAQUINA3 + ":" + PUERTOREPLICA3
 
-	// PATH de los ejecutables de modulo golang de servicio de vistas
-	PATH = filepath.Join(os.Getenv("HOME"), "tmp", "P4", "raft")
-
 	// paquete main de ejecutables relativos a PATH previo
 	EXECREPLICA = "cmd/srvraft/main.go "
 
@@ -38,13 +33,17 @@ const (
 	// 				cd $HOME/raft; go run cmd/srvraft/main.go 127.0.0.1:29001
 
 	// go run testcltvts/main.go 127.0.0.1:29003 127.0.0.1:29001 127.0.0.1:29000
-	REPLICACMD = "cd " + PATH + "; go run " + EXECREPLICA
 
 	// Ubicar, en esta constante, nombre de fichero de vuestra clave privada local
 	// emparejada con la clave pública en authorized_keys de máquinas remotas
- 
+
 	PRIVKEYFILE = "id_ed25519"
 )
+
+// PATH de los ejecutables de modulo golang de servicio de vistas
+var PATH = filepath.Join(os.Getenv("HOME"), "tmp", "P4", "raft")
+
+var REPLICACMD = "cd " + PATH + "; go run " + EXECREPLICA
 
 // TEST primer rango
 func TestPrimerasPruebas(t *testing.T) { // (m *testing.M) {
@@ -76,7 +75,7 @@ func TestPrimerasPruebas(t *testing.T) { // (m *testing.M) {
 }
 
 // ---------------------------------------------------------------------
-// 
+//
 // Canal de resultados de ejecución de comandos ssh remotos
 type CanalResultados chan string
 
@@ -84,7 +83,7 @@ func (cr *CanalResultados) stop() {
 	close(ts.cmdOutput)
 
 	// Leer las salidas obtenidos de los comandos ssh ejecutados
-	for s := range cr {
+	for s := range *cr {
 		fmt.Println(s)
 	}
 }
@@ -92,11 +91,11 @@ func (cr *CanalResultados) stop() {
 // start  gestor de vistas; mapa de replicas y maquinas donde ubicarlos;
 // y lista clientes (host:puerto)
 func (cr *CanalResultados) startDistributedProcesses(
-										replicasMaquinas map[string]string) {
+	replicasMaquinas map[string]string) {
 
 	for replica, maquina := range replicasMaquinas {
-			despliegue.ExecMutipleHosts(
-			REPLICACMD + " " + replica,
+		despliegue.ExecMutipleNodes(
+			REPLICACMD+" "+replica,
 			[]string{maquina}, ts.cmdOutput, PRIVKEYFILE)
 
 		// dar tiempo para se establezcan las replicas
@@ -105,10 +104,12 @@ func (cr *CanalResultados) startDistributedProcesses(
 }
 
 //
-func (cr *CanalResultados) stopDistributedProcesses(???) {
+func (cr *CanalResultados) stopDistributedProcesses(
+	replicasMaquinas map[string]string) {
 
-	// Parar procesos que han sido distribuidos con ssh ??
+	for replica, maquina := range replicasMaquinas {
 
+	}
 }
 
 // --------------------------------------------------------------------------
@@ -124,58 +125,54 @@ func (cr *CanalResultados) soloArranqueYparadaTest1(t *testing.T) {
 	cr.startDistributedProcesses(map[string]string{REPLICA1: MAQUINA1})
 
 	// Parar réplicas alamcenamiento en remoto
-	cr.stopDistributedProcesses(??)
+	cr.stopDistributedProcesses(map[string]string{REPLICA1: MAQUINA1})
 
 	fmt.Println(".............", t.Name(), "Superado")
 }
 
 // Primer lider en marcha
-func (cr *CanalResultados) ElegirPrimerLiderTest2(t *testing.T) {
+func (cr *CanalResultados) elegirPrimerLiderTest2(t *testing.T) {
 	//t.Skip("SKIPPED ElegirPrimerLiderTest2")
 
 	fmt.Println(t.Name(), ".....................")
 
 	// Poner en marcha  3 réplicas Raft
 	replicasMaquinas :=
-		map[string]string{REPLICA1: MAQUINA1, REPLICA2: MAQUINA2, REPLICA3: 																	MAQUINA3}
+		map[string]string{REPLICA1: MAQUINA1, REPLICA2: MAQUINA2, REPLICA3: MAQUINA3}
 	cr.startDistributedProcesses(replicasMaquinas)
-
 
 	// Se ha elegido lider ?
 	fmt.Printf("Probando lider en curso\n")
 	pruebaUnLider()
 
-
 	// Parar réplicas alamcenamiento en remoto
-	ts.stopDistributedProcesses(??)
+	ts.stopDistributedProcesses(replicasMaquinas)
 
 	fmt.Println(".............", t.Name(), "Superado")
 }
 
 // Fallo de un primer lider y reeleccion de uno nuevo
-func (cr *CanalResultados) FalloAnteriorElegirNuevoLiderTest3(t *testing.T) {
+func (cr *CanalResultados) falloAnteriorElegirNuevoLiderTest3(t *testing.T) {
 	//t.Skip("SKIPPED FalloAnteriorElegirNuevoLiderTest3")
 
 	fmt.Println(t.Name(), ".....................")
 
 	// Poner en marcha  3 réplicas Raft
 	replicasMaquinas :=
-		map[string]string{REPLICA1: MAQUINA1, REPLICA2: MAQUINA2, REPLICA3: 																	MAQUINA3}
+		map[string]string{REPLICA1: MAQUINA1, REPLICA2: MAQUINA2, REPLICA3: MAQUINA3}
 	cr.startDistributedProcesses(replicasMaquinas)
 
 	fmt.Printf("Lider inicial\n")
 	pruebaUnLider()
-
 
 	// Desconectar lider
 	// ???
 
 	fmt.Printf("Comprobar nuevo lider\n")
 	pruebaUnLider()
-	
 
 	// Parar réplicas almacenamiento en remoto
-	ts.stopDistributedProcesses(??)
+	ts.stopDistributedProcesses(replicasMaquinas)
 
 	fmt.Println(".............", t.Name(), "Superado")
 }
@@ -206,7 +203,7 @@ func pruebaUnLider() int {
 		for t, lideres := range mapaLideres {
 			if len(lideres) > 1 {
 				cfg.t.Fatalf("mandato %d tiene %d (>1) lideres",
-														t, len(lideres))
+					t, len(lideres))
 			}
 			if t > ultimoMandatoConLider {
 				ultimoMandatoConLider = t
@@ -214,12 +211,12 @@ func pruebaUnLider() int {
 		}
 
 		if len(mapaLideres) != 0 {
-			
-			return mapaLideres[ultimoMandatoConLider][0]  // Termina
-			
+
+			return mapaLideres[ultimoMandatoConLider][0] // Termina
+
 		}
 	}
 	cfg.t.Fatalf("un lider esperado, ninguno obtenido")
-	
-	return -1   // Termina
+
+	return -1 // Termina
 }

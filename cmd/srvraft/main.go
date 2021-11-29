@@ -2,63 +2,41 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"net"
-	"net/rpc"
-	"raft/internal/comun/rpctimeout"
+	"os"
+	"raft/internal/raft"
+	"strconv"
 	"time"
 )
 
-type Args struct {
-	A, B int
-}
-
-type Arith int
-
-func (t *Arith) Mul(args *Args, reply *int) error {
-	*reply = args.A * args.B
-	return nil
-}
-
 func main() {
-	arith := new(Arith)
-	// Parte Servidor
-	rpc.Register(arith)
+	args := os.Args[1:]
+	nodo, _ := strconv.Atoi(args[0])
 
-	l, e := net.Listen("tcp", ":1234")
-	if e != nil {
-		log.Fatal("listen error:", e)
-	}
+	nr := raft.NuevoNodo(nodo, nil)
+	fmt.Println("============= Nodo Creado ==============")
 
-	// Quitar el lanzamiento de la gorutina, pero no el código interno.
-	// Solo se necesita para esta prueba dado que cliente y servidor estan,
-	// aqui, juntos
-	go func() {
-		for {
-			conn, err := l.Accept()
-			if err != nil {
-				continue
-			}
+	for {
+		var estado raft.Estado
+		nr.ObtenerEstado(nil, &estado)
+		fmt.Println("Soy el Nodo: ", estado.Yo)
+		fmt.Println("Estamos en el Mandato: ", estado.Mandato)
 
-			go rpc.ServeConn(conn)
+		if estado.EsLider {
+			fmt.Println("Soy el Master Actual")
+			fmt.Println("##########################################")
+			fmt.Print("Introduce Operacion: ")
+
+			var op string
+			fmt.Scanln(&op)
+
+			//var OpASometer raft.OpASometer
+			//nr.SometerOperacion(&op, &OpASometer)
+			fmt.Println("==========================================")
+
+		} else {
+			fmt.Println("NO soy el Master Actual")
+			fmt.Println("==========================================")
+			time.Sleep(5 * time.Second)
 		}
-	}()
-
-	time.Sleep(100 * time.Millisecond)
-
-	// Parte Cliente
-	client, err := rpc.Dial("tcp", "127.0.0.1:1234")
-	if err != nil {
-		log.Fatal("dialing:", err)
 	}
-
-	var replay int
-	err := rpctimeout.CallTimeout(client, &Args{5, 7}, &replay,
-		5*time.Millisecond)
-
-	if err != nil {
-		log.Fatal("arith error:", err)
-	}
-
-	fmt.Println("Arith: %d*%d=%d", args.A, args.B, reply)
 }

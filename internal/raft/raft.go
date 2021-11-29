@@ -26,8 +26,13 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"math/rand"
+	"net"
+	"net/http"
 	"net/rpc"
 	"os"
+	"raft/internal/comun/constants"
+	"raft/internal/comun/rpctimeout"
 	"strconv"
 	"sync"
 	"time"
@@ -35,12 +40,12 @@ import (
 
 const (
 	//CONSTANTES DE LOS LOGS
-	kEnableDebugLogs = true           //  false deshabilita los logs
+	kEnableDebugLogs = false          //  false deshabilita los logs
 	kLogToStdout     = true           // true: logs -> stdout | flase: logs -> kLogOutputDir
 	kLogOutputDir    = "./logs_raft/" // Directorio de salida de los logs
 
 	// CONSTANTES TEMPORALES
-	pulseDelay = 100 * time.Millisecond // Delay de cada latido
+	pulseDelay = 100 * time.Millisecond // Delay de cada latido (10 veces / seg)
 )
 
 // A medida que el nodo Raft conoce las operaciones de las  entradas de registro
@@ -55,9 +60,12 @@ type AplicaOperacion struct {
 //
 type NodoRaft struct {
 	// Variables de control y depuración
-	mux    sync.Mutex    // Mutex para proteger acceso a estado compartido
-	nodos  []*rpc.Client // Conexiones RPC a todos los nodos (réplicas) Raft
-	logger *log.Logger   // Logger para depuración
+	mux         sync.Mutex    // Mutex para proteger acceso a estado compartido
+	nodos       []*rpc.Client // Conexiones RPC a todos los nodos (réplicas) Raft
+	logger      *log.Logger   // Logger para depuración
+	canalLatido chan bool
+	endChan     chan bool
+	canalMaster chan bool
 
 	// Variables que deberían ser iguales entre todos los nodos (sin tener
 	// en cuenta posibles errores)
@@ -70,48 +78,103 @@ type NodoRaft struct {
 	entradas                  []AplicaOperacion
 	ultimaEntrada             int
 	ultimaEntradaComprometida int
+	periodoLatido             time.Duration
+	periodoCandidatura        time.Duration
 
 	// Variables únicas del Master actual (si el nodo actual no es master, se
 	// deben ignorar sus valores)
-	// NONE YET
+	totalCompromisosUltima int
 }
 
-func (nr *NodoRaft) inicializacion() {
-	args := &ArgsPeticionVoto{nr.candidaturaActual, nr.yo, nr.ultimaEntrada, nr.candidaturaAnterior}
+func (nr *NodoRaft) registrarNodo() {
+	NR := new(NodoRaft)
 
-	for id := range nr.nodos {
-		var respuesta RespuestaPeticionVoto
-		nr.enviarPeticionVoto(id, args, &respuesta)
-		if !respuesta.VotoGrantizado {
-			return // No tenemos prioridad
+	// Registro y Creación del RPC
+	rpc.Register(NR)
+	rpc.HandleHTTP()
+
+	// Inicio Escucha
+	listener, _ := net.Listen("tcp", constants.HOSTS[nr.yo])
+
+	// Sirve petiticiones
+	http.Serve(listener, nil)
+}
+
+func (nr *NodoRaft) iniciarComunicacion() {
+
+	nr.contactarNodos()
+	for {
+		if nr.masterActual == nr.yo { // Yo soy el master
+			fmt.Println("------------Ejecuto Latidos------------")
+			nr.comunicarLatidos()
+			time.Sleep(pulseDelay)
+		} else {
+			select {
+			case <-nr.canalLatido: // El master ha respondido a tiempo
+				fmt.Println("!¡!¡!¡!¡!¡!¡ ME LLEGA UN LATIDO !¡!¡!¡!¡!¡!¡")
+				break
+
+			case <-time.After(nr.periodoLatido): // El master ha tardado mucho
+				fmt.Println("¿?¿?¿?¿?¿?¿? EL master no contesta, empiezo candidatura ¿?¿?¿?¿?¿?¿?")
+				nr.prepararCandidatura()
+				break
+
+			case <-nr.endChan:
+				fmt.Println("************* Termino la Ejecucion *************")
+				os.Exit(0)
+			}
+		}
+	}
+}
+
+func (nr *NodoRaft) prepararCandidatura() {
+	select {
+	case <-nr.canalMaster:
+		break
+	case <-time.After(nr.periodoCandidatura):
+		args := &ArgsPeticionVoto{
+			nr.candidaturaActual, nr.yo, nr.ultimaEntrada, nr.candidaturaAnterior}
+		soyMaster := true
+
+		for id := range nr.nodos {
+			var respuesta RespuestaPeticionVoto
+			ok := nr.enviarPeticionVoto(id, args, &respuesta)
+			if ok {
+				if !respuesta.VotoGrantizado {
+					soyMaster = false
+					if nr.candidaturaActual < respuesta.Candidatura {
+						nr.candidaturaActual = respuesta.Candidatura
+					}
+				}
+			}
+		}
+
+		if soyMaster {
+			nr.inicializarMaster()
+			nr.candidaturaActual++
+			nr.masterActual = nr.yo
+		}
+	}
+}
+
+func (nr *NodoRaft) YaHayMaster(noArgs *interface{}, noReply *interface{}) error {
+	nr.canalMaster <- true
+	return nil
+}
+
+func (nr *NodoRaft) contactarNodos() {
+	var nodos []*rpc.Client
+
+	for i := 0; i < constants.USERS; i++ {
+		if i != nr.yo { // No contacto conmigo
+			nodo, err := rpc.DialHTTP("tcp", constants.HOSTS[i])
+			if err != nil { // No ha habido error
+				nodos = append(nodos, nodo)
+			}
 		}
 	}
 
-	// Nos convertimos en master de este mandato
-	nr.candidaturaActual = nr.candidaturaAnterior + 1
-	nr.masterActual = nr.yo
-}
-
-func (nr *NodoRaft) activarLogs() {
-	nombreNodo := strconv.Itoa(nr.yo) // nodos[yo].String()
-	logPrefix := fmt.Sprintf("%s ", nombreNodo)
-	if kLogToStdout {
-		nr.logger = log.New(os.Stdout, nombreNodo,
-			log.Lmicroseconds|log.Lshortfile)
-	} else {
-		err := os.MkdirAll(kLogOutputDir, os.ModePerm)
-		if err != nil {
-			panic(err.Error())
-		}
-		logOutputFile, err := os.OpenFile(fmt.Sprintf("%s/%s.txt",
-			kLogOutputDir, logPrefix), os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
-		if err != nil {
-			panic(err.Error())
-		}
-		nr.logger = log.New(logOutputFile, logPrefix,
-			log.Lmicroseconds|log.Lshortfile)
-	}
-	nr.logger.Println("logger initialized")
+	nr.nodos = nodos
 }
 
 // Creacion de un nuevo nodo de eleccion
@@ -128,12 +191,13 @@ func (nr *NodoRaft) activarLogs() {
 //
 // NuevoNodo() debe devolver resultado rápido, por lo que se deberían
 // poner en marcha Gorutinas para trabajos de larga duracion
-func NuevoNodo(nodos []*rpc.Client, yo int,
-	canalAplicar chan AplicaOperacion) *NodoRaft {
+func NuevoNodo(yo int, canalAplicar chan AplicaOperacion) *NodoRaft {
 
 	nr := &NodoRaft{}
-	nr.nodos = nodos
 	nr.yo = yo
+	milis := 1000 + rand.Int()%1500 // Tiempo aleatorio entre 1000 y 2500 ms
+	nr.periodoLatido = time.Duration(milis * int(time.Millisecond))
+	nr.periodoCandidatura = time.Duration(3 * time.Second)
 
 	if kEnableDebugLogs {
 		nr.activarLogs()
@@ -141,7 +205,9 @@ func NuevoNodo(nodos []*rpc.Client, yo int,
 		nr.logger = log.New(ioutil.Discard, "", 0)
 	}
 
-	nr.inicializacion()
+	go nr.registrarNodo()
+	time.Sleep(1 * time.Second)
+	go nr.iniciarComunicacion()
 
 	return nr
 }
@@ -151,23 +217,29 @@ func NuevoNodo(nodos []*rpc.Client, yo int,
 // Quizas interesante desactivar la salida de depuracion
 // de este nodo
 //
-func (nr *NodoRaft) Para() {
-
-	// Vuestro codigo aqui
-
+func (nr *NodoRaft) Para(noArgs *interface{}, noReply *interface{}) error {
+	nr.endChan <- true
+	return nil
 }
 
+type Estado struct {
+	Yo      int
+	Mandato int
+	EsLider bool
+}
+
+//
 // Devuelve "yo", mandato en curso y si este nodo cree ser lider
 //
-func (nr *NodoRaft) ObtenerEstado() (int, int, bool) {
-	// No sé si hace lo que pide
+func (nr *NodoRaft) ObtenerEstado(noArgs *interface{}, estado *Estado) error {
+
 	nr.mux.Lock()
-	yo := nr.yo
-	mandato := nr.candidaturaActual
-	esLider := nr.masterActual == nr.yo
+	estado.Yo = nr.yo
+	estado.Mandato = nr.candidaturaActual
+	estado.EsLider = nr.masterActual == nr.yo
 	nr.mux.Lock()
 
-	return yo, mandato, esLider
+	return nil
 }
 
 // El servicio que utilice Raft (base de datos clave/valor, por ejemplo)
@@ -185,17 +257,87 @@ func (nr *NodoRaft) ObtenerEstado() (int, int, bool) {
 // la operacion si consigue comprometerse.
 // El segundo valor es el mandato en curso
 // El tercer valor es true si el nodo cree ser el lider
-func (nr *NodoRaft) SometerOperacion(operacion interface{}) (int, int, bool) {
-	indice := -1
-	mandato := -1
-	EsLider := true
 
-	for id := range nr.nodos {
-		// TODO: Función que introduzca una operación a los seguidores por RPC
-		nr.nodos[id].Call("", nil, nil)
+type OpASometer struct {
+	Indice  int
+	Mandato int
+	EsLider bool
+}
+
+func (nr *NodoRaft) SometerOperacion(operacion *interface{}, oas *OpASometer) error {
+	nr.mux.Lock()
+
+	nr.ultimaEntrada++
+	esLider := nr.yo == nr.masterActual
+
+	oas.Indice = nr.ultimaEntrada
+	oas.Mandato = nr.candidaturaActual
+	oas.EsLider = esLider
+
+	nr.mux.Unlock()
+
+	if esLider {
+		for id := range nr.nodos {
+			var success bool
+			nr.nodos[id].Call("NodoRaft.AppendEntries", &operacion, &success)
+		}
 	}
 
-	return indice, mandato, EsLider
+	return nil
+}
+
+func (nr *NodoRaft) AppendEntries(operacion *interface{}, correct *bool) error {
+	if nr.yo != nr.masterActual {
+		nr.canalLatido <- true // El master sigue vivo
+
+		nr.mux.Lock()
+		indice := nr.ultimaEntrada + 1
+		nr.entradas[indice] = AplicaOperacion{indice, *operacion}
+		nr.ultimaEntrada++
+		nr.mux.Unlock()
+
+		*correct = true
+	} else {
+		*correct = false
+	}
+
+	return nil
+}
+
+//
+// Funciones relacionadas con los latidos entre
+// el master y las réplicas
+//
+
+func (nr *NodoRaft) RecibirLatido(noArgs *interface{}, ultimaEntrada *AplicaOperacion) error {
+	nr.canalLatido <- true
+	*ultimaEntrada = nr.entradas[nr.ultimaEntrada]
+	return nil
+}
+
+func (nr *NodoRaft) comunicarLatidos() {
+	for id := range nr.nodos {
+		var ultimaEntrada AplicaOperacion
+		rpctimeout.CallTimeout(nr.nodos[id], "NodoRaft.RecibirLatido", nil, &ultimaEntrada, 100)
+		if nr.entradas[ultimaEntrada.indice].operacion == ultimaEntrada.operacion {
+			nr.totalCompromisosUltima++
+			if nr.totalCompromisosUltima > (constants.USERS)/2 {
+				nr.totalCompromisosUltima = 0
+				nr.ultimaEntradaComprometida++
+			}
+		}
+	}
+}
+
+func (nr *NodoRaft) inicializarMaster() {
+	for i := 0; i < constants.USERS; i++ {
+		if i != nr.yo { // No contacto conmigo
+			nr.nodos[i].Call("NodoRaft.YaHayMaster", nil, nil)
+		}
+	}
+
+	nr.totalCompromisosUltima = 0
+	// Variables de master
 }
 
 //
@@ -224,11 +366,23 @@ type RespuestaPeticionVoto struct {
 //
 // PedirVoto
 // ===========
-//
 // Metodo para RPC PedirVoto
 //
-func (nr *NodoRaft) PedirVoto(args *ArgsPeticionVoto, reply *RespuestaPeticionVoto) {
-	// Vuestro codigo aqui
+func (nr *NodoRaft) PedirVoto(args *ArgsPeticionVoto, reply *RespuestaPeticionVoto) error {
+	acceso := false
+
+	// Aún no ha habido un master
+	if nr.candidaturaAnterior == -1 {
+		acceso = true
+
+		// El candidato tiene por lo menos con las entradas de este nodo
+	} else if args.UltimaCandidatura >= nr.candidaturaAnterior && args.UltimaEntrada >= nr.ultimaEntrada {
+		acceso = true
+	}
+
+	reply = &RespuestaPeticionVoto{nr.candidaturaActual, acceso}
+
+	return nil
 }
 
 // Ejemplo de código enviarPeticionVoto
@@ -265,29 +419,28 @@ func (nr *NodoRaft) enviarPeticionVoto(nodo int, args *ArgsPeticionVoto,
 	return err != nil
 }
 
-// Función RPC que permite a este nodo recibir un latido de otro nodo dentro
-// del sistema
 //
-func (nr *NodoRaft) RecibirLatido() error {
-	// No clue, tenemos que hacer algo aquí?
-	return nil
-}
+// Función que activa los logs de este nodo
+//
 
-// Función que debe lanzarse como gorutina que hace continuos latidos a todos
-// los nodos del sistema
-//
-func (nr *NodoRaft) lanzarLatidos() {
-	var err error
-	for {
-		for id := range nr.nodos {
-			err = nr.nodos[id].Call("RecibirLatido", nil, nil)
-			if err != nil {
-				// Ha habido problema con un nodo
-				if id == nr.masterActual {
-					// Se ha caido el master
-				}
-			}
-			time.Sleep(pulseDelay)
+func (nr *NodoRaft) activarLogs() {
+	nombreNodo := strconv.Itoa(nr.yo) // nodos[yo].String()
+	logPrefix := fmt.Sprintf("%s ", nombreNodo)
+	if kLogToStdout {
+		nr.logger = log.New(os.Stdout, nombreNodo,
+			log.Lmicroseconds|log.Lshortfile)
+	} else {
+		err := os.MkdirAll(kLogOutputDir, os.ModePerm)
+		if err != nil {
+			panic(err.Error())
 		}
+		logOutputFile, err := os.OpenFile(fmt.Sprintf("%s/%s.txt",
+			kLogOutputDir, logPrefix), os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
+		if err != nil {
+			panic(err.Error())
+		}
+		nr.logger = log.New(logOutputFile, logPrefix,
+			log.Lmicroseconds|log.Lshortfile)
 	}
+	nr.logger.Println("logger initialized")
 }

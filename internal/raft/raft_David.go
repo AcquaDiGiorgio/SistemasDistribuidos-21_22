@@ -1,8 +1,8 @@
-// Escribir vuestro código de funcionalidad Raft en este fichero
-//
-
 package raft
 
+/*
+// Escribir vuestro código de funcionalidad Raft en este fichero
+//
 //
 // API
 // ===
@@ -90,8 +90,8 @@ func (nr *NodoRaft) inicializacion() {
 
 	select {
 		case <- ch: //Mi timeout ha acabado y tengo que presentarme como candidato y iniciar elecciones
-			//Inicio elecciones y me presento como candidato 
-		case <- //Me llega la candidatura de un candidato 
+			//Inicio elecciones y me presento como candidato
+		case <- //Me llega la candidatura de un candidato
 			//Le voto al candidato
 	}
 }
@@ -265,3 +265,4 @@ func (nr *NodoRaft) enviarPeticionVoto(nodo int, args *ArgsPeticionVoto,
 
 	return ok
 }
+*/
