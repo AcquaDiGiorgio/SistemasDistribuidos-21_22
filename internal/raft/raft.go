@@ -53,8 +53,8 @@ type EmptyValue struct{}
 // comprometidas, envía un AplicaOperacion, con cada una de ellas, al canal
 // "canalAplicar" (funcion NuevoNodo) de la maquina de estados
 type AplicaOperacion struct {
-	indice    int // en la entrada de registro
-	operacion interface{}
+	Indice    int // en la entrada de registro
+	Operacion interface{}
 }
 
 // Tipo de dato Go que representa un solo nodo (réplica) de raft
@@ -130,16 +130,16 @@ func (nr *NodoRaft) iniciarComunicacion() {
 		} else {
 			select {
 			case <-nr.canalLatido: // El master ha respondido a tiempo
-				fmt.Println("!¡!¡!¡!¡!¡!¡ ME LLEGA UN LATIDO !¡!¡!¡!¡!¡!¡")
+				fmt.Println("!¡!¡!¡!¡!¡ ME LLEGA UN LATIDO !¡!¡!¡!¡!¡")
 				break
 
 			case <-time.After(nr.periodoLatido): // El master ha tardado mucho
-				fmt.Println("¿?¿?¿?¿?¿?¿? EL master no contesta, empiezo candidatura ¿?¿?¿?¿?¿?¿?")
+				fmt.Println("¿?¿?¿?¿?¿? EL master no contesta, empiezo candidatura ¿?¿?¿?¿?¿?")
 				nr.prepararCandidatura()
 				break
 
 			case <-nr.endChan:
-				fmt.Println("************* Termino la Ejecucion *************")
+				fmt.Println("********* Termino la Ejecucion *********")
 				os.Exit(0)
 			}
 		}
@@ -149,7 +149,9 @@ func (nr *NodoRaft) iniciarComunicacion() {
 func (nr *NodoRaft) prepararCandidatura() {
 	select {
 	case <-nr.canalMaster:
+		fmt.Println("Me han dicho que alguien se ha convertido en master")
 		break
+
 	case <-time.After(nr.periodoCandidatura):
 		args := &ArgsPeticionVoto{
 			nr.candidaturaActual, nr.yo, nr.ultimaEntrada, nr.candidaturaAnterior}
@@ -200,9 +202,21 @@ func NuevoNodo(yo int, canalAplicar chan AplicaOperacion) *NodoRaft {
 
 	nr := new(NodoRaft)
 	nr.yo = yo
+	nr.candidaturaActual = -1
+	nr.masterActual = 0
+	nr.candidaturaAnterior = -1
+	nr.totalCompromisosUltima = -1
+	nr.ultimaEntrada = -1
+	nr.ultimaEntradaComprometida = -1
+	nr.votosCandidaturaActual = 0
+
 	milis := 1000 + rand.Int()%1500 // Tiempo aleatorio entre 1000 y 2500 ms
 	nr.periodoLatido = time.Duration(milis * int(time.Millisecond))
 	nr.periodoCandidatura = time.Duration(3 * time.Second)
+
+	nr.canalLatido = make(chan bool)
+	nr.canalMaster = make(chan bool)
+	nr.endChan = make(chan bool)
 
 	if kEnableDebugLogs {
 		nr.activarLogs()
@@ -314,9 +328,13 @@ func (nr *NodoRaft) AppendEntries(operacion *interface{}, correct *bool) error {
 //
 
 func (nr *NodoRaft) RecibirLatido(emptyArgs EmptyValue, ultimaEntrada *AplicaOperacion) error {
-	fmt.Println("Fución Recibir latido activada")
 	nr.canalLatido <- true
-	*ultimaEntrada = nr.entradas[nr.ultimaEntrada]
+	if nr.ultimaEntrada != -1 {
+		*ultimaEntrada = nr.entradas[nr.ultimaEntrada]
+	} else {
+		*ultimaEntrada = AplicaOperacion{-1, nil}
+	}
+
 	return nil
 }
 
@@ -327,12 +345,14 @@ func (nr *NodoRaft) comunicarLatidos() {
 		var ch chan *rpc.Call
 		nr.nodos[id].Go("NodoRaft.RecibirLatido", empty, &ultimaEntrada, ch)
 
-		if ultimaEntrada.indice > 0 { // Hay alguna entrada
-			if nr.entradas[ultimaEntrada.indice].operacion == ultimaEntrada.operacion {
-				nr.totalCompromisosUltima++
-				if nr.totalCompromisosUltima > (constants.USERS)/2 {
-					nr.totalCompromisosUltima = 0
-					nr.ultimaEntradaComprometida++
+		if nr.ultimaEntrada != -1 { // Hay alguna entrada en mi nodo
+			if ultimaEntrada.Indice != -1 { // El nodo con quien contacto tiene alguna entrada
+				if nr.entradas[ultimaEntrada.Indice].Operacion == ultimaEntrada.Operacion {
+					nr.totalCompromisosUltima++
+					if nr.totalCompromisosUltima > (constants.USERS)/2 {
+						nr.totalCompromisosUltima = 0
+						nr.ultimaEntradaComprometida++
+					}
 				}
 			}
 		}
