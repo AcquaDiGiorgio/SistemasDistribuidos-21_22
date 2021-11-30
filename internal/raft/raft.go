@@ -32,7 +32,6 @@ import (
 	"net/rpc"
 	"os"
 	"raft/internal/comun/constants"
-	"raft/internal/comun/rpctimeout"
 	"strconv"
 	"sync"
 	"time"
@@ -47,6 +46,8 @@ const (
 	// CONSTANTES TEMPORALES
 	pulseDelay = 100 * time.Millisecond // Delay de cada latido (10 veces / seg)
 )
+
+type EmptyValue struct{}
 
 // A medida que el nodo Raft conoce las operaciones de las  entradas de registro
 // comprometidas, envía un AplicaOperacion, con cada una de ellas, al canal
@@ -75,6 +76,7 @@ type NodoRaft struct {
 
 	// Variables propias de cada Nodo
 	yo                        int
+	votosCandidaturaActual    int
 	entradas                  []AplicaOperacion
 	ultimaEntrada             int
 	ultimaEntradaComprometida int
@@ -87,22 +89,39 @@ type NodoRaft struct {
 }
 
 func (nr *NodoRaft) registrarNodo() {
-	NR := new(NodoRaft)
 
 	// Registro y Creación del RPC
-	rpc.Register(NR)
+	rpc.Register(nr)
 	rpc.HandleHTTP()
 
 	// Inicio Escucha
-	listener, _ := net.Listen("tcp", constants.HOSTS[nr.yo])
+	listener, err := net.Listen("tcp", constants.HOSTS[nr.yo])
+	if err != nil {
+		os.Exit(1)
+	}
+	defer listener.Close()
 
 	// Sirve petiticiones
 	http.Serve(listener, nil)
 }
 
+func (nr *NodoRaft) contactarNodos() {
+	for i := 0; i < constants.USERS; i++ {
+		if i != nr.yo { // No contacto conmigo
+			nodo, err := rpc.DialHTTP("tcp", constants.HOSTS[i])
+			if err == nil { // No ha habido error
+				nr.nodos = append(nr.nodos, nodo)
+				fmt.Println("Nodo Contactado")
+			}
+		}
+	}
+}
+
 func (nr *NodoRaft) iniciarComunicacion() {
 
 	nr.contactarNodos()
+	time.Sleep(1 * time.Second)
+
 	for {
 		if nr.masterActual == nr.yo { // Yo soy el master
 			fmt.Println("------------Ejecuto Latidos------------")
@@ -134,47 +153,33 @@ func (nr *NodoRaft) prepararCandidatura() {
 	case <-time.After(nr.periodoCandidatura):
 		args := &ArgsPeticionVoto{
 			nr.candidaturaActual, nr.yo, nr.ultimaEntrada, nr.candidaturaAnterior}
-		soyMaster := true
 
 		for id := range nr.nodos {
 			var respuesta RespuestaPeticionVoto
 			ok := nr.enviarPeticionVoto(id, args, &respuesta)
 			if ok {
 				if !respuesta.VotoGrantizado {
-					soyMaster = false
 					if nr.candidaturaActual < respuesta.Candidatura {
 						nr.candidaturaActual = respuesta.Candidatura
+					}
+				} else {
+					nr.votosCandidaturaActual++
+					if nr.votosCandidaturaActual >= constants.USERS/2+1 {
+						nr.inicializarMaster()
+						nr.candidaturaActual++
+						nr.masterActual = nr.yo
 					}
 				}
 			}
 		}
-
-		if soyMaster {
-			nr.inicializarMaster()
-			nr.candidaturaActual++
-			nr.masterActual = nr.yo
-		}
 	}
 }
 
-func (nr *NodoRaft) YaHayMaster(noArgs *interface{}, noReply *interface{}) error {
+func (nr *NodoRaft) YaHayMaster(master Estado, emptyReply *EmptyValue) error {
 	nr.canalMaster <- true
+	nr.masterActual = master.Yo
+	nr.candidaturaActual = master.Mandato
 	return nil
-}
-
-func (nr *NodoRaft) contactarNodos() {
-	var nodos []*rpc.Client
-
-	for i := 0; i < constants.USERS; i++ {
-		if i != nr.yo { // No contacto conmigo
-			nodo, err := rpc.DialHTTP("tcp", constants.HOSTS[i])
-			if err != nil { // No ha habido error
-				nodos = append(nodos, nodo)
-			}
-		}
-	}
-
-	nr.nodos = nodos
 }
 
 // Creacion de un nuevo nodo de eleccion
@@ -193,7 +198,7 @@ func (nr *NodoRaft) contactarNodos() {
 // poner en marcha Gorutinas para trabajos de larga duracion
 func NuevoNodo(yo int, canalAplicar chan AplicaOperacion) *NodoRaft {
 
-	nr := &NodoRaft{}
+	nr := new(NodoRaft)
 	nr.yo = yo
 	milis := 1000 + rand.Int()%1500 // Tiempo aleatorio entre 1000 y 2500 ms
 	nr.periodoLatido = time.Duration(milis * int(time.Millisecond))
@@ -206,8 +211,7 @@ func NuevoNodo(yo int, canalAplicar chan AplicaOperacion) *NodoRaft {
 	}
 
 	go nr.registrarNodo()
-	time.Sleep(1 * time.Second)
-	go nr.iniciarComunicacion()
+	nr.iniciarComunicacion()
 
 	return nr
 }
@@ -217,7 +221,7 @@ func NuevoNodo(yo int, canalAplicar chan AplicaOperacion) *NodoRaft {
 // Quizas interesante desactivar la salida de depuracion
 // de este nodo
 //
-func (nr *NodoRaft) Para(noArgs *interface{}, noReply *interface{}) error {
+func (nr *NodoRaft) Para(emptyArgs EmptyValue, emptyReply *EmptyValue) error {
 	nr.endChan <- true
 	return nil
 }
@@ -231,7 +235,7 @@ type Estado struct {
 //
 // Devuelve "yo", mandato en curso y si este nodo cree ser lider
 //
-func (nr *NodoRaft) ObtenerEstado(noArgs *interface{}, estado *Estado) error {
+func (nr *NodoRaft) ObtenerEstado(emptyArgs EmptyValue, estado *Estado) error {
 
 	nr.mux.Lock()
 	estado.Yo = nr.yo
@@ -309,35 +313,42 @@ func (nr *NodoRaft) AppendEntries(operacion *interface{}, correct *bool) error {
 // el master y las réplicas
 //
 
-func (nr *NodoRaft) RecibirLatido(noArgs *interface{}, ultimaEntrada *AplicaOperacion) error {
+func (nr *NodoRaft) RecibirLatido(emptyArgs EmptyValue, ultimaEntrada *AplicaOperacion) error {
+	fmt.Println("Fución Recibir latido activada")
 	nr.canalLatido <- true
 	*ultimaEntrada = nr.entradas[nr.ultimaEntrada]
 	return nil
 }
 
 func (nr *NodoRaft) comunicarLatidos() {
+	var empty EmptyValue
 	for id := range nr.nodos {
 		var ultimaEntrada AplicaOperacion
-		rpctimeout.CallTimeout(nr.nodos[id], "NodoRaft.RecibirLatido", nil, &ultimaEntrada, 100)
-		if nr.entradas[ultimaEntrada.indice].operacion == ultimaEntrada.operacion {
-			nr.totalCompromisosUltima++
-			if nr.totalCompromisosUltima > (constants.USERS)/2 {
-				nr.totalCompromisosUltima = 0
-				nr.ultimaEntradaComprometida++
+		var ch chan *rpc.Call
+		nr.nodos[id].Go("NodoRaft.RecibirLatido", empty, &ultimaEntrada, ch)
+
+		if ultimaEntrada.indice > 0 { // Hay alguna entrada
+			if nr.entradas[ultimaEntrada.indice].operacion == ultimaEntrada.operacion {
+				nr.totalCompromisosUltima++
+				if nr.totalCompromisosUltima > (constants.USERS)/2 {
+					nr.totalCompromisosUltima = 0
+					nr.ultimaEntradaComprometida++
+				}
 			}
 		}
 	}
 }
 
 func (nr *NodoRaft) inicializarMaster() {
-	for i := 0; i < constants.USERS; i++ {
-		if i != nr.yo { // No contacto conmigo
-			nr.nodos[i].Call("NodoRaft.YaHayMaster", nil, nil)
-		}
+
+	estado := Estado{nr.yo, nr.candidaturaActual, true}
+	var empty EmptyValue
+	for id := range nr.nodos {
+		nr.nodos[id].Call("NodoRaft.YaHayMaster", estado, &empty)
 	}
 
 	nr.totalCompromisosUltima = 0
-	// Variables de master
+	// Variables de master a inicializar
 }
 
 //
@@ -416,7 +427,7 @@ func (nr *NodoRaft) enviarPeticionVoto(nodo int, args *ArgsPeticionVoto,
 	reply *RespuestaPeticionVoto) (ok bool) {
 
 	err := nr.nodos[nodo].Call("NodoRaft.PedirVoto", args, &reply)
-	return err != nil
+	return err == nil
 }
 
 //

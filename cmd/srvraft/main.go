@@ -14,10 +14,12 @@ func main() {
 
 	nr := raft.NuevoNodo(nodo, nil)
 	fmt.Println("============= Nodo Creado ==============")
+	var empty raft.EmptyValue
 
 	for {
 		var estado raft.Estado
-		nr.ObtenerEstado(nil, &estado)
+
+		nr.ObtenerEstado(empty, &estado)
 		fmt.Println("Soy el Nodo: ", estado.Yo)
 		fmt.Println("Estamos en el Mandato: ", estado.Mandato)
 
