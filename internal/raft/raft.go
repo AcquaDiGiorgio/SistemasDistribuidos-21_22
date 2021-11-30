@@ -129,7 +129,7 @@ func NuevoNodo(yo int, canalAplicar chan AplicaOperacion) *NodoRaft {
 	}
 
 	go nr.registrarNodo()
-	nr.iniciarComunicacion()
+	go nr.iniciarComunicacion()
 
 	return nr
 }
@@ -182,6 +182,9 @@ func (nr *NodoRaft) contactarNodos() {
 // También incia el periodo de candidatura si no recibe un latido
 // a tiempo
 //
+// Si se van a hacer operaciones externas, se debe ejecutar con una
+// gorutina
+//
 func (nr *NodoRaft) iniciarComunicacion() {
 
 	nr.contactarNodos()
@@ -217,46 +220,48 @@ func (nr *NodoRaft) iniciarComunicacion() {
 // Se ejecuta tras no recibir un latido del master a tiempo,
 //
 func (nr *NodoRaft) prepararCandidatura() {
-	select {
-	case <-nr.canalMaster:
-		fmt.Println("Me han dicho que alguien se ha convertido en master")
-		break
+	for {
+		select {
+		case <-nr.canalMaster: // Alguien se ha convertido en master
+			fmt.Println("Me han dicho que alguien se ha convertido en master")
+			return
 
-	case <-time.After(nr.periodoCandidatura):
-		args := &ArgsPeticionVoto{
-			nr.candidaturaActual, nr.yo, nr.ultimaEntrada, nr.candidaturaAnterior}
+		case <-time.After(nr.periodoCandidatura):
+			args := &ArgsPeticionVoto{
+				nr.candidaturaActual, nr.yo, nr.ultimaEntrada, nr.candidaturaAnterior}
 
-		var sum int
+			var sum int //DEBUG
 
-		for id := range nr.nodos {
-			var respuesta RespuestaPeticionVoto
-			ok := nr.enviarPeticionVoto(id, args, &respuesta)
+			for id := range nr.nodos {
+				var respuesta RespuestaPeticionVoto
+				ok := nr.enviarPeticionVoto(id, args, &respuesta)
 
-			if id == nr.yo {
-				sum++
-			}
+				if id == nr.yo { //DEBUG
+					sum++
+				}
 
-			if ok { // El nodo no está caído
-				fmt.Println("El nodo ", id+sum, " me ha dicho", respuesta.VotoGrantizado)
+				if ok { // El nodo no está caído
+					fmt.Println("El nodo ", id+sum, " me ha dicho", respuesta.VotoGrantizado)
 
-				if !respuesta.VotoGrantizado { // Me da el voto
-					if nr.candidaturaActual < respuesta.Candidatura {
-						nr.candidaturaActual = respuesta.Candidatura
+					if !respuesta.VotoGrantizado { // No me da el voto
+						if nr.candidaturaActual < respuesta.Candidatura {
+							nr.candidaturaActual = respuesta.Candidatura
+						}
+					} else { // Me da el voto
+						nr.votosCandidaturaActual++
+						if nr.votosCandidaturaActual >= constants.USERS/2+1 {
+							nr.candidaturaActual++
+							nr.masterActual = nr.yo
+							nr.inicializarMaster()
+						}
 					}
-				} else { // No me da voto
+				} else {
 					nr.votosCandidaturaActual++
 					if nr.votosCandidaturaActual >= constants.USERS/2+1 {
 						nr.inicializarMaster()
 						nr.candidaturaActual++
 						nr.masterActual = nr.yo
 					}
-				}
-			} else {
-				nr.votosCandidaturaActual++
-				if nr.votosCandidaturaActual >= constants.USERS/2+1 {
-					nr.inicializarMaster()
-					nr.candidaturaActual++
-					nr.masterActual = nr.yo
 				}
 			}
 		}
@@ -388,7 +393,6 @@ func (nr *NodoRaft) comunicarLatidos() {
 
 	for id := range nr.nodos {
 		var ultimaEntrada AplicaOperacion
-		//var ch chan *rpc.Call
 		nr.nodos[id].Call("NodoRaft.RecibirLatido", empty, &ultimaEntrada)
 
 		if nr.ultimaEntrada != -1 { // Hay alguna entrada en mi nodo
