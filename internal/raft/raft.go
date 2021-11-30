@@ -88,102 +88,6 @@ type NodoRaft struct {
 	totalCompromisosUltima int
 }
 
-func (nr *NodoRaft) registrarNodo() {
-
-	// Registro y Creación del RPC
-	rpc.Register(nr)
-	rpc.HandleHTTP()
-
-	// Inicio Escucha
-	listener, err := net.Listen("tcp", constants.HOSTS[nr.yo])
-	if err != nil {
-		os.Exit(1)
-	}
-	defer listener.Close()
-
-	// Sirve petiticiones
-	http.Serve(listener, nil)
-}
-
-func (nr *NodoRaft) contactarNodos() {
-	for i := 0; i < constants.USERS; i++ {
-		if i != nr.yo { // No contacto conmigo
-			nodo, err := rpc.DialHTTP("tcp", constants.HOSTS[i])
-			if err == nil { // No ha habido error
-				nr.nodos = append(nr.nodos, nodo)
-				fmt.Println("Nodo Contactado")
-			}
-		}
-	}
-}
-
-func (nr *NodoRaft) iniciarComunicacion() {
-
-	nr.contactarNodos()
-	time.Sleep(1 * time.Second)
-
-	for {
-		if nr.masterActual == nr.yo { // Yo soy el master
-			fmt.Println("------------Ejecuto Latidos------------")
-			nr.comunicarLatidos()
-			time.Sleep(pulseDelay)
-		} else {
-			select {
-			case <-nr.canalLatido: // El master ha respondido a tiempo
-				fmt.Println("!¡!¡!¡!¡!¡ ME LLEGA UN LATIDO !¡!¡!¡!¡!¡")
-				break
-
-			case <-time.After(nr.periodoLatido): // El master ha tardado mucho
-				fmt.Println("¿?¿?¿?¿?¿? EL master no contesta, empiezo candidatura ¿?¿?¿?¿?¿?")
-				nr.prepararCandidatura()
-				break
-
-			case <-nr.endChan:
-				fmt.Println("********* Termino la Ejecucion *********")
-				os.Exit(0)
-			}
-		}
-	}
-}
-
-func (nr *NodoRaft) prepararCandidatura() {
-	select {
-	case <-nr.canalMaster:
-		fmt.Println("Me han dicho que alguien se ha convertido en master")
-		break
-
-	case <-time.After(nr.periodoCandidatura):
-		args := &ArgsPeticionVoto{
-			nr.candidaturaActual, nr.yo, nr.ultimaEntrada, nr.candidaturaAnterior}
-
-		for id := range nr.nodos {
-			var respuesta RespuestaPeticionVoto
-			ok := nr.enviarPeticionVoto(id, args, &respuesta)
-			if ok {
-				if !respuesta.VotoGrantizado {
-					if nr.candidaturaActual < respuesta.Candidatura {
-						nr.candidaturaActual = respuesta.Candidatura
-					}
-				} else {
-					nr.votosCandidaturaActual++
-					if nr.votosCandidaturaActual >= constants.USERS/2+1 {
-						nr.inicializarMaster()
-						nr.candidaturaActual++
-						nr.masterActual = nr.yo
-					}
-				}
-			}
-		}
-	}
-}
-
-func (nr *NodoRaft) YaHayMaster(master Estado, emptyReply *EmptyValue) error {
-	nr.canalMaster <- true
-	nr.masterActual = master.Yo
-	nr.candidaturaActual = master.Mandato
-	return nil
-}
-
 // Creacion de un nuevo nodo de eleccion
 //
 // Tabla de <Direccion IP:puerto> de cada nodo incluido a si mismo.
@@ -203,15 +107,15 @@ func NuevoNodo(yo int, canalAplicar chan AplicaOperacion) *NodoRaft {
 	nr := new(NodoRaft)
 	nr.yo = yo
 	nr.candidaturaActual = -1
-	nr.masterActual = 0
+	nr.masterActual = -1
 	nr.candidaturaAnterior = -1
 	nr.totalCompromisosUltima = -1
 	nr.ultimaEntrada = -1
 	nr.ultimaEntradaComprometida = -1
 	nr.votosCandidaturaActual = 0
 
-	milis := 1000 + rand.Int()%1500 // Tiempo aleatorio entre 1000 y 2500 ms
-	nr.periodoLatido = time.Duration(milis * int(time.Millisecond))
+	milis := time.Duration(1000 + rand.Int()%1500) // Tiempo aleatorio entre 1000 y 2500 ms
+	nr.periodoLatido = time.Duration(milis * time.Millisecond)
 	nr.periodoCandidatura = time.Duration(3 * time.Second)
 
 	nr.canalLatido = make(chan bool)
@@ -230,10 +134,150 @@ func NuevoNodo(yo int, canalAplicar chan AplicaOperacion) *NodoRaft {
 	return nr
 }
 
-// Metodo Para() utilizado cuando no se necesita mas al nodo
 //
-// Quizas interesante desactivar la salida de depuracion
-// de este nodo
+// Función que prepara a un nodo para la recepción de llamadas
+// RPC
+//
+// Debe ejecutarse como gorutina o el sistema se queda bloqueado
+//
+func (nr *NodoRaft) registrarNodo() {
+
+	// Registro y Creación del RPC
+	rpc.Register(nr)
+	rpc.HandleHTTP()
+
+	// Inicio Escucha
+	listener, err := net.Listen("tcp", constants.HOSTS[nr.yo])
+	if err != nil {
+		os.Exit(1)
+	}
+	defer listener.Close()
+
+	// Sirve petiticiones
+	http.Serve(listener, nil)
+}
+
+//
+// Inicializa el vector que guarda los usuarios del sistema
+//
+// Los nodos deben haber sido registrados antes de que esta función
+// se ejecute
+//
+func (nr *NodoRaft) contactarNodos() {
+	for i := 0; i < constants.USERS; i++ {
+		if i != nr.yo { // No contacto conmigo
+			nodo, err := rpc.DialHTTP("tcp", constants.HOSTS[i])
+			if err == nil { // No ha habido error
+				nr.nodos = append(nr.nodos, nodo)
+				fmt.Println("Nodo Contactado")
+			}
+		}
+	}
+}
+
+//
+// Inicia la ecucha permanente de latidos del master o, por contra,
+// si el nodo es master, envia latidos
+//
+// También incia el periodo de candidatura si no recibe un latido
+// a tiempo
+//
+func (nr *NodoRaft) iniciarComunicacion() {
+
+	nr.contactarNodos()
+	time.Sleep(1 * time.Second)
+
+	for {
+		if nr.masterActual == nr.yo { // Yo soy el master
+			fmt.Println("------------Ejecuto Latidos------------")
+			nr.comunicarLatidos()
+			time.Sleep(pulseDelay)
+		} else {
+			select {
+			case <-nr.canalLatido: // El master ha respondido a tiempo
+				fmt.Println("!¡!¡!¡!¡!¡ ME LLEGA UN LATIDO !¡!¡!¡!¡!¡")
+				break
+
+			case <-time.After(nr.periodoLatido): // El master ha tardado mucho
+				fmt.Println("¿?¿?¿?¿?¿? EL master no contesta, empiezo candidatura ¿?¿?¿?¿?¿?")
+				fmt.Println(time.Now())
+				nr.prepararCandidatura()
+				break
+
+			case <-nr.endChan:
+				fmt.Println("********* Termino la Ejecucion *********")
+				os.Exit(0)
+			}
+		}
+	}
+}
+
+//
+// Periodo de candidatura de un nodo.
+// Se ejecuta tras no recibir un latido del master a tiempo,
+//
+func (nr *NodoRaft) prepararCandidatura() {
+	select {
+	case <-nr.canalMaster:
+		fmt.Println("Me han dicho que alguien se ha convertido en master")
+		break
+
+	case <-time.After(nr.periodoCandidatura):
+		args := &ArgsPeticionVoto{
+			nr.candidaturaActual, nr.yo, nr.ultimaEntrada, nr.candidaturaAnterior}
+
+		var sum int
+
+		for id := range nr.nodos {
+			var respuesta RespuestaPeticionVoto
+			ok := nr.enviarPeticionVoto(id, args, &respuesta)
+
+			if id == nr.yo {
+				sum++
+			}
+
+			if ok { // El nodo no está caído
+				fmt.Println("El nodo ", id+sum, " me ha dicho", respuesta.VotoGrantizado)
+
+				if !respuesta.VotoGrantizado { // Me da el voto
+					if nr.candidaturaActual < respuesta.Candidatura {
+						nr.candidaturaActual = respuesta.Candidatura
+					}
+				} else { // No me da voto
+					nr.votosCandidaturaActual++
+					if nr.votosCandidaturaActual >= constants.USERS/2+1 {
+						nr.inicializarMaster()
+						nr.candidaturaActual++
+						nr.masterActual = nr.yo
+					}
+				}
+			} else {
+				nr.votosCandidaturaActual++
+				if nr.votosCandidaturaActual >= constants.USERS/2+1 {
+					nr.inicializarMaster()
+					nr.candidaturaActual++
+					nr.masterActual = nr.yo
+				}
+			}
+		}
+	}
+}
+
+//
+// Avisa que en el periodo de candidatura actual, ya se ha elegido a alguien como
+// master.
+//
+// La información de quién es va guardada en master.
+//
+func (nr *NodoRaft) YaHayMaster(master Estado, emptyReply *EmptyValue) error {
+	nr.canalMaster <- true
+	nr.masterActual = master.Yo
+	nr.candidaturaActual = master.Mandato
+	return nil
+}
+
+//
+// Metodo que termina la ejecución de un nodo
 //
 func (nr *NodoRaft) Para(emptyArgs EmptyValue, emptyReply *EmptyValue) error {
 	nr.endChan <- true
@@ -263,7 +307,7 @@ func (nr *NodoRaft) ObtenerEstado(emptyArgs EmptyValue, estado *Estado) error {
 // El servicio que utilice Raft (base de datos clave/valor, por ejemplo)
 // Quiere buscar un acuerdo de posicion en registro para siguiente operacion
 // solicitada por cliente.
-
+//
 // Si el nodo no es el lider, devolver falso
 // Sino, comenzar la operacion de consenso sobre la operacion y devolver con
 // rapidez
@@ -329,6 +373,7 @@ func (nr *NodoRaft) AppendEntries(operacion *interface{}, correct *bool) error {
 
 func (nr *NodoRaft) RecibirLatido(emptyArgs EmptyValue, ultimaEntrada *AplicaOperacion) error {
 	nr.canalLatido <- true
+
 	if nr.ultimaEntrada != -1 {
 		*ultimaEntrada = nr.entradas[nr.ultimaEntrada]
 	} else {
@@ -340,10 +385,11 @@ func (nr *NodoRaft) RecibirLatido(emptyArgs EmptyValue, ultimaEntrada *AplicaOpe
 
 func (nr *NodoRaft) comunicarLatidos() {
 	var empty EmptyValue
+
 	for id := range nr.nodos {
 		var ultimaEntrada AplicaOperacion
-		var ch chan *rpc.Call
-		nr.nodos[id].Go("NodoRaft.RecibirLatido", empty, &ultimaEntrada, ch)
+		//var ch chan *rpc.Call
+		nr.nodos[id].Call("NodoRaft.RecibirLatido", empty, &ultimaEntrada)
 
 		if nr.ultimaEntrada != -1 { // Hay alguna entrada en mi nodo
 			if ultimaEntrada.Indice != -1 { // El nodo con quien contacto tiene alguna entrada
@@ -411,7 +457,7 @@ func (nr *NodoRaft) PedirVoto(args *ArgsPeticionVoto, reply *RespuestaPeticionVo
 		acceso = true
 	}
 
-	reply = &RespuestaPeticionVoto{nr.candidaturaActual, acceso}
+	*reply = RespuestaPeticionVoto{nr.candidaturaActual, acceso}
 
 	return nil
 }
