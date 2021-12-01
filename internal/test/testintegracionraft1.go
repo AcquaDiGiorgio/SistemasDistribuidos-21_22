@@ -1,5 +1,6 @@
-package testintegracionraft1
+package test
 
+/*
 import (
 	"fmt"
 	"os"
@@ -220,3 +221,4 @@ func pruebaUnLider() int {
 
 	return -1 // Termina
 }
+*/

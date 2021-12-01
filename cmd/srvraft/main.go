@@ -31,8 +31,12 @@ func main() {
 			var op string
 			fmt.Scanln(&op)
 
-			//var OpASometer raft.OpASometer
-			//nr.SometerOperacion(&op, &OpASometer)
+			if op == "Stop" {
+				nr.Para(empty, &empty)
+			}
+
+			var OpASometer raft.OpASometer
+			nr.SometerOperacion(op, &OpASometer)
 			fmt.Println("==========================================")
 
 		} else {

@@ -1,0 +1,18 @@
+Nodo_1 23:50:33.455608 raft.go:553: logger initialized
+Nodo_1 23:50:33.774427 raft.go:174: Contacto con el nodo 0
+Nodo_1 23:50:34.087420 raft.go:174: Contacto con el nodo 2
+Nodo_1 23:50:37.000745 raft.go:205: El master no me contesta, empiezo candidatura
+Nodo_1 23:50:39.016533 raft.go:247: El nodo 0 me ha dicho true
+Nodo_1 23:50:39.016533 raft.go:269: Me convierto en master
+Nodo_1 23:50:44.956493 raft.go:354: Intento someter:  aeths
+Nodo_1 23:50:44.957003 raft.go:378: Recibo:  true
+Nodo_1 23:50:44.957179 raft.go:378: Recibo:  true
+Nodo_1 23:50:47.460423 raft.go:354: Intento someter:  aethshdrtyu
+Nodo_1 23:50:47.460972 raft.go:378: Recibo:  true
+Nodo_1 23:50:47.460972 raft.go:378: Recibo:  true
+Nodo_1 23:50:49.132762 raft.go:354: Intento someter:  23678ufdtg
+Nodo_1 23:50:49.132852 raft.go:378: Recibo:  true
+Nodo_1 23:50:49.132852 raft.go:378: Recibo:  true
+Nodo_1 23:50:49.925069 raft.go:354: Intento someter:  
+Nodo_1 23:50:49.925915 raft.go:378: Recibo:  true
+Nodo_1 23:50:49.926613 raft.go:378: Recibo:  true
