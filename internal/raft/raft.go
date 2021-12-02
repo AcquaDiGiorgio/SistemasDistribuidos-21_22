@@ -149,7 +149,7 @@ func (nr *NodoRaft) registrarNodo() {
 	rpc.HandleHTTP()
 
 	// Inicio Escucha
-	listener, err := net.Listen("tcp", constants.HOSTS[nr.yo])
+	listener, err := net.Listen("tcp", constants.MachinesLocal[nr.yo].Ip)
 	if err != nil {
 		os.Exit(1)
 	}
@@ -168,7 +168,7 @@ func (nr *NodoRaft) registrarNodo() {
 func (nr *NodoRaft) contactarNodos() {
 	for i := 0; i < constants.USERS; i++ {
 		if i != nr.yo { // No contacto conmigo
-			nodo, err := rpc.DialHTTP("tcp", constants.HOSTS[i])
+			nodo, err := rpc.DialHTTP("tcp", constants.MachinesLocal[i].Ip)
 			if err == nil { // No ha habido error
 				nr.nodos = append(nr.nodos, nodo)
 				nr.logger.Println("Contacto con el nodo", i)
