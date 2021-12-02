@@ -1,39 +1,65 @@
-Nodo_2 23:50:33.146843 raft.go:553: logger initialized
-Nodo_2 23:50:33.976550 raft.go:174: Contacto con el nodo 0
-Nodo_2 23:50:34.293055 raft.go:174: Contacto con el nodo 1
-Nodo_2 23:50:37.204689 raft.go:205: El master no me contesta, empiezo candidatura
-Nodo_2 23:50:39.017242 raft.go:296: El nodo 1 se ha hecho master del mandato 0
-Nodo_2 23:50:39.017242 raft.go:228: Termina la candidatura 0
-Nodo_2 23:50:44.957067 raft.go:386: Me piden meter entradas 2 1
-Nodo_2 23:50:44.957179 raft.go:393: Op Recibida:
-	entrada[ 0 ] aeths
-Nodo_2 23:50:47.460972 raft.go:386: Me piden meter entradas 2 1
-Nodo_2 23:50:47.460972 raft.go:393: Op Recibida:
-	entrada[ 1 ] aethshdrtyu
-Nodo_2 23:50:49.132852 raft.go:386: Me piden meter entradas 2 1
-Nodo_2 23:50:49.132852 raft.go:393: Op Recibida:
-	entrada[ 2 ] 23678ufdtg
-Nodo_2 23:50:49.925973 raft.go:386: Me piden meter entradas 2 1
-Nodo_2 23:50:49.925973 raft.go:393: Op Recibida:
-	entrada[ 3 ] 
-Nodo_2 23:50:51.832804 raft.go:205: El master no me contesta, empiezo candidatura
-Nodo_2 23:50:53.836061 raft.go:247: El nodo 0 me ha dicho false
-Nodo_2 23:50:53.836569 raft.go:261: El nodo 1 ha dado error de conexion
-Nodo_2 23:50:55.844154 raft.go:247: El nodo 0 me ha dicho false
-Nodo_2 23:50:55.844154 raft.go:261: El nodo 1 ha dado error de conexion
-Nodo_2 23:50:57.855587 raft.go:247: El nodo 0 me ha dicho false
-Nodo_2 23:50:57.855587 raft.go:261: El nodo 1 ha dado error de conexion
-Nodo_2 23:50:59.861224 raft.go:247: El nodo 0 me ha dicho true
-Nodo_2 23:50:59.861224 raft.go:269: Me convierto en master
-Nodo_2 23:51:16.508217 raft.go:354: Intento someter:  
-Nodo_2 23:51:16.508512 raft.go:378: Recibo:  true
-Nodo_2 23:51:16.508512 raft.go:378: Recibo:  false
-Nodo_2 23:51:18.604639 raft.go:354: Intento someter:  sehgsh
-Nodo_2 23:51:18.604639 raft.go:378: Recibo:  true
-Nodo_2 23:51:18.604639 raft.go:378: Recibo:  false
-Nodo_2 23:51:19.788711 raft.go:354: Intento someter:  s57
-Nodo_2 23:51:19.788748 raft.go:378: Recibo:  true
-Nodo_2 23:51:19.788748 raft.go:378: Recibo:  false
-Nodo_2 23:51:20.339750 raft.go:354: Intento someter:  
-Nodo_2 23:51:20.341377 raft.go:378: Recibo:  true
-Nodo_2 23:51:20.341455 raft.go:378: Recibo:  false
+Nodo_2 15:32:14.671850 raft.go:563: logger initialized
+Nodo_2 15:32:15.141850 raft.go:174: Contacto con el nodo 0
+Nodo_2 15:32:15.455178 raft.go:174: Contacto con el nodo 1
+Nodo_2 15:32:17.656345 raft.go:211: El master no me contesta, empiezo candidatura
+Nodo_2 15:32:18.447868 raft.go:298: El nodo 1 se ha hecho master del mandato 0
+Nodo_2 15:32:18.447868 raft.go:230: Termina la candidatura 0
+Nodo_2 15:32:18.495703 raft.go:388: Me piden meter entradas 2 1
+Nodo_2 15:32:18.495703 raft.go:395: Op Recibida:
+	entrada[ 0 ] Operacion0
+Nodo_2 15:32:18.697838 raft.go:388: Me piden meter entradas 2 1
+Nodo_2 15:32:18.697838 raft.go:395: Op Recibida:
+	entrada[ 1 ] Operacion1
+Nodo_2 15:32:20.053237 raft.go:211: El master no me contesta, empiezo candidatura
+Nodo_2 15:32:21.366057 raft.go:249: El nodo 0 me ha dicho false
+Nodo_2 15:32:21.366057 raft.go:263: El nodo 1 ha dado error de conexion
+Nodo_2 15:32:21.401080 raft.go:298: El nodo 0 se ha hecho master del mandato 1
+Nodo_2 15:32:21.401080 raft.go:230: Termina la candidatura 1
+Nodo_2 15:32:21.418593 raft.go:388: Me piden meter entradas 2 0
+Nodo_2 15:32:21.418593 raft.go:395: Op Recibida:
+	entrada[ 2 ] Operacion0
+Nodo_2 15:32:21.620483 raft.go:388: Me piden meter entradas 2 0
+Nodo_2 15:32:21.620483 raft.go:395: Op Recibida:
+	entrada[ 3 ] Operacion1
+Nodo_2 15:32:21.824112 raft.go:388: Me piden meter entradas 2 0
+Nodo_2 15:32:21.824112 raft.go:395: Op Recibida:
+	entrada[ 4 ] Operacion2
+Nodo_2 15:32:23.025063 raft.go:211: El master no me contesta, empiezo candidatura
+Nodo_2 15:32:24.325122 raft.go:263: El nodo 0 ha dado error de conexion
+Nodo_2 15:32:24.325122 raft.go:263: El nodo 1 ha dado error de conexion
+Nodo_2 15:32:25.626001 raft.go:263: El nodo 0 ha dado error de conexion
+Nodo_2 15:32:25.626001 raft.go:263: El nodo 1 ha dado error de conexion
+Nodo_2 15:32:26.951248 raft.go:263: El nodo 0 ha dado error de conexion
+Nodo_2 15:32:26.951248 raft.go:263: El nodo 1 ha dado error de conexion
+Nodo_2 15:32:28.251546 raft.go:263: El nodo 0 ha dado error de conexion
+Nodo_2 15:32:28.251546 raft.go:263: El nodo 1 ha dado error de conexion
+Nodo_2 15:32:29.553234 raft.go:263: El nodo 0 ha dado error de conexion
+Nodo_2 15:32:29.553234 raft.go:263: El nodo 1 ha dado error de conexion
+Nodo_2 15:32:30.857052 raft.go:263: El nodo 0 ha dado error de conexion
+Nodo_2 15:32:30.857052 raft.go:263: El nodo 1 ha dado error de conexion
+Nodo_2 15:32:32.157380 raft.go:263: El nodo 0 ha dado error de conexion
+Nodo_2 15:32:32.157380 raft.go:263: El nodo 1 ha dado error de conexion
+Nodo_2 15:32:33.459784 raft.go:263: El nodo 0 ha dado error de conexion
+Nodo_2 15:32:33.459784 raft.go:263: El nodo 1 ha dado error de conexion
+Nodo_2 15:32:34.767203 raft.go:263: El nodo 0 ha dado error de conexion
+Nodo_2 15:32:34.767203 raft.go:263: El nodo 1 ha dado error de conexion
+Nodo_2 15:32:36.067831 raft.go:263: El nodo 0 ha dado error de conexion
+Nodo_2 15:32:36.067831 raft.go:263: El nodo 1 ha dado error de conexion
+Nodo_2 15:32:37.367970 raft.go:263: El nodo 0 ha dado error de conexion
+Nodo_2 15:32:37.367970 raft.go:263: El nodo 1 ha dado error de conexion
+Nodo_2 15:32:38.674513 raft.go:263: El nodo 0 ha dado error de conexion
+Nodo_2 15:32:38.674513 raft.go:263: El nodo 1 ha dado error de conexion
+Nodo_2 15:32:39.974517 raft.go:263: El nodo 0 ha dado error de conexion
+Nodo_2 15:32:39.974517 raft.go:263: El nodo 1 ha dado error de conexion
+Nodo_2 15:32:41.280736 raft.go:263: El nodo 0 ha dado error de conexion
+Nodo_2 15:32:41.280736 raft.go:263: El nodo 1 ha dado error de conexion
+Nodo_2 15:32:42.584930 raft.go:263: El nodo 0 ha dado error de conexion
+Nodo_2 15:32:42.584930 raft.go:263: El nodo 1 ha dado error de conexion
+Nodo_2 15:32:43.886233 raft.go:263: El nodo 0 ha dado error de conexion
+Nodo_2 15:32:43.886233 raft.go:263: El nodo 1 ha dado error de conexion
+Nodo_2 15:32:45.188448 raft.go:263: El nodo 0 ha dado error de conexion
+Nodo_2 15:32:45.188448 raft.go:263: El nodo 1 ha dado error de conexion
+Nodo_2 15:32:46.488799 raft.go:263: El nodo 0 ha dado error de conexion
+Nodo_2 15:32:46.488799 raft.go:263: El nodo 1 ha dado error de conexion
+Nodo_2 15:32:47.788958 raft.go:263: El nodo 0 ha dado error de conexion
+Nodo_2 15:32:47.788958 raft.go:263: El nodo 1 ha dado error de conexion

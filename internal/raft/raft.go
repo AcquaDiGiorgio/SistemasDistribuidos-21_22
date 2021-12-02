@@ -192,6 +192,12 @@ func (nr *NodoRaft) iniciarComunicacion() {
 	nr.contactarNodos()
 	time.Sleep(1 * time.Second)
 
+	go func() {
+		<-nr.endChan
+		nr.logger.Println("Termino la ejecución")
+		os.Exit(0)
+	}()
+
 	for {
 		if nr.masterActual == nr.yo { // Yo soy el master
 			nr.comunicarLatidos()
@@ -205,10 +211,6 @@ func (nr *NodoRaft) iniciarComunicacion() {
 				nr.logger.Println("El master no me contesta, empiezo candidatura")
 				nr.prepararCandidatura()
 				break
-
-			case <-nr.endChan:
-				nr.logger.Println("Termino la ejecución")
-				os.Exit(0)
 			}
 		}
 	}
@@ -404,17 +406,25 @@ func (nr *NodoRaft) AppendEntries(operacion string, correct *bool) error {
 	return nil
 }
 
+type ArgsLatido struct {
+	MasterActual              int
+	MandatoActual             int
+	ultimaEntradaComprometida int
+}
+
 //
 // Funciones relacionadas con los latidos entre
 // el master y las réplicas
 //
-func (nr *NodoRaft) RecibirLatido(estado Estado, ultimaEntrada *AplicaOperacion) error {
+func (nr *NodoRaft) RecibirLatido(args ArgsLatido, ultimaEntrada *AplicaOperacion) error {
 	nr.canalLatido <- true
 
-	if estado.Mandato >= nr.candidaturaActual {
+	if args.MandatoActual >= nr.candidaturaActual {
 		nr.candidaturaAnterior = nr.candidaturaActual
-		nr.candidaturaActual = estado.Mandato
+		nr.candidaturaActual = args.MandatoActual
 	}
+
+	nr.ultimaEntradaComprometida = args.ultimaEntradaComprometida
 
 	if nr.ultimaEntrada != -1 {
 		*ultimaEntrada = nr.entradas[nr.ultimaEntrada]
@@ -426,11 +436,11 @@ func (nr *NodoRaft) RecibirLatido(estado Estado, ultimaEntrada *AplicaOperacion)
 }
 
 func (nr *NodoRaft) comunicarLatidos() {
-	estado := Estado{nr.yo, nr.candidaturaActual, true}
+	args := ArgsLatido{nr.yo, nr.candidaturaActual, nr.ultimaEntradaComprometida}
 
 	for id := range nr.nodos {
 		var ultimaEntrada AplicaOperacion
-		nr.nodos[id].Call("NodoRaft.RecibirLatido", estado, &ultimaEntrada)
+		nr.nodos[id].Call("NodoRaft.RecibirLatido", args, &ultimaEntrada)
 
 		if nr.ultimaEntrada != -1 { // Hay alguna entrada en mi nodo
 			if ultimaEntrada.Indice != -1 { // El nodo con quien contacto tiene alguna entrada

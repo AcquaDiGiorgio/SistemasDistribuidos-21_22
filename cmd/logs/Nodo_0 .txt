@@ -1,41 +1,28 @@
-Nodo_0 23:50:33.715029 raft.go:553: logger initialized
-Nodo_0 23:50:34.024872 raft.go:174: Contacto con el nodo 1
-Nodo_0 23:50:34.340351 raft.go:174: Contacto con el nodo 2
-Nodo_0 23:50:37.250762 raft.go:205: El master no me contesta, empiezo candidatura
-Nodo_0 23:50:39.017048 raft.go:296: El nodo 1 se ha hecho master del mandato 0
-Nodo_0 23:50:39.017048 raft.go:228: Termina la candidatura 0
-Nodo_0 23:50:44.956493 raft.go:386: Me piden meter entradas 0 1
-Nodo_0 23:50:44.956493 raft.go:393: Op Recibida:
-	entrada[ 0 ] aeths
-Nodo_0 23:50:47.460972 raft.go:386: Me piden meter entradas 0 1
-Nodo_0 23:50:47.460972 raft.go:393: Op Recibida:
-	entrada[ 1 ] aethshdrtyu
-Nodo_0 23:50:49.132852 raft.go:386: Me piden meter entradas 0 1
-Nodo_0 23:50:49.132852 raft.go:393: Op Recibida:
-	entrada[ 2 ] 23678ufdtg
-Nodo_0 23:50:49.925069 raft.go:386: Me piden meter entradas 0 1
-Nodo_0 23:50:49.925608 raft.go:393: Op Recibida:
-	entrada[ 3 ] 
-Nodo_0 23:50:51.832804 raft.go:205: El master no me contesta, empiezo candidatura
-Nodo_0 23:50:53.834872 raft.go:261: El nodo 1 ha dado error de conexion
-Nodo_0 23:50:53.836061 raft.go:247: El nodo 2 me ha dicho false
-Nodo_0 23:50:55.843570 raft.go:261: El nodo 1 ha dado error de conexion
-Nodo_0 23:50:55.844154 raft.go:247: El nodo 2 me ha dicho false
-Nodo_0 23:50:57.854990 raft.go:261: El nodo 1 ha dado error de conexion
-Nodo_0 23:50:57.855587 raft.go:247: El nodo 2 me ha dicho false
-Nodo_0 23:50:59.859950 raft.go:261: El nodo 1 ha dado error de conexion
-Nodo_0 23:50:59.861094 raft.go:247: El nodo 2 me ha dicho false
-Nodo_0 23:50:59.861936 raft.go:296: El nodo 2 se ha hecho master del mandato 1
-Nodo_0 23:50:59.861936 raft.go:228: Termina la candidatura 1
-Nodo_0 23:51:16.508512 raft.go:386: Me piden meter entradas 0 2
-Nodo_0 23:51:16.508512 raft.go:393: Op Recibida:
-	entrada[ 4 ] 
-Nodo_0 23:51:18.604639 raft.go:386: Me piden meter entradas 0 2
-Nodo_0 23:51:18.604639 raft.go:393: Op Recibida:
-	entrada[ 5 ] sehgsh
-Nodo_0 23:51:19.788748 raft.go:386: Me piden meter entradas 0 2
-Nodo_0 23:51:19.788748 raft.go:393: Op Recibida:
-	entrada[ 6 ] s57
-Nodo_0 23:51:20.340711 raft.go:386: Me piden meter entradas 0 2
-Nodo_0 23:51:20.340711 raft.go:393: Op Recibida:
-	entrada[ 7 ] 
+Nodo_0 15:32:13.223328 raft.go:563: logger initialized
+Nodo_0 15:32:14.743905 raft.go:174: Contacto con el nodo 1
+Nodo_0 15:32:15.057156 raft.go:174: Contacto con el nodo 2
+Nodo_0 15:32:17.260833 raft.go:211: El master no me contesta, empiezo candidatura
+Nodo_0 15:32:18.446867 raft.go:230: Termina la candidatura 0
+Nodo_0 15:32:18.446867 raft.go:298: El nodo 1 se ha hecho master del mandato 0
+Nodo_0 15:32:18.495703 raft.go:388: Me piden meter entradas 0 1
+Nodo_0 15:32:18.495703 raft.go:395: Op Recibida:
+	entrada[ 0 ] Operacion0
+Nodo_0 15:32:18.697340 raft.go:388: Me piden meter entradas 0 1
+Nodo_0 15:32:18.697340 raft.go:395: Op Recibida:
+	entrada[ 1 ] Operacion1
+Nodo_0 15:32:18.898971 raft.go:388: Me piden meter entradas 0 1
+Nodo_0 15:32:18.898971 raft.go:395: Op Recibida:
+	entrada[ 2 ] Operacion2
+Nodo_0 15:32:20.099768 raft.go:211: El master no me contesta, empiezo candidatura
+Nodo_0 15:32:21.400081 raft.go:263: El nodo 1 ha dado error de conexion
+Nodo_0 15:32:21.400580 raft.go:249: El nodo 2 me ha dicho true
+Nodo_0 15:32:21.400580 raft.go:271: Me convierto en master
+Nodo_0 15:32:21.418593 raft.go:356: Intento someter:  Operacion0
+Nodo_0 15:32:21.418593 raft.go:380: Recibo:  false
+Nodo_0 15:32:21.419093 raft.go:380: Recibo:  true
+Nodo_0 15:32:21.620483 raft.go:356: Intento someter:  Operacion1
+Nodo_0 15:32:21.620483 raft.go:380: Recibo:  false
+Nodo_0 15:32:21.620982 raft.go:380: Recibo:  true
+Nodo_0 15:32:21.823121 raft.go:356: Intento someter:  Operacion2
+Nodo_0 15:32:21.823121 raft.go:380: Recibo:  false
+Nodo_0 15:32:21.823121 raft.go:197: Termino la ejecución
