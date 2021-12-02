@@ -39,8 +39,8 @@ import (
 
 const (
 	//CONSTANTES DE LOS LOGS
-	kEnableDebugLogs = true       //  false deshabilita los logs
-	kLogToStdout     = false      // true: logs -> stdout | flase: logs -> kLogOutputDir
+	kEnableDebugLogs = false      //  false deshabilita los logs
+	kLogToStdout     = true       // true: logs -> stdout | flase: logs -> kLogOutputDir
 	kLogOutputDir    = "../logs/" // Directorio de salida de los logs
 
 	// CONSTANTES TEMPORALES
@@ -221,22 +221,27 @@ func (nr *NodoRaft) iniciarComunicacion() {
 // Se ejecuta tras no recibir un latido del master a tiempo,
 //
 func (nr *NodoRaft) prepararCandidatura() {
+	nr.mux.Lock()
 	nr.candidaturaActual++
+	nr.mux.Unlock()
 	for {
+		nr.mux.Lock()
 		nr.votosCandidaturaActual = 1
 		nr.soyCandidato = false
+		nr.mux.Unlock()
 		select {
 		case <-nr.canalLatido: // Alguien se ha convertido en master
 			nr.logger.Println("Termina la candidatura", nr.candidaturaActual)
 			return
 
 		case <-time.After(nr.periodoCandidatura):
+			nr.mux.Lock()
 			args := ArgsPeticionVoto{
 				nr.candidaturaActual, nr.yo, nr.ultimaEntrada, nr.candidaturaAnterior}
+			nr.soyCandidato = true
+			nr.mux.Unlock()
 
 			var sum int //DEBUG
-
-			nr.soyCandidato = true
 			for id := range nr.nodos {
 				var respuesta RespuestaPeticionVoto
 				ok := nr.enviarPeticionVoto(id, args, &respuesta)
@@ -250,7 +255,9 @@ func (nr *NodoRaft) prepararCandidatura() {
 
 					if !respuesta.VotoGrantizado { // No me da el voto
 						if nr.candidaturaActual < respuesta.Candidatura {
+							nr.mux.Lock()
 							nr.candidaturaActual = respuesta.Candidatura
+							nr.mux.Unlock()
 						}
 					} else { // Me da el voto
 						nr.votosCandidaturaActual++
@@ -270,7 +277,9 @@ func (nr *NodoRaft) prepararCandidatura() {
 func (nr *NodoRaft) inicializarMaster() {
 	nr.logger.Println("Me convierto en master")
 
+	nr.mux.Lock()
 	nr.masterActual = nr.yo
+	nr.mux.Unlock()
 
 	var empty EmptyValue
 	var estado Estado
@@ -293,8 +302,12 @@ func (nr *NodoRaft) inicializarMaster() {
 //
 func (nr *NodoRaft) YaHayMaster(master Estado, emptyReply *EmptyValue) error {
 	nr.canalLatido <- true
+
+	nr.mux.Lock()
 	nr.masterActual = master.Yo
 	nr.candidaturaActual = master.Mandato
+	nr.mux.Unlock()
+
 	nr.logger.Println("El nodo", master.Yo, "se ha hecho master del mandato", master.Mandato)
 	return nil
 }
@@ -360,7 +373,7 @@ func (nr *NodoRaft) SometerOperacion(operacion string, oas *OpASometer) error {
 
 	if !esLider {
 		nr.mux.Unlock()
-		return nil
+		return fmt.Errorf("el nodo actual no puede someter operaciones")
 	}
 
 	nr.ultimaEntrada++
@@ -373,7 +386,9 @@ func (nr *NodoRaft) SometerOperacion(operacion string, oas *OpASometer) error {
 	ao := AplicaOperacion{nr.ultimaEntrada, operacion}
 
 	if esLider {
+		nr.mux.Lock()
 		nr.entradas = append(nr.entradas, ao)
+		nr.mux.Unlock()
 		for id := range nr.nodos {
 			var success bool
 			nr.nodos[id].Call("NodoRaft.AppendEntries", operacion, &success)
@@ -393,7 +408,6 @@ func (nr *NodoRaft) AppendEntries(operacion string, correct *bool) error {
 
 		nr.ultimaEntrada++
 		nr.logger.Println("Op Recibida:\n\tentrada[", nr.ultimaEntrada, "]", operacion)
-
 		nr.entradas = append(nr.entradas, AplicaOperacion{nr.ultimaEntrada, operacion})
 
 		nr.mux.Unlock()
@@ -487,6 +501,7 @@ func (nr *NodoRaft) PedirVoto(args ArgsPeticionVoto, reply *RespuestaPeticionVot
 	acceso := false
 
 	if nr.soyCandidato {
+		*reply = RespuestaPeticionVoto{nr.candidaturaActual, acceso}
 		return nil
 	}
 

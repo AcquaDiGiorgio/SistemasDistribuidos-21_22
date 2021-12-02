@@ -1,14 +1,1 @@
-Nodo_1 15:32:14.108176 raft.go:563: logger initialized
-Nodo_1 15:32:14.620313 raft.go:174: Contacto con el nodo 0
-Nodo_1 15:32:14.943528 raft.go:174: Contacto con el nodo 2
-Nodo_1 15:32:17.144252 raft.go:211: El master no me contesta, empiezo candidatura
-Nodo_1 15:32:18.446867 raft.go:249: El nodo 0 me ha dicho true
-Nodo_1 15:32:18.446867 raft.go:271: Me convierto en master
-Nodo_1 15:32:18.495206 raft.go:356: Intento someter:  Operacion0
-Nodo_1 15:32:18.495703 raft.go:380: Recibo:  true
-Nodo_1 15:32:18.496206 raft.go:380: Recibo:  true
-Nodo_1 15:32:18.697340 raft.go:356: Intento someter:  Operacion1
-Nodo_1 15:32:18.697838 raft.go:380: Recibo:  true
-Nodo_1 15:32:18.697838 raft.go:380: Recibo:  true
-Nodo_1 15:32:18.898971 raft.go:356: Intento someter:  Operacion2
-Nodo_1 15:32:18.898971 raft.go:197: Termino la ejecución
+Nodo_1 22:57:14.316928 raft.go:578: logger initialized

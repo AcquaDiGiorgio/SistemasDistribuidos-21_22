@@ -4,11 +4,9 @@ import (
 	"fmt"
 	"raft/internal/comun/constants"
 	"raft/internal/despliegue"
-	"syscall"
+	"strconv"
 	"testing"
 	"time"
-
-	"golang.org/x/term"
 )
 
 const (
@@ -18,7 +16,8 @@ const (
 	PUERTOREPLICA3 = 29003
 
 	// paquete main de ejecutables relativos a PATH previo
-	EXECREPLICA = "cmd/srvraft/main.go "
+	WORKPATH    = "/SSDD/Practica4/"
+	EXECREPLICA = "cmd/srvraft/main "
 
 	// comandos completo a ejecutar en máquinas remota con ssh. Ejemplo :
 	// 				cd $HOME/raft; go run cmd/srvraft/main.go 127.0.0.1:29001
@@ -46,16 +45,20 @@ func TestPrimerasPruebas(t *testing.T) { // (m *testing.M) {
 	// <setup code>
 	testExec := new(testExecution)
 
-	fmt.Print("Introduzca el usuario: ")
-	fmt.Scanf("%s", &testExec.user)
+	/*
+		fmt.Print("Introduzca el usuario: ")
+		fmt.Scanf("%s", &testExec.user)
 
-	fmt.Print("Introduzca la Contraseña: ")
-	pass, _ := term.ReadPassword(int(syscall.Stdin))
+		fmt.Print("Introduzca la Contraseña: ")
+		pass, _ := term.ReadPassword(int(syscall.Stdin))
 
-	testExec.pass = string(pass)
+		testExec.pass = string(pass)
+	*/
+	testExec.user = "a774248"
+	testExec.pass = "Fsw5zw"
 
 	testExec.rsaPath = "/home/" + testExec.user + "/.ssh/id_rsa"
-	testExec.cmd = "/home/" + testExec.user + "/SSDD/Practica4/cmd/srvraft/main "
+	testExec.cmd = "/home/" + testExec.user + WORKPATH + EXECREPLICA
 
 	// Crear canal de resultados de ejecuciones ssh en maquinas remotas
 	testExec.canalResultados = make(chan string, 2000)
@@ -92,9 +95,9 @@ func (te *testExecution) stop() {
 
 func (te *testExecution) startDistributedProcesses(option string) {
 
-	for _, maquina := range constants.MachinesSSH {
-		despliegue.ExecOneNode(te.user, te.pass,
-			maquina.Host, te.rsaPath, te.canalResultados, te.cmd+maquina.Ip+option)
+	for i, maquina := range constants.MachinesSSH {
+		go despliegue.ExecOneNode(te.user, te.pass,
+			maquina.Host, te.rsaPath, te.canalResultados, te.cmd+strconv.Itoa(i)+" "+option)
 
 		// dar tiempo para se establezcan las replicas
 		time.Sleep(1000 * time.Millisecond)

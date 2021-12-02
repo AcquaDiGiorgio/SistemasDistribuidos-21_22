@@ -9,6 +9,11 @@
 
 package despliegue
 
+import (
+	"fmt"
+	"os"
+)
+
 func ExecOneNode(user string, pass string, hostname string,
 	rsaPath string, results chan<- string, cmd string) {
 
@@ -23,10 +28,11 @@ func ExecOneNode(user string, pass string, hostname string,
 		panic(err)
 	}
 
-	output, err := client.RunCommand(cmd)
+	err = client.RunCommand(cmd)
 	if err != nil {
-		panic(err)
+		fmt.Println(err.Error())
+		os.Exit(1)
 	}
 
-	results <- output
+	results <- "output"
 }
