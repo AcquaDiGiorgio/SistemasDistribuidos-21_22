@@ -39,8 +39,8 @@ import (
 
 const (
 	//CONSTANTES DE LOS LOGS
-	kEnableDebugLogs = false      //  false deshabilita los logs
-	kLogToStdout     = true       // true: logs -> stdout | flase: logs -> kLogOutputDir
+	kEnableDebugLogs = true       //  false deshabilita los logs
+	kLogToStdout     = false      // true: logs -> stdout | flase: logs -> kLogOutputDir
 	kLogOutputDir    = "../logs/" // Directorio de salida de los logs
 
 	// CONSTANTES TEMPORALES
@@ -115,10 +115,10 @@ func NuevoNodo(yo int, canalAplicar chan AplicaOperacion) *NodoRaft {
 	nr.votosCandidaturaActual = 0
 	nr.soyCandidato = false
 
-	milis := time.Duration(1000 + rand.Int()%11*100) // Tiempo aleatorio entre 1000 y 2500 ms
+	milis := time.Duration(500 + rand.Int()%6*100) // Tiempo aleatorio entre 500 y 1000 ms
 	nr.periodoLatido = time.Duration(milis * time.Millisecond)
 
-	milis = time.Duration(1000 + rand.Int()%11*100) // Tiempo aleatorio entre 1000 y 2500 ms
+	milis = time.Duration(1000 + rand.Int()%21*100) // Tiempo aleatorio entre 1000 y 3000 ms
 	nr.periodoCandidatura = time.Duration(milis * time.Millisecond)
 
 	nr.canalLatido = make(chan bool)
@@ -149,11 +149,10 @@ func (nr *NodoRaft) registrarNodo() {
 	rpc.HandleHTTP()
 
 	// Inicio Escucha
-	listener, err := net.Listen("tcp", constants.MachinesLocal[nr.yo].Ip)
+	listener, err := net.Listen("tcp", constants.MachinesSSH[nr.yo].Ip)
 	if err != nil {
 		os.Exit(1)
 	}
-	defer listener.Close()
 
 	// Sirve petiticiones
 	http.Serve(listener, nil)
@@ -166,15 +165,19 @@ func (nr *NodoRaft) registrarNodo() {
 // se ejecute
 //
 func (nr *NodoRaft) contactarNodos() {
+	nr.mux.Lock()
 	for i := 0; i < constants.USERS; i++ {
 		if i != nr.yo { // No contacto conmigo
-			nodo, err := rpc.DialHTTP("tcp", constants.MachinesLocal[i].Ip)
+			nodo, err := rpc.DialHTTP("tcp", constants.MachinesSSH[i].Ip)
 			if err == nil { // No ha habido error
 				nr.nodos = append(nr.nodos, nodo)
 				nr.logger.Println("Contacto con el nodo", i)
+			} else {
+				nr.logger.Panicln("ERROR CONTACTO: ", err.Error())
 			}
 		}
 	}
+	nr.mux.Unlock()
 }
 
 //
@@ -189,6 +192,7 @@ func (nr *NodoRaft) contactarNodos() {
 //
 func (nr *NodoRaft) iniciarComunicacion() {
 
+	time.Sleep(2 * time.Second)
 	nr.contactarNodos()
 	time.Sleep(1 * time.Second)
 
