@@ -28,11 +28,11 @@ func ExecOneNode(user string, pass string, hostname string,
 		panic(err)
 	}
 
-	err = client.RunCommand(cmd)
+	output, err := client.RunCommand(cmd)
 	if err != nil {
 		fmt.Println(err.Error())
 		os.Exit(1)
 	}
 
-	results <- "output"
+	results <- output
 }

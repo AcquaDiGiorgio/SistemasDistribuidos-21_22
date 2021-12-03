@@ -40,7 +40,7 @@ import (
 const (
 	//CONSTANTES DE LOS LOGS
 	kEnableDebugLogs = true       //  false deshabilita los logs
-	kLogToStdout     = false      // true: logs -> stdout | flase: logs -> kLogOutputDir
+	kLogToStdout     = true       // true: logs -> stdout | flase: logs -> kLogOutputDir
 	kLogOutputDir    = "../logs/" // Directorio de salida de los logs
 
 	// CONSTANTES TEMPORALES
@@ -149,7 +149,7 @@ func (nr *NodoRaft) registrarNodo() {
 	rpc.HandleHTTP()
 
 	// Inicio Escucha
-	listener, err := net.Listen("tcp", constants.MachinesSSH[nr.yo].Ip)
+	listener, err := net.Listen("tcp", constants.MachinesLocal[nr.yo].Ip)
 	if err != nil {
 		os.Exit(1)
 	}
@@ -168,7 +168,7 @@ func (nr *NodoRaft) contactarNodos() {
 	nr.mux.Lock()
 	for i := 0; i < constants.USERS; i++ {
 		if i != nr.yo { // No contacto conmigo
-			nodo, err := rpc.DialHTTP("tcp", constants.MachinesSSH[i].Ip)
+			nodo, err := rpc.DialHTTP("tcp", constants.MachinesLocal[i].Ip)
 			if err == nil { // No ha habido error
 				nr.nodos = append(nr.nodos, nodo)
 				nr.logger.Println("Contacto con el nodo", i)
@@ -196,25 +196,25 @@ func (nr *NodoRaft) iniciarComunicacion() {
 	nr.contactarNodos()
 	time.Sleep(1 * time.Second)
 
-	go func() {
-		<-nr.endChan
-		nr.logger.Println("Termino la ejecución")
-		os.Exit(0)
-	}()
-
 	for {
-		if nr.masterActual == nr.yo { // Yo soy el master
-			nr.comunicarLatidos()
-			time.Sleep(pulseDelay)
-		} else {
-			select {
-			case <-nr.canalLatido: // El master ha respondido a tiempo
-				break
+		select {
+		case <-nr.endChan:
+			return
 
-			case <-time.After(nr.periodoLatido): // El master ha tardado mucho
-				nr.logger.Println("El master no me contesta, empiezo candidatura")
-				nr.prepararCandidatura()
-				break
+		case <-time.After(10 * time.Millisecond):
+			if nr.masterActual == nr.yo { // Yo soy el master
+				nr.comunicarLatidos()
+				time.Sleep(pulseDelay)
+			} else {
+				select {
+				case <-nr.canalLatido: // El master ha respondido a tiempo
+					break
+
+				case <-time.After(nr.periodoLatido): // El master ha tardado mucho
+					nr.logger.Println("El master no me contesta, empiezo candidatura")
+					nr.prepararCandidatura()
+					break
+				}
 			}
 		}
 	}
@@ -234,6 +234,8 @@ func (nr *NodoRaft) prepararCandidatura() {
 		nr.soyCandidato = false
 		nr.mux.Unlock()
 		select {
+		case <-nr.endChan:
+			return
 		case <-nr.canalLatido: // Alguien se ha convertido en master
 			nr.logger.Println("Termina la candidatura", nr.candidaturaActual)
 			return

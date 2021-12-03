@@ -111,11 +111,14 @@ func IniciarYElegirLider(nodo int) {
 		nr.ObtenerEstado(empty, &estado)
 
 		// Me he convertido en líder o alguien lo ha hecho
-		if estado.EsLider {
+		if estado.Mandato > 0 {
+			nr.Para(empty, &empty)
+			return
+
+		} else if estado.EsLider {
 			fmt.Printf("Nodo %d Se ha convertido en Líder del mandato %d\n", estado.Yo, estado.Mandato)
 			nr.Para(empty, &empty)
-		} else if estado.Mandato > 0 {
-			nr.Para(empty, &empty)
+			return
 		}
 		time.Sleep(100 * time.Millisecond)
 	}
@@ -135,15 +138,18 @@ func IniciarYTumbarLider(nodo int) {
 			fmt.Printf("Nodo %d se ha hecho Líder en el mandato 0\n", nodo)
 			fmt.Printf("Nodo %d Tumbado\n", nodo)
 			nr.Para(empty, &empty)
+			return
 
 			// Me he convertido en líder del mandato 1
 		} else if estado.EsLider && estado.Mandato == 1 {
 			fmt.Printf("Nodo %d se ha hecho Líder en el mandato 1\n", nodo)
 			nr.Para(empty, &empty)
+			return
 
 			// Ha caído el master del mandato 1
 		} else if estado.Mandato == 2 {
 			nr.Para(empty, &empty)
+			return
 		}
 		time.Sleep(100 * time.Millisecond)
 	}
@@ -167,6 +173,7 @@ func IniciarYComprometer3Entradas(nodo int) {
 			if idOp == 3 {
 				fmt.Printf("Nodo %d Termina\n", nodo)
 				nr.Para(empty, &empty)
+				return
 			}
 
 			var OpASometer raft.OpASometer

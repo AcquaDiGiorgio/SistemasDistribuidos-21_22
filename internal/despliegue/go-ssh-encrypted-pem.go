@@ -49,24 +49,24 @@ func NewSshClient(user string, host string, port int, privateKeyPath string, pri
 
 // Opens a new SSH connection and runs the specified command
 // Returns the combined output of stdout and stderr
-func (s *SshClient) RunCommand(cmd string) error {
+func (s *SshClient) RunCommand(cmd string) (string, error) {
 	// open connection
 	conn, err := ssh.Dial("tcp", s.Server, s.Config)
 	if err != nil {
-		return fmt.Errorf("Dial to %v failed %v", s.Server, err)
+		return "", fmt.Errorf("Dial to %v failed %v", s.Server, err)
 	}
 	defer conn.Close()
 
 	// open session
 	session, err := conn.NewSession()
 	if err != nil {
-		return fmt.Errorf("Create session for %v failed %v", s.Server, err)
+		return "", fmt.Errorf("Create session for %v failed %v", s.Server, err)
 	}
 	defer session.Close()
 
 	// run command and capture stdout/stderr
-	err = session.Start(cmd)
-	return err
+	bytes, err := session.CombinedOutput(cmd)
+	return string(bytes), err
 }
 
 func signerFromPem(pemBytes []byte, password []byte) (ssh.Signer, error) {

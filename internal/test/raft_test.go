@@ -10,11 +10,6 @@ import (
 )
 
 const (
-	//puertos
-	PUERTOREPLICA1 = 29001
-	PUERTOREPLICA2 = 29002
-	PUERTOREPLICA3 = 29003
-
 	// paquete main de ejecutables relativos a PATH previo
 	WORKPATH    = "/SSDD/Practica4/"
 	EXECREPLICA = "cmd/srvraft/main "
@@ -41,7 +36,8 @@ type testExecution struct {
 }
 
 // TEST primer rango
-func TestPrimerasPruebas(t *testing.T) { // (m *testing.M) {
+func TestPrimerasPruebas(t *testing.T) {
+
 	// <setup code>
 	testExec := new(testExecution)
 
@@ -83,7 +79,9 @@ func TestPrimerasPruebas(t *testing.T) { // (m *testing.M) {
 
 	// tear down code
 	// eliminar procesos en máquinas remotas
+
 	testExec.stop()
+
 }
 
 func (te *testExecution) stop() {
@@ -105,17 +103,17 @@ func (te *testExecution) startDistributedProcesses(option string) {
 }
 
 func (te *testExecution) soloArranqueYparadaTest1(t *testing.T) {
-	te.startDistributedProcesses("0")
-}
-
-func (te *testExecution) elegirPrimerLiderTest2(t *testing.T) {
 	te.startDistributedProcesses("1")
 }
 
-func (te *testExecution) falloAnteriorElegirNuevoLiderTest3(t *testing.T) {
+func (te *testExecution) elegirPrimerLiderTest2(t *testing.T) {
 	te.startDistributedProcesses("2")
 }
 
-func (te *testExecution) tresOperacionesComprometidasEstable(t *testing.T) {
+func (te *testExecution) falloAnteriorElegirNuevoLiderTest3(t *testing.T) {
 	te.startDistributedProcesses("3")
+}
+
+func (te *testExecution) tresOperacionesComprometidasEstable(t *testing.T) {
+	te.startDistributedProcesses("4")
 }
