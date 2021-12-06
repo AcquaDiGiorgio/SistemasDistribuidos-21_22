@@ -72,7 +72,10 @@ type NodoRaft struct {
 	candidaturaAnterior int
 	candidaturaActual   int
 	masterActual        int
-	soyCandidato        bool
+
+	// Varaibles de cada candidatura
+	soyCandidato bool
+	heVotadoA    int
 
 	// Variables propias de cada Nodo
 	yo                        int
@@ -113,6 +116,7 @@ func NuevoNodo(yo int, canalAplicar chan AplicaOperacion) *NodoRaft {
 	nr.ultimaEntrada = -1
 	nr.ultimaEntradaComprometida = -1
 	nr.votosCandidaturaActual = 0
+	nr.heVotadoA = -1
 	nr.soyCandidato = false
 
 	milis := time.Duration(500 + rand.Int()%6*100) // Tiempo aleatorio entre 500 y 1000 ms
@@ -245,6 +249,7 @@ func (nr *NodoRaft) prepararCandidatura() {
 			args := ArgsPeticionVoto{
 				nr.candidaturaActual, nr.yo, nr.ultimaEntrada, nr.candidaturaAnterior}
 			nr.soyCandidato = true
+			nr.heVotadoA = -1
 			nr.mux.Unlock()
 
 			var sum int //DEBUG
@@ -506,17 +511,25 @@ type RespuestaPeticionVoto struct {
 func (nr *NodoRaft) PedirVoto(args ArgsPeticionVoto, reply *RespuestaPeticionVoto) error {
 	acceso := false
 
-	if nr.soyCandidato {
+	if nr.soyCandidato || nr.heVotadoA != -1 {
 		*reply = RespuestaPeticionVoto{nr.candidaturaActual, acceso}
 		return nil
 	}
 
 	// Aún no ha habido un master
 	if nr.candidaturaAnterior == -1 {
+		nr.mux.Lock()
+		nr.heVotadoA = args.Candidato
+		nr.mux.Unlock()
 		acceso = true
 
 		// El candidato tiene por lo menos con las entradas de este nodo
-	} else if args.UltimaCandidatura >= nr.candidaturaAnterior && args.UltimaEntrada >= nr.ultimaEntrada {
+	} else if args.UltimaCandidatura >= nr.candidaturaAnterior &&
+		args.UltimaEntrada >= nr.ultimaEntrada {
+
+		nr.mux.Lock()
+		nr.heVotadoA = args.Candidato
+		nr.mux.Unlock()
 		acceso = true
 	}
 
