@@ -74,12 +74,12 @@ type NodoRaft struct {
 	masterActual        int
 
 	// Varaibles de cada candidatura
-	soyCandidato bool
-	heVotadoA    int
+	soyCandidato           bool
+	heVotadoA              int
+	votosCandidaturaActual int
 
 	// Variables propias de cada Nodo
 	yo                        int
-	votosCandidaturaActual    int
 	entradas                  []AplicaOperacion
 	ultimaEntrada             int
 	ultimaEntradaComprometida int
@@ -511,6 +511,7 @@ type RespuestaPeticionVoto struct {
 func (nr *NodoRaft) PedirVoto(args ArgsPeticionVoto, reply *RespuestaPeticionVoto) error {
 	acceso := false
 
+	// Si soy candidato o ya he votado, no doy el voto
 	if nr.soyCandidato || nr.heVotadoA != -1 {
 		*reply = RespuestaPeticionVoto{nr.candidaturaActual, acceso}
 		return nil
