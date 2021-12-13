@@ -134,7 +134,7 @@ func NuevoNodo(yo int, canalAplicar chan AplicaOperacion) *NodoRaft {
 
 	go nr.registrarNodo()
 	go nr.iniciarComunicacion()
-	go nr.comprometerEntradas()
+	go nr.introducirEntradas()
 
 	return nr
 }
@@ -476,7 +476,6 @@ func (nr *NodoRaft) comunicarLatidos() {
 			// El nodo con quien contacto no tiene las mismas entradas que yo
 			if nr.indiceUltimaEntradaNodo[id] != nr.ultimaEntrada {
 				if !nr.comprometiendo[id] {
-					nr.comprometiendo[id] = true
 					nr.canalAplicar <- entradaIntroducir{nr.entradas[nr.indiceUltimaEntradaNodo[id]+1], id}
 				}
 			}
@@ -484,19 +483,41 @@ func (nr *NodoRaft) comunicarLatidos() {
 	}
 }
 
-func (nr *NodoRaft) comprometerEntradas() {
+func (nr *NodoRaft) introducirEntradas() {
 	for {
 		entradaComprometer := <-nr.canalAplicar
+		nr.comprometiendo[entradaComprometer.Quien] = true
 		var correcto bool
 
-		nr.nodos[entradaComprometer.Quien].Call("NodoRaft.AppendEntries", entradaComprometer.Entrada, &correcto)
+		err := rpctimeout.CallTimeout(nr.nodos[entradaComprometer.Quien], "NodoRaft.AppendEntries", entradaComprometer.Entrada, &correcto, 1000)
 
-		if correcto {
-			nr.indiceUltimaEntradaNodo[entradaComprometer.Quien]++
+		if err != nil {
+			if correcto {
+				nr.indiceUltimaEntradaNodo[entradaComprometer.Quien]++
+				nr.comprobarCompromiso()
+			}
 		}
 
 		nr.comprometiendo[entradaComprometer.Quien] = false
 	}
+}
+
+func (nr *NodoRaft) comprobarCompromiso() {
+	nr.mux.Lock()
+	nextEntry := nr.ultimaEntradaComprometida + 1
+	graterOrEqual := 0
+
+	for _, val := range nr.indiceUltimaEntradaNodo {
+		if val >= nextEntry {
+			graterOrEqual++
+			if graterOrEqual > constants.USERS/2+1 {
+				nr.ultimaEntradaComprometida++
+				nr.mux.Unlock()
+				return
+			}
+		}
+	}
+	nr.mux.Unlock()
 }
 
 //
