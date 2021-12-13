@@ -1,6 +1,3 @@
-// Escribir vuestro código de funcionalidad Raft en este fichero
-//
-
 package raft
 
 //
@@ -32,6 +29,7 @@ import (
 	"net/rpc"
 	"os"
 	"raft/internal/comun/constants"
+	"raft/internal/comun/rpctimeout"
 	"strconv"
 	"sync"
 	"time"
@@ -39,9 +37,10 @@ import (
 
 const (
 	//CONSTANTES DE LOS LOGS
-	kEnableDebugLogs = true       //  false deshabilita los logs
-	kLogToStdout     = true       // true: logs -> stdout | flase: logs -> kLogOutputDir
-	kLogOutputDir    = "../logs/" // Directorio de salida de los logs
+	kEnableDebugLogs = true // false deshabilita los logs
+	kLogToStdout     = true // true: logs -> stdout
+	// flase: logs -> kLogOutputDir
+	kLogOutputDir = "../logs/" // Directorio de salida de los logs
 
 	// CONSTANTES TEMPORALES
 	pulseDelay = 100 * time.Millisecond // Delay de cada latido (10 veces / seg)
@@ -57,21 +56,27 @@ type AplicaOperacion struct {
 	Operacion interface{}
 }
 
+type entradaIntroducir struct {
+	Entrada AplicaOperacion
+	Quien   int
+}
+
+//
 // Tipo de dato Go que representa un solo nodo (réplica) de raft
 //
 type NodoRaft struct {
 	// Variables de control y depuración
-	mux         sync.Mutex    // Mutex para proteger acceso a estado compartido
-	nodos       []*rpc.Client // Conexiones RPC a todos los nodos (réplicas) Raft
-	logger      *log.Logger   // Logger para depuración
-	canalLatido chan bool
-	endChan     chan bool
+	mux          sync.Mutex    // Mutex para proteger acceso a estado compartido
+	nodos        []*rpc.Client // Conexiones RPC a todos los nodos (réplicas) Raft
+	logger       *log.Logger   // Logger para depuración
+	canalLatido  chan bool
+	endChan      chan bool
+	canalAplicar chan entradaIntroducir
 
 	// Variables que deberían ser iguales entre todos los nodos (sin tener
 	// en cuenta posibles errores)
-	candidaturaAnterior int
-	candidaturaActual   int
-	masterActual        int
+	candidaturaActual int
+	masterActual      int
 
 	// Varaibles de cada candidatura
 	soyCandidato           bool
@@ -88,41 +93,34 @@ type NodoRaft struct {
 
 	// Variables únicas del Master actual (si el nodo actual no es master, se
 	// deben ignorar sus valores)
-	totalCompromisosUltima int
+	indiceUltimaEntradaNodo []int
+	comprometiendo          []bool
 }
 
 // Creacion de un nuevo nodo de eleccion
 //
-// Tabla de <Direccion IP:puerto> de cada nodo incluido a si mismo.
-//
-// <Direccion IP:puerto> de este nodo esta en nodos[yo]
-//
-// Todos los arrays nodos[] de los nodos tienen el mismo orden
-
 // canalAplicar es un canal donde, en la practica 5, se recogerán las
 // operaciones a aplicar a la máquina de estados. Se puede asumir que
 // este canal se consumira de forma continúa.
 //
-// NuevoNodo() debe devolver resultado rápido, por lo que se deberían
-// poner en marcha Gorutinas para trabajos de larga duracion
 func NuevoNodo(yo int, canalAplicar chan AplicaOperacion) *NodoRaft {
 
 	nr := new(NodoRaft)
 	nr.yo = yo
 	nr.candidaturaActual = -1
 	nr.masterActual = -1
-	nr.candidaturaAnterior = -1
-	nr.totalCompromisosUltima = -1
 	nr.ultimaEntrada = -1
 	nr.ultimaEntradaComprometida = -1
 	nr.votosCandidaturaActual = 0
 	nr.heVotadoA = -1
 	nr.soyCandidato = false
 
-	milis := time.Duration(500 + rand.Int()%6*100) // Tiempo aleatorio entre 500 y 1000 ms
+	// Tiempo aleatorio entre 500 y 1000 ms
+	milis := time.Duration(500 + rand.Int()%6*100)
 	nr.periodoLatido = time.Duration(milis * time.Millisecond)
 
-	milis = time.Duration(1000 + rand.Int()%21*100) // Tiempo aleatorio entre 1000 y 3000 ms
+	// Tiempo aleatorio entre 1000 y 3000 ms
+	milis = time.Duration(1000 + rand.Int()%21*100)
 	nr.periodoCandidatura = time.Duration(milis * time.Millisecond)
 
 	nr.canalLatido = make(chan bool)
@@ -136,6 +134,7 @@ func NuevoNodo(yo int, canalAplicar chan AplicaOperacion) *NodoRaft {
 
 	go nr.registrarNodo()
 	go nr.iniciarComunicacion()
+	go nr.comprometerEntradas()
 
 	return nr
 }
@@ -165,7 +164,7 @@ func (nr *NodoRaft) registrarNodo() {
 //
 // Inicializa el vector que guarda los usuarios del sistema
 //
-// Los nodos deben haber sido registrados antes de que esta función
+// TODOS los nodos deben haber sido registrados antes de que esta función
 // se ejecute
 //
 func (nr *NodoRaft) contactarNodos() {
@@ -175,6 +174,7 @@ func (nr *NodoRaft) contactarNodos() {
 			nodo, err := rpc.DialHTTP("tcp", constants.MachinesLocal[i].Ip)
 			if err == nil { // No ha habido error
 				nr.nodos = append(nr.nodos, nodo)
+				nr.indiceUltimaEntradaNodo = append(nr.indiceUltimaEntradaNodo, -1)
 				nr.logger.Println("Contacto con el nodo", i)
 			} else {
 				nr.logger.Panicln("ERROR CONTACTO: ", err.Error())
@@ -196,9 +196,8 @@ func (nr *NodoRaft) contactarNodos() {
 //
 func (nr *NodoRaft) iniciarComunicacion() {
 
-	time.Sleep(2 * time.Second)
-	nr.contactarNodos()
-	time.Sleep(1 * time.Second)
+	time.Sleep(2 * time.Second) // Esperamos que todas las réplicas estén registradas
+	nr.contactarNodos()         // Contactamos con ellas
 
 	for {
 		select {
@@ -232,7 +231,7 @@ func (nr *NodoRaft) prepararCandidatura() {
 	nr.mux.Lock()
 	nr.candidaturaActual++
 	nr.mux.Unlock()
-	for {
+	for { // Periodo de candidatura
 		nr.mux.Lock()
 		nr.votosCandidaturaActual = 1
 		nr.soyCandidato = false
@@ -241,13 +240,14 @@ func (nr *NodoRaft) prepararCandidatura() {
 		case <-nr.endChan:
 			return
 		case <-nr.canalLatido: // Alguien se ha convertido en master
+			nr.heVotadoA = -1
 			nr.logger.Println("Termina la candidatura", nr.candidaturaActual)
 			return
 
 		case <-time.After(nr.periodoCandidatura):
 			nr.mux.Lock()
 			args := ArgsPeticionVoto{
-				nr.candidaturaActual, nr.yo, nr.ultimaEntrada, nr.candidaturaAnterior}
+				nr.candidaturaActual, nr.yo, nr.ultimaEntrada, nr.ultimaEntradaComprometida}
 			nr.soyCandidato = true
 			nr.heVotadoA = -1
 			nr.mux.Unlock()
@@ -278,7 +278,7 @@ func (nr *NodoRaft) prepararCandidatura() {
 						}
 					}
 				} else {
-					nr.logger.Println("El nodo", id+sum, "ha dado error de conexion")
+					nr.logger.Println("El nodo", id+sum, "no ha contestado a tiempo")
 				}
 			}
 		}
@@ -301,25 +301,29 @@ func (nr *NodoRaft) inicializarMaster() {
 		nr.nodos[id].Call("NodoRaft.YaHayMaster", estado, &empty)
 	}
 
-	nr.totalCompromisosUltima = 0
 	// Variables de master a inicializar
 }
 
+type InfoMaster struct {
+	Yo                int
+	CandidaturaActual int
+}
+
 //
-// Avisa que en el periodo de candidatura actual, ya se ha elegido a alguien como
-// master.
+// Avisa que en el periodo de candidatura actual, ya se ha elegido a alguien
+// como master.
 //
 // La información de quién es va guardada en master.
 //
-func (nr *NodoRaft) YaHayMaster(master Estado, emptyReply *EmptyValue) error {
+func (nr *NodoRaft) YaHayMaster(master InfoMaster, emptyReply *EmptyValue) error {
 	nr.canalLatido <- true
 
 	nr.mux.Lock()
 	nr.masterActual = master.Yo
-	nr.candidaturaActual = master.Mandato
+	nr.candidaturaActual = master.CandidaturaActual
 	nr.mux.Unlock()
 
-	nr.logger.Println("El nodo", master.Yo, "se ha hecho master del mandato", master.Mandato)
+	nr.logger.Println("El nodo", master.Yo, "se ha hecho master del mandato", master.CandidaturaActual)
 	return nil
 }
 
@@ -332,9 +336,13 @@ func (nr *NodoRaft) Para(emptyArgs EmptyValue, emptyReply *EmptyValue) error {
 }
 
 type Estado struct {
-	Yo      int
-	Mandato int
-	EsLider bool
+	Yo                        int
+	CandidaturaActual         int
+	EsLider                   bool
+	MasterActual              int
+	Entradas                  []AplicaOperacion
+	UltimaEntrada             int
+	UltimaEntradaComprometida int
 }
 
 //
@@ -345,14 +353,18 @@ func (nr *NodoRaft) ObtenerEstado(emptyArgs EmptyValue, estado *Estado) error {
 	nr.mux.Lock()
 
 	estado.Yo = nr.yo
-	estado.Mandato = nr.candidaturaActual
+	estado.CandidaturaActual = nr.candidaturaActual
 	estado.EsLider = nr.masterActual == nr.yo
+	estado.MasterActual = nr.masterActual
+	estado.UltimaEntrada = nr.ultimaEntrada
+	estado.UltimaEntradaComprometida = nr.ultimaEntradaComprometida
 
 	nr.mux.Unlock()
 
 	return nil
 }
 
+//
 // El servicio que utilice Raft (base de datos clave/valor, por ejemplo)
 // Quiere buscar un acuerdo de posicion en registro para siguiente operacion
 // solicitada por cliente.
@@ -384,7 +396,7 @@ func (nr *NodoRaft) SometerOperacion(operacion string, oas *OpASometer) error {
 
 	if !esLider {
 		nr.mux.Unlock()
-		return fmt.Errorf("el nodo actual no puede someter operaciones")
+		return fmt.Errorf("El nodo actual no puede someter operaciones")
 	}
 
 	nr.ultimaEntrada++
@@ -400,16 +412,18 @@ func (nr *NodoRaft) SometerOperacion(operacion string, oas *OpASometer) error {
 		nr.mux.Lock()
 		nr.entradas = append(nr.entradas, ao)
 		nr.mux.Unlock()
-		for id := range nr.nodos {
-			var success bool
-			nr.nodos[id].Call("NodoRaft.AppendEntries", operacion, &success)
-			nr.logger.Println("Recibo: ", success)
-		}
 	}
 
 	return nil
 }
 
+//
+// Función RPC que recibe un nodo cuando un master le pide introducir
+// una entrada
+//
+// Recibe la operación a someter
+// Devuelve si la ha introducido
+//
 func (nr *NodoRaft) AppendEntries(operacion string, correct *bool) error {
 	nr.logger.Println("Me piden meter entradas", nr.yo, nr.masterActual)
 	if nr.yo != nr.masterActual {
@@ -432,52 +446,56 @@ func (nr *NodoRaft) AppendEntries(operacion string, correct *bool) error {
 }
 
 type ArgsLatido struct {
-	MasterActual              int
-	MandatoActual             int
-	ultimaEntradaComprometida int
+	MasterActual  int
+	MandatoActual int
 }
 
 //
 // Funciones relacionadas con los latidos entre
 // el master y las réplicas
 //
-func (nr *NodoRaft) RecibirLatido(args ArgsLatido, ultimaEntrada *AplicaOperacion) error {
+func (nr *NodoRaft) RecibirLatido(args ArgsLatido, empty *EmptyValue) error {
 	nr.canalLatido <- true
 
 	if args.MandatoActual >= nr.candidaturaActual {
-		nr.candidaturaAnterior = nr.candidaturaActual
 		nr.candidaturaActual = args.MandatoActual
-	}
-
-	nr.ultimaEntradaComprometida = args.ultimaEntradaComprometida
-
-	if nr.ultimaEntrada != -1 {
-		*ultimaEntrada = nr.entradas[nr.ultimaEntrada]
-	} else {
-		*ultimaEntrada = AplicaOperacion{-1, nil}
 	}
 
 	return nil
 }
 
 func (nr *NodoRaft) comunicarLatidos() {
-	args := ArgsLatido{nr.yo, nr.candidaturaActual, nr.ultimaEntradaComprometida}
+	args := ArgsLatido{nr.yo, nr.candidaturaActual}
+	var empty EmptyValue
 
 	for id := range nr.nodos {
-		var ultimaEntrada AplicaOperacion
-		nr.nodos[id].Call("NodoRaft.RecibirLatido", args, &ultimaEntrada)
+		nr.nodos[id].Call("NodoRaft.RecibirLatido", args, &empty)
 
-		if nr.ultimaEntrada != -1 { // Hay alguna entrada en mi nodo
-			if ultimaEntrada.Indice != -1 { // El nodo con quien contacto tiene alguna entrada
-				if nr.entradas[ultimaEntrada.Indice].Operacion == ultimaEntrada.Operacion {
-					nr.totalCompromisosUltima++
-					if nr.totalCompromisosUltima > (constants.USERS)/2 {
-						nr.totalCompromisosUltima = 0
-						nr.ultimaEntradaComprometida++
-					}
+		// Hay alguna entrada en mi nodo
+		if nr.ultimaEntrada != -1 {
+			// El nodo con quien contacto no tiene las mismas entradas que yo
+			if nr.indiceUltimaEntradaNodo[id] != nr.ultimaEntrada {
+				if !nr.comprometiendo[id] {
+					nr.comprometiendo[id] = true
+					nr.canalAplicar <- entradaIntroducir{nr.entradas[nr.indiceUltimaEntradaNodo[id]+1], id}
 				}
 			}
 		}
+	}
+}
+
+func (nr *NodoRaft) comprometerEntradas() {
+	for {
+		entradaComprometer := <-nr.canalAplicar
+		var correcto bool
+
+		nr.nodos[entradaComprometer.Quien].Call("NodoRaft.AppendEntries", entradaComprometer.Entrada, &correcto)
+
+		if correcto {
+			nr.indiceUltimaEntradaNodo[entradaComprometer.Quien]++
+		}
+
+		nr.comprometiendo[entradaComprometer.Quien] = false
 	}
 }
 
@@ -487,10 +505,10 @@ func (nr *NodoRaft) comunicarLatidos() {
 // Estructura de argumentos de RPC PedirVoto.
 //
 type ArgsPeticionVoto struct {
-	CandidaturaActual int
-	Candidato         int
-	UltimaEntrada     int
-	UltimaCandidatura int
+	CandidaturaActual         int
+	Candidato                 int
+	UltimaEntrada             int
+	UltimaEntradaComprometida int
 }
 
 //
@@ -518,15 +536,17 @@ func (nr *NodoRaft) PedirVoto(args ArgsPeticionVoto, reply *RespuestaPeticionVot
 	}
 
 	// Aún no ha habido un master
-	if nr.candidaturaAnterior == -1 {
+	if nr.candidaturaActual == -1 {
 		nr.mux.Lock()
 		nr.heVotadoA = args.Candidato
 		nr.mux.Unlock()
 		acceso = true
 
-		// El candidato tiene por lo menos con las entradas de este nodo
-	} else if args.UltimaCandidatura >= nr.candidaturaAnterior &&
-		args.UltimaEntrada >= nr.ultimaEntrada {
+		// El candidato tiene por lo menos la misma cantidad de entradas
+		// y de entradas comprometidas que este nodo
+	} else if args.CandidaturaActual >= nr.candidaturaActual &&
+		args.UltimaEntrada >= nr.ultimaEntrada &&
+		args.UltimaEntradaComprometida >= nr.ultimaEntradaComprometida {
 
 		nr.mux.Lock()
 		nr.heVotadoA = args.Candidato
@@ -539,37 +559,23 @@ func (nr *NodoRaft) PedirVoto(args ArgsPeticionVoto, reply *RespuestaPeticionVot
 	return nil
 }
 
-// Ejemplo de código enviarPeticionVoto
 //
-// nodo int -- indice del servidor destino en nr.nodos[]
-//
-// args *RequestVoteArgs -- argumetnos par la llamada RPC
-//
-// reply *RequestVoteReply -- respuesta RPC
-//
-// Los tipos de argumentos y respuesta pasados a CallTimeout deben ser
-// los mismos que los argumentos declarados en el metodo de tratamiento
-// de la llamada (incluido si son punteros
+// nodo int 				-- indice del servidor destino en nr.nodos[]
+// args *RequestVoteArgs 	-- argumetnos par la llamada RPC
+// reply *RequestVoteReply 	-- respuesta RPC
 //
 // Si en la llamada RPC, la respuesta llega en un intervalo de tiempo,
 // la funcion devuelve true, sino devuelve false
 //
-// la llamada RPC deberia tener un timout adecuado.
-//
 // Un resultado falso podria ser causado por una replica caida,
-// un servidor vivo que no es alcanzable (por problemas de red ?),
+// un servidor vivo que no es alcanzable,
 // una petición perdida, o una respuesta perdida
-//
-// Para problemas con funcionamiento de RPC, comprobar que la primera letra
-// del nombre  todo los campos de la estructura (y sus subestructuras)
-// pasadas como parametros en las llamadas RPC es una mayuscula,
-// Y que la estructura de recuperacion de resultado sea un puntero a estructura
-// y no la estructura misma.
 //
 func (nr *NodoRaft) enviarPeticionVoto(nodo int, args ArgsPeticionVoto,
 	reply *RespuestaPeticionVoto) (ok bool) {
 
-	err := nr.nodos[nodo].Call("NodoRaft.PedirVoto", args, &reply)
+	err := rpctimeout.CallTimeout(nr.nodos[nodo], "NodoRaft.PedirVoto", args, &reply, 1000)
+
 	return err == nil
 }
 
@@ -577,7 +583,7 @@ func (nr *NodoRaft) enviarPeticionVoto(nodo int, args ArgsPeticionVoto,
 // Función que activa los logs de este nodo
 //
 func (nr *NodoRaft) activarLogs() {
-	nombreNodo := strconv.Itoa(nr.yo) // nodos[yo].String()
+	nombreNodo := strconv.Itoa(nr.yo)
 	logPrefix := fmt.Sprintf("Nodo_%s ", nombreNodo)
 	if kLogToStdout {
 		nr.logger = log.New(os.Stdout, nombreNodo,
