@@ -41,17 +41,8 @@ func TestPrimerasPruebas(t *testing.T) {
 	// <setup code>
 	testExec := new(testExecution)
 
-	/*
-		fmt.Print("Introduzca el usuario: ")
-		fmt.Scanf("%s", &testExec.user)
-
-		fmt.Print("Introduzca la Contraseña: ")
-		pass, _ := term.ReadPassword(int(syscall.Stdin))
-
-		testExec.pass = string(pass)
-	*/
 	testExec.user = "a774248"
-	testExec.pass = "Fsw5zw"
+	testExec.pass = ""
 
 	testExec.rsaPath = "/home/" + testExec.user + "/.ssh/id_rsa"
 	testExec.cmd = "/home/" + testExec.user + WORKPATH + EXECREPLICA
