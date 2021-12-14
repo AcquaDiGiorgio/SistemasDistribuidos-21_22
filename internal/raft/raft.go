@@ -454,8 +454,12 @@ func (nr *NodoRaft) comunicarLatidos() {
 	var respuesta int
 
 	for id := range nr.nodos {
-		nr.nodos[id].Call("NodoRaft.RecibirLatido", args, &respuesta)
-		nr.indiceUltimaEntradaNodo[id] = respuesta
+		err := nr.nodos[id].Call("NodoRaft.RecibirLatido", args, &respuesta)
+
+		if err == nil {
+			nr.indiceUltimaEntradaNodo[id] = respuesta
+		}
+
 		nr.comprobarCompromiso()
 
 		// Hay alguna entrada en mi nodo
@@ -497,11 +501,11 @@ func (nr *NodoRaft) comprobarCompromiso() {
 
 	graterOrEqual := 1
 
-	for i, val := range nr.indiceUltimaEntradaNodo {
-		nr.logger.Println("Nodo", i, "tiene hasta la entrada", val)
+	for _, val := range nr.indiceUltimaEntradaNodo {
 		if val >= nextEntry {
 			graterOrEqual++
 			if graterOrEqual > constants.USERS/2 {
+				nr.logger.Println("Se compromete la entrada número", val)
 				nr.mux.Lock()
 				nr.ultimaEntradaComprometida++
 				nr.mux.Unlock()

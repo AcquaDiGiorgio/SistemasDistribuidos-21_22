@@ -38,16 +38,13 @@ func main() {
 		noDebug(nodo)
 
 	case 1:
-		//IniciarYParar(nodo)
+		//Consenso2nodos(nodo)
 
 	case 2:
-		//IniciarYElegirLider(nodo)
+		//NoConsenso1Nodo(nodo)
 
 	case 3:
-		//IniciarYTumbarLider(nodo)
-
-	case 4:
-		//IniciarYComprometer3Entradas(nodo)
+		//Comprometer5Entradas(nodo)
 
 	default:
 		fmt.Println("Opción no válida")
@@ -100,8 +97,8 @@ func noDebug(nodo int) {
 
 		}
 
+		time.Sleep(3 * time.Second)
 		fmt.Print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
-		time.Sleep(1 * time.Second)
 		fmt.Println("==========================================")
 	}
 }
