@@ -1,26 +1,4 @@
-// Escribir vuestro código de funcionalidad Raft en este fichero
-//
-
 package raft
-
-//
-// API
-// ===
-// Este es el API que vuestra implementación debe exportar
-//
-// nodoRaft = NuevoNodo(...)
-//   Crear un nuevo servidor del grupo de elección.
-//
-// nodoRaft.Para()
-//   Solicitar la parado de un servidor
-//
-// nodo.ObtenerEstado() (yo, mandato, esLider)
-//   Solicitar a un nodo de elección por "yo", su mandato en curso,
-//   y si piensa que es el msmo el lider
-//
-// nodoRaft.SometerOperacion(operacion interface()) (indice, mandato, esLider)
-
-// type AplicaOperacion
 
 import (
 	"fmt"
@@ -32,6 +10,7 @@ import (
 	"net/rpc"
 	"os"
 	"raft/internal/comun/constants"
+	"raft/internal/comun/rpctimeout"
 	"strconv"
 	"sync"
 	"time"
@@ -91,20 +70,9 @@ type NodoRaft struct {
 	totalCompromisosUltima int
 }
 
+//
 // Creacion de un nuevo nodo de eleccion
 //
-// Tabla de <Direccion IP:puerto> de cada nodo incluido a si mismo.
-//
-// <Direccion IP:puerto> de este nodo esta en nodos[yo]
-//
-// Todos los arrays nodos[] de los nodos tienen el mismo orden
-
-// canalAplicar es un canal donde, en la practica 5, se recogerán las
-// operaciones a aplicar a la máquina de estados. Se puede asumir que
-// este canal se consumira de forma continúa.
-//
-// NuevoNodo() debe devolver resultado rápido, por lo que se deberían
-// poner en marcha Gorutinas para trabajos de larga duracion
 func NuevoNodo(yo int, canalAplicar chan AplicaOperacion) *NodoRaft {
 
 	nr := new(NodoRaft)
@@ -237,10 +205,13 @@ func (nr *NodoRaft) prepararCandidatura() {
 		nr.votosCandidaturaActual = 1
 		nr.soyCandidato = false
 		nr.mux.Unlock()
+
 		select {
 		case <-nr.endChan:
 			return
+
 		case <-nr.canalLatido: // Alguien se ha convertido en master
+			nr.heVotadoA = -1
 			nr.logger.Println("Termina la candidatura", nr.candidaturaActual)
 			return
 
@@ -402,7 +373,7 @@ func (nr *NodoRaft) SometerOperacion(operacion string, oas *OpASometer) error {
 		nr.mux.Unlock()
 		for id := range nr.nodos {
 			var success bool
-			nr.nodos[id].Call("NodoRaft.AppendEntries", operacion, &success)
+			rpctimeout.CallTimeout(nr.nodos[id], "NodoRaft.AppendEntries", operacion, &success, time.Second)
 			nr.logger.Println("Recibo: ", success)
 		}
 	}
@@ -410,6 +381,13 @@ func (nr *NodoRaft) SometerOperacion(operacion string, oas *OpASometer) error {
 	return nil
 }
 
+//
+// Función RPC que recibe un nodo cuando un master le pide introducir
+// una entrada
+//
+// Recibe la operación a someter
+// Devuelve si la ha introducido
+//
 func (nr *NodoRaft) AppendEntries(operacion string, correct *bool) error {
 	nr.logger.Println("Me piden meter entradas", nr.yo, nr.masterActual)
 	if nr.yo != nr.masterActual {
@@ -539,37 +517,23 @@ func (nr *NodoRaft) PedirVoto(args ArgsPeticionVoto, reply *RespuestaPeticionVot
 	return nil
 }
 
-// Ejemplo de código enviarPeticionVoto
 //
-// nodo int -- indice del servidor destino en nr.nodos[]
-//
-// args *RequestVoteArgs -- argumetnos par la llamada RPC
-//
-// reply *RequestVoteReply -- respuesta RPC
-//
-// Los tipos de argumentos y respuesta pasados a CallTimeout deben ser
-// los mismos que los argumentos declarados en el metodo de tratamiento
-// de la llamada (incluido si son punteros
+// nodo int 				-- indice del servidor destino en nr.nodos[]
+// args *RequestVoteArgs 	-- argumetnos par la llamada RPC
+// reply *RequestVoteReply 	-- respuesta RPC
 //
 // Si en la llamada RPC, la respuesta llega en un intervalo de tiempo,
 // la funcion devuelve true, sino devuelve false
 //
-// la llamada RPC deberia tener un timout adecuado.
-//
 // Un resultado falso podria ser causado por una replica caida,
-// un servidor vivo que no es alcanzable (por problemas de red ?),
+// un servidor vivo que no es alcanzable,
 // una petición perdida, o una respuesta perdida
-//
-// Para problemas con funcionamiento de RPC, comprobar que la primera letra
-// del nombre  todo los campos de la estructura (y sus subestructuras)
-// pasadas como parametros en las llamadas RPC es una mayuscula,
-// Y que la estructura de recuperacion de resultado sea un puntero a estructura
-// y no la estructura misma.
 //
 func (nr *NodoRaft) enviarPeticionVoto(nodo int, args ArgsPeticionVoto,
 	reply *RespuestaPeticionVoto) (ok bool) {
 
-	err := nr.nodos[nodo].Call("NodoRaft.PedirVoto", args, &reply)
+	err := rpctimeout.CallTimeout(nr.nodos[nodo], "NodoRaft.PedirVoto", args, &reply, time.Second)
+
 	return err == nil
 }
 
