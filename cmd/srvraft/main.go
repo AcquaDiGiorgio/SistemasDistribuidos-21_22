@@ -11,14 +11,8 @@ import (
 func main() {
 	args := os.Args[1:]
 
-	if len(args) != 2 {
-		fmt.Println("Debe se ejecutado con los argumentos <idNodo> <opciónDebug>")
-		fmt.Println("OpciónDebug:")
-		fmt.Println("\t0: No debug + Entrada de usuario")
-		fmt.Println("\t1: XXXXXXXXXXXXXX")
-		fmt.Println("\t2: XXXXXXXXXXXXXX")
-		fmt.Println("\t3: XXXXXXXXXXXXXX")
-		fmt.Println("\t4: XXXXXXXXXXXXXX")
+	if len(args) != 1 {
+		fmt.Println("Debe se ejecutado con los argumentos <idNodo>")
 		os.Exit(1)
 	}
 
@@ -27,32 +21,7 @@ func main() {
 		panic(err)
 	}
 
-	opt, err := strconv.Atoi(args[1])
-
-	if err != nil {
-		panic(err)
-	}
-
-	switch opt {
-	case 0:
-		noDebug(nodo)
-
-	case 1:
-		//Consenso2nodos(nodo)
-
-	case 2:
-		//NoConsenso1Nodo(nodo)
-
-	case 3:
-		//Comprometer5Entradas(nodo)
-
-	default:
-		fmt.Println("Opción no válida")
-	}
-}
-
-func noDebug(nodo int) {
-	nr := raft.NuevoNodo(nodo, nil)
+	nr := raft.NuevoNodo(nodo)
 
 	fmt.Print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
 	fmt.Println("============== Nodo Creado ===============")
@@ -120,7 +89,7 @@ func mostrarEntradas(entradas []string, ultimaEntrada int, ultimaComprometida in
 func IniciarYComprometer3Entradas(nodo int) {
 	var empty raft.EmptyValue
 	idOp := 0
-	nr := raft.NuevoNodo(nodo, nil)
+	nr := raft.NuevoNodo(nodo)
 	fmt.Printf("Nodo %d Creado\n", nodo)
 	for {
 		var estado raft.Estado

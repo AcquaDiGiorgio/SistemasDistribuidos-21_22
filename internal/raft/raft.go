@@ -1,24 +1,5 @@
 package raft
 
-//
-// API
-// ===
-// Este es el API que vuestra implementación debe exportar
-//
-// nodoRaft = NuevoNodo(...)
-//   Crear un nuevo servidor del grupo de elección.
-//
-// nodoRaft.Para()
-//   Solicitar la parado de un servidor
-//
-// nodo.ObtenerEstado() (yo, mandato, esLider)
-//   Solicitar a un nodo de elección por "yo", su mandato en curso,
-//   y si piensa que es el msmo el lider
-//
-// nodoRaft.SometerOperacion(operacion interface()) (indice, mandato, esLider)
-
-// type AplicaOperacion
-
 import (
 	"fmt"
 	"io/ioutil"
@@ -99,11 +80,7 @@ type NodoRaft struct {
 
 // Creacion de un nuevo nodo de eleccion
 //
-// canalAplicar es un canal donde, en la practica 5, se recogerán las
-// operaciones a aplicar a la máquina de estados. Se puede asumir que
-// este canal se consumira de forma continúa.
-//
-func NuevoNodo(yo int, canalAplicar chan AplicaOperacion) *NodoRaft {
+func NuevoNodo(yo int) *NodoRaft {
 
 	nr := new(NodoRaft)
 	nr.yo = yo
@@ -126,7 +103,6 @@ func NuevoNodo(yo int, canalAplicar chan AplicaOperacion) *NodoRaft {
 
 	nr.canalLatido = make(chan bool)
 	nr.endChan = make(chan bool)
-	nr.canalAplicar = make(chan entradaIntroducir, 20)
 
 	if kEnableDebugLogs {
 		nr.activarLogs()
@@ -136,7 +112,6 @@ func NuevoNodo(yo int, canalAplicar chan AplicaOperacion) *NodoRaft {
 
 	go nr.registrarNodo()
 	go nr.iniciarComunicacion()
-	go nr.introducirEntradas()
 
 	return nr
 }
@@ -154,7 +129,7 @@ func (nr *NodoRaft) registrarNodo() {
 	rpc.HandleHTTP()
 
 	// Inicio Escucha
-	listener, err := net.Listen("tcp", constants.MachinesLocal[nr.yo].Ip)
+	listener, err := net.Listen("tcp", constants.MachinesSSH[nr.yo].Ip)
 	if err != nil {
 		os.Exit(1)
 	}
@@ -173,10 +148,12 @@ func (nr *NodoRaft) contactarNodos() {
 	nr.mux.Lock()
 	for i := 0; i < constants.USERS; i++ {
 		if i != nr.yo { // No contacto conmigo
-			nodo, err := rpc.DialHTTP("tcp", constants.MachinesLocal[i].Ip)
+			nodo, err := rpc.DialHTTP("tcp", constants.MachinesSSH[i].Ip)
 			if err == nil { // No ha habido error
 				nr.nodos = append(nr.nodos, nodo)
-				nr.indiceUltimaEntradaNodo = append(nr.indiceUltimaEntradaNodo, -1)
+				nr.indiceUltimaEntradaNodo =
+					append(nr.indiceUltimaEntradaNodo, -1)
+
 				nr.comprometiendo = append(nr.comprometiendo, false)
 				nr.logger.Println("Contacto con el nodo", i)
 			} else {
@@ -249,13 +226,18 @@ func (nr *NodoRaft) prepararCandidatura() {
 		case <-nr.canalLatido: // Alguien se ha convertido en master
 			nr.estamosEnCandidatura = false
 			nr.heVotadoA = -1
-			nr.logger.Println("El nodo", nr.masterActual, "se ha hecho master del mandato", nr.candidaturaActual)
+			nr.logger.Println("El nodo", nr.masterActual,
+				"se ha hecho master del mandato", nr.candidaturaActual)
 			return
 
 		case <-time.After(nr.periodoCandidatura):
 			nr.mux.Lock()
 			args := ArgsPeticionVoto{
-				nr.candidaturaActual, nr.yo, nr.ultimaEntrada, nr.ultimaEntradaComprometida}
+				nr.candidaturaActual,
+				nr.yo,
+				nr.ultimaEntrada,
+				nr.ultimaEntradaComprometida}
+
 			nr.soyCandidato = true
 			nr.heVotadoA = -1
 			nr.mux.Unlock()
@@ -270,7 +252,8 @@ func (nr *NodoRaft) prepararCandidatura() {
 				}
 
 				if ok && nr.heVotadoA == -1 { // El nodo no está caído
-					nr.logger.Println("El nodo", id+sum, "me ha dicho", respuesta.VotoGrantizado)
+					nr.logger.Println("El nodo", id+sum,
+						"me ha dicho", respuesta.VotoGrantizado)
 
 					if !respuesta.VotoGrantizado { // No me da el voto
 						if nr.candidaturaActual < respuesta.Candidatura {
@@ -286,7 +269,8 @@ func (nr *NodoRaft) prepararCandidatura() {
 						}
 					}
 				} else {
-					nr.logger.Println("El nodo", id+sum, "no ha contestado a tiempo")
+					nr.logger.Println("El nodo", id+sum,
+						"no ha contestado a tiempo")
 				}
 			}
 		}
@@ -296,10 +280,11 @@ func (nr *NodoRaft) prepararCandidatura() {
 func (nr *NodoRaft) inicializarMaster() {
 	nr.masterActual = nr.yo
 	nr.comunicarLatidos()
+
 	nr.logger.Println("Me convierto en master")
 
-	// Variables de master a inicializar
-	// VECTORES
+	nr.canalAplicar = make(chan entradaIntroducir, 20)
+	go nr.introducirEntradas()
 }
 
 //
@@ -374,7 +359,7 @@ func (nr *NodoRaft) SometerOperacion(operacion string, oas *OpASometer) error {
 
 	if !esLider {
 		nr.mux.Unlock()
-		return fmt.Errorf("El nodo actual no puede someter operaciones")
+		return fmt.Errorf("el nodo actual no puede someter operaciones")
 	}
 
 	nr.ultimaEntrada++
@@ -384,11 +369,9 @@ func (nr *NodoRaft) SometerOperacion(operacion string, oas *OpASometer) error {
 
 	nr.mux.Unlock()
 
-	ao := AplicaOperacion{nr.ultimaEntrada, operacion}
-
 	if esLider {
 		nr.mux.Lock()
-		nr.entradas[ao.Indice] = ao.Operacion
+		nr.entradas[nr.ultimaEntrada] = operacion
 		nr.mux.Unlock()
 	}
 
@@ -402,7 +385,9 @@ func (nr *NodoRaft) SometerOperacion(operacion string, oas *OpASometer) error {
 // Recibe la operación a someter
 // Devuelve si la ha introducido
 //
-func (nr *NodoRaft) AppendEntries(operacion AplicaOperacion, correct *bool) error {
+func (nr *NodoRaft) AppendEntries(operacion AplicaOperacion,
+	correct *bool) error {
+
 	nr.logger.Println("El master, me pide meter entradas")
 	if nr.yo != nr.masterActual {
 		nr.canalLatido <- true // El master sigue vivo
@@ -410,7 +395,8 @@ func (nr *NodoRaft) AppendEntries(operacion AplicaOperacion, correct *bool) erro
 		nr.mux.Lock()
 
 		nr.ultimaEntrada++
-		nr.logger.Println("Op Recibida:\n\tentrada[", operacion.Indice, "]", operacion.Operacion)
+		nr.logger.Println("Op Recibida:\n\tentrada[", operacion.Indice,
+			"]", operacion.Operacion)
 		nr.entradas[operacion.Indice] = operacion.Operacion
 
 		nr.mux.Unlock()
@@ -449,7 +435,8 @@ func (nr *NodoRaft) RecibirLatido(args ArgsLatido, ultimaEntrada *int) error {
 }
 
 func (nr *NodoRaft) comunicarLatidos() {
-	args := ArgsLatido{nr.yo, nr.candidaturaActual, nr.ultimaEntradaComprometida}
+	args := ArgsLatido{nr.yo, nr.candidaturaActual,
+		nr.ultimaEntradaComprometida}
 
 	var respuesta int
 
@@ -466,12 +453,19 @@ func (nr *NodoRaft) comunicarLatidos() {
 		if nr.ultimaEntrada != -1 {
 			// El nodo con quien contacto no tiene las mismas entradas que yo
 			if nr.indiceUltimaEntradaNodo[id] != nr.ultimaEntrada {
-				nr.logger.Println("El nodo", id, "tiene", nr.indiceUltimaEntradaNodo[id], "entradas y vamos por la", nr.ultimaEntrada)
+				nr.logger.Println("El nodo", id, "tiene",
+					nr.indiceUltimaEntradaNodo[id],
+					"entradas y vamos por la", nr.ultimaEntrada)
 
 				indice := nr.indiceUltimaEntradaNodo[id] + 1
 
-				if !nr.comprometiendo[id] {
-					nr.canalAplicar <- entradaIntroducir{nr.entradas[indice], id}
+				nr.mux.Lock()
+				comprometiendoEntrada := nr.comprometiendo[id]
+				nr.mux.Unlock()
+
+				if !comprometiendoEntrada {
+					entrada := entradaIntroducir{nr.entradas[indice], id}
+					nr.canalAplicar <- entrada
 				}
 			}
 		}
@@ -481,16 +475,24 @@ func (nr *NodoRaft) comunicarLatidos() {
 func (nr *NodoRaft) introducirEntradas() {
 	for {
 		entradaIntroducir := <-nr.canalAplicar
-
-		nr.comprometiendo[entradaIntroducir.Quien] = true
 		var correcto bool
 
+		nr.mux.Lock()
+
+		nr.comprometiendo[entradaIntroducir.Quien] = true
+
 		operacion := AplicaOperacion{
-			nr.indiceUltimaEntradaNodo[entradaIntroducir.Quien] + 1, entradaIntroducir.Entrada}
+			nr.indiceUltimaEntradaNodo[entradaIntroducir.Quien] + 1,
+			entradaIntroducir.Entrada}
 
-		rpctimeout.CallTimeout(nr.nodos[entradaIntroducir.Quien], "NodoRaft.AppendEntries", operacion, &correcto, time.Second)
+		nr.mux.Unlock()
 
+		rpctimeout.CallTimeout(nr.nodos[entradaIntroducir.Quien],
+			"NodoRaft.AppendEntries", operacion, &correcto, time.Second)
+
+		nr.mux.Lock()
 		nr.comprometiendo[entradaIntroducir.Quien] = false
+		nr.mux.Unlock()
 	}
 }
 
@@ -542,7 +544,9 @@ type RespuestaPeticionVoto struct {
 // ===========
 // Metodo para RPC PedirVoto
 //
-func (nr *NodoRaft) PedirVoto(args ArgsPeticionVoto, reply *RespuestaPeticionVoto) error {
+func (nr *NodoRaft) PedirVoto(args ArgsPeticionVoto,
+	reply *RespuestaPeticionVoto) error {
+
 	acceso := false
 
 	// Si soy candidato o ya he votado, no doy el voto
@@ -590,7 +594,8 @@ func (nr *NodoRaft) PedirVoto(args ArgsPeticionVoto, reply *RespuestaPeticionVot
 func (nr *NodoRaft) enviarPeticionVoto(nodo int, args ArgsPeticionVoto,
 	reply *RespuestaPeticionVoto) (ok bool) {
 
-	err := rpctimeout.CallTimeout(nr.nodos[nodo], "NodoRaft.PedirVoto", args, &reply, time.Second)
+	err := rpctimeout.CallTimeout(nr.nodos[nodo], "NodoRaft.PedirVoto",
+		args, &reply, time.Second)
 
 	return err == nil
 }
