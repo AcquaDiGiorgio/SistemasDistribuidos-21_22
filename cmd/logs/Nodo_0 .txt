@@ -1,5 +1,115 @@
-Nodo_0 13:31:05.606550 raft.go:620: logger initialized
-Nodo_0 13:31:08.099276 raft.go:181: Contacto con el nodo 1
-Nodo_0 13:31:08.413262 raft.go:181: Contacto con el nodo 2
-Nodo_0 13:31:09.130006 raft.go:220: El master no me contesta, empiezo candidatura
-Nodo_0 13:31:09.769165 raft.go:252: El nodo 2 se ha hecho master del mandato 0
+Nodo_0 10:55:25.403369 raft.go:628: logger initialized
+Nodo_0 10:55:27.862411 raft.go:158: Contacto con el nodo 1
+Nodo_0 10:55:28.165355 raft.go:158: Contacto con el nodo 2
+Nodo_0 10:55:29.877793 raft.go:198: El master no me contesta, empiezo candidatura
+Nodo_0 10:55:30.625873 raft.go:230: El nodo 1 se ha hecho master del mandato 0
+Nodo_0 10:55:35.955118 raft.go:393: El master, me pide meter entradas
+Nodo_0 10:55:35.965123 raft.go:400: Op Recibida:
+	entrada[ 0 ] lalalal
+Nodo_0 10:55:40.657060 raft.go:198: El master no me contesta, empiezo candidatura
+Nodo_0 10:55:42.058735 raft.go:274: El nodo 1 no ha contestado a tiempo
+Nodo_0 10:55:42.059735 raft.go:257: El nodo 2 me ha dicho false
+Nodo_0 10:55:43.460639 raft.go:274: El nodo 1 no ha contestado a tiempo
+Nodo_0 10:55:43.460639 raft.go:257: El nodo 2 me ha dicho false
+Nodo_0 10:55:44.860945 raft.go:274: El nodo 1 no ha contestado a tiempo
+Nodo_0 10:55:44.860945 raft.go:257: El nodo 2 me ha dicho false
+Nodo_0 10:55:46.262155 raft.go:274: El nodo 1 no ha contestado a tiempo
+Nodo_0 10:55:46.262155 raft.go:257: El nodo 2 me ha dicho false
+Nodo_0 10:55:47.662391 raft.go:274: El nodo 1 no ha contestado a tiempo
+Nodo_0 10:55:47.662391 raft.go:257: El nodo 2 me ha dicho false
+Nodo_0 10:55:49.063419 raft.go:274: El nodo 1 no ha contestado a tiempo
+Nodo_0 10:55:49.063419 raft.go:257: El nodo 2 me ha dicho false
+Nodo_0 10:55:50.464990 raft.go:274: El nodo 1 no ha contestado a tiempo
+Nodo_0 10:55:50.465141 raft.go:257: El nodo 2 me ha dicho false
+Nodo_0 10:55:51.866250 raft.go:274: El nodo 1 no ha contestado a tiempo
+Nodo_0 10:55:51.866250 raft.go:257: El nodo 2 me ha dicho false
+Nodo_0 10:55:53.266742 raft.go:274: El nodo 1 no ha contestado a tiempo
+Nodo_0 10:55:53.266742 raft.go:257: El nodo 2 me ha dicho false
+Nodo_0 10:55:54.667874 raft.go:274: El nodo 1 no ha contestado a tiempo
+Nodo_0 10:55:54.667874 raft.go:257: El nodo 2 me ha dicho false
+Nodo_0 10:55:56.068853 raft.go:274: El nodo 1 no ha contestado a tiempo
+Nodo_0 10:55:56.068853 raft.go:257: El nodo 2 me ha dicho false
+Nodo_0 10:55:57.470409 raft.go:274: El nodo 1 no ha contestado a tiempo
+Nodo_0 10:55:57.470409 raft.go:257: El nodo 2 me ha dicho false
+Nodo_0 10:55:58.870841 raft.go:274: El nodo 1 no ha contestado a tiempo
+Nodo_0 10:55:58.870841 raft.go:257: El nodo 2 me ha dicho false
+Nodo_0 10:56:00.271698 raft.go:274: El nodo 1 no ha contestado a tiempo
+Nodo_0 10:56:00.271698 raft.go:257: El nodo 2 me ha dicho false
+Nodo_0 10:56:01.672727 raft.go:274: El nodo 1 no ha contestado a tiempo
+Nodo_0 10:56:01.672727 raft.go:257: El nodo 2 me ha dicho false
+Nodo_0 10:56:03.074025 raft.go:274: El nodo 1 no ha contestado a tiempo
+Nodo_0 10:56:03.074077 raft.go:257: El nodo 2 me ha dicho false
+Nodo_0 10:56:04.474241 raft.go:274: El nodo 1 no ha contestado a tiempo
+Nodo_0 10:56:04.474241 raft.go:257: El nodo 2 me ha dicho false
+Nodo_0 10:56:05.874652 raft.go:274: El nodo 1 no ha contestado a tiempo
+Nodo_0 10:56:05.874652 raft.go:257: El nodo 2 me ha dicho false
+Nodo_0 10:56:07.275457 raft.go:274: El nodo 1 no ha contestado a tiempo
+Nodo_0 10:56:07.275457 raft.go:257: El nodo 2 me ha dicho false
+Nodo_0 10:56:08.676324 raft.go:274: El nodo 1 no ha contestado a tiempo
+Nodo_0 10:56:08.676324 raft.go:257: El nodo 2 me ha dicho false
+Nodo_0 10:56:10.077617 raft.go:274: El nodo 1 no ha contestado a tiempo
+Nodo_0 10:56:10.077617 raft.go:257: El nodo 2 me ha dicho false
+Nodo_0 10:56:11.478619 raft.go:274: El nodo 1 no ha contestado a tiempo
+Nodo_0 10:56:11.478619 raft.go:257: El nodo 2 me ha dicho false
+Nodo_0 10:56:12.878865 raft.go:274: El nodo 1 no ha contestado a tiempo
+Nodo_0 10:56:12.878865 raft.go:257: El nodo 2 me ha dicho false
+Nodo_0 10:56:14.279631 raft.go:274: El nodo 1 no ha contestado a tiempo
+Nodo_0 10:56:14.279631 raft.go:257: El nodo 2 me ha dicho false
+Nodo_0 10:56:15.680836 raft.go:274: El nodo 1 no ha contestado a tiempo
+Nodo_0 10:56:15.680836 raft.go:257: El nodo 2 me ha dicho false
+Nodo_0 10:56:17.081493 raft.go:274: El nodo 1 no ha contestado a tiempo
+Nodo_0 10:56:17.081493 raft.go:257: El nodo 2 me ha dicho false
+Nodo_0 10:56:18.481883 raft.go:274: El nodo 1 no ha contestado a tiempo
+Nodo_0 10:56:18.481883 raft.go:257: El nodo 2 me ha dicho false
+Nodo_0 10:56:19.883058 raft.go:274: El nodo 1 no ha contestado a tiempo
+Nodo_0 10:56:19.883058 raft.go:257: El nodo 2 me ha dicho false
+Nodo_0 10:56:21.283814 raft.go:274: El nodo 1 no ha contestado a tiempo
+Nodo_0 10:56:21.283814 raft.go:257: El nodo 2 me ha dicho false
+Nodo_0 10:56:22.685358 raft.go:274: El nodo 1 no ha contestado a tiempo
+Nodo_0 10:56:22.685358 raft.go:257: El nodo 2 me ha dicho false
+Nodo_0 10:56:24.086147 raft.go:274: El nodo 1 no ha contestado a tiempo
+Nodo_0 10:56:24.086147 raft.go:257: El nodo 2 me ha dicho false
+Nodo_0 10:56:25.487543 raft.go:274: El nodo 1 no ha contestado a tiempo
+Nodo_0 10:56:25.487543 raft.go:257: El nodo 2 me ha dicho false
+Nodo_0 10:56:26.887694 raft.go:274: El nodo 1 no ha contestado a tiempo
+Nodo_0 10:56:26.887694 raft.go:257: El nodo 2 me ha dicho false
+Nodo_0 10:56:28.288364 raft.go:274: El nodo 1 no ha contestado a tiempo
+Nodo_0 10:56:28.288364 raft.go:257: El nodo 2 me ha dicho false
+Nodo_0 10:56:29.689409 raft.go:274: El nodo 1 no ha contestado a tiempo
+Nodo_0 10:56:29.689409 raft.go:257: El nodo 2 me ha dicho false
+Nodo_0 10:56:31.089927 raft.go:274: El nodo 1 no ha contestado a tiempo
+Nodo_0 10:56:31.089927 raft.go:257: El nodo 2 me ha dicho false
+Nodo_0 10:56:32.491563 raft.go:274: El nodo 1 no ha contestado a tiempo
+Nodo_0 10:56:32.491563 raft.go:257: El nodo 2 me ha dicho false
+Nodo_0 10:56:33.893110 raft.go:274: El nodo 1 no ha contestado a tiempo
+Nodo_0 10:56:33.893110 raft.go:257: El nodo 2 me ha dicho false
+Nodo_0 10:56:35.294436 raft.go:274: El nodo 1 no ha contestado a tiempo
+Nodo_0 10:56:35.294436 raft.go:257: El nodo 2 me ha dicho false
+Nodo_0 10:56:36.695301 raft.go:274: El nodo 1 no ha contestado a tiempo
+Nodo_0 10:56:36.695451 raft.go:257: El nodo 2 me ha dicho false
+Nodo_0 10:56:38.097008 raft.go:274: El nodo 1 no ha contestado a tiempo
+Nodo_0 10:56:38.097008 raft.go:257: El nodo 2 me ha dicho false
+Nodo_0 10:56:39.497558 raft.go:274: El nodo 1 no ha contestado a tiempo
+Nodo_0 10:56:39.497558 raft.go:257: El nodo 2 me ha dicho false
+Nodo_0 10:56:40.898208 raft.go:274: El nodo 1 no ha contestado a tiempo
+Nodo_0 10:56:40.898208 raft.go:257: El nodo 2 me ha dicho false
+Nodo_0 10:56:42.299091 raft.go:274: El nodo 1 no ha contestado a tiempo
+Nodo_0 10:56:42.299091 raft.go:257: El nodo 2 me ha dicho false
+Nodo_0 10:56:43.699731 raft.go:274: El nodo 1 no ha contestado a tiempo
+Nodo_0 10:56:43.699731 raft.go:257: El nodo 2 me ha dicho false
+Nodo_0 10:56:45.101206 raft.go:274: El nodo 1 no ha contestado a tiempo
+Nodo_0 10:56:45.101206 raft.go:257: El nodo 2 me ha dicho false
+Nodo_0 10:56:46.502290 raft.go:274: El nodo 1 no ha contestado a tiempo
+Nodo_0 10:56:46.502290 raft.go:257: El nodo 2 me ha dicho false
+Nodo_0 10:56:47.902525 raft.go:274: El nodo 1 no ha contestado a tiempo
+Nodo_0 10:56:47.902525 raft.go:257: El nodo 2 me ha dicho false
+Nodo_0 10:56:49.303737 raft.go:274: El nodo 1 no ha contestado a tiempo
+Nodo_0 10:56:49.304738 raft.go:257: El nodo 2 me ha dicho false
+Nodo_0 10:56:49.313743 raft.go:230: El nodo 2 se ha hecho master del mandato 1
+Nodo_0 10:56:49.423961 raft.go:393: El master, me pide meter entradas
+Nodo_0 10:56:49.433967 raft.go:400: Op Recibida:
+	entrada[ 1 ] lala
+Nodo_0 10:57:13.748807 raft.go:393: El master, me pide meter entradas
+Nodo_0 10:57:13.758812 raft.go:400: Op Recibida:
+	entrada[ 2 ] ijwbgwrg
+Nodo_0 10:57:21.192452 raft.go:198: El master no me contesta, empiezo candidatura

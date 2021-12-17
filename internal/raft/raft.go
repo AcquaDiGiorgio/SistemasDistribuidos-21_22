@@ -178,6 +178,7 @@ func (nr *NodoRaft) iniciarComunicacion() {
 
 	time.Sleep(2 * time.Second) // Esperamos que todas las réplicas estén registradas
 	nr.contactarNodos()         // Contactamos con ellas
+	time.Sleep(1 * time.Second)
 
 	for {
 		select {
@@ -232,6 +233,7 @@ func (nr *NodoRaft) prepararCandidatura() {
 
 		case <-time.After(nr.periodoCandidatura):
 			nr.mux.Lock()
+
 			args := ArgsPeticionVoto{
 				nr.candidaturaActual,
 				nr.yo,
@@ -273,13 +275,13 @@ func (nr *NodoRaft) prepararCandidatura() {
 						"no ha contestado a tiempo")
 				}
 			}
+
 		}
 	}
 }
 
 func (nr *NodoRaft) inicializarMaster() {
 	nr.masterActual = nr.yo
-	nr.comunicarLatidos()
 
 	nr.logger.Println("Me convierto en master")
 
@@ -441,7 +443,8 @@ func (nr *NodoRaft) comunicarLatidos() {
 	var respuesta int
 
 	for id := range nr.nodos {
-		err := nr.nodos[id].Call("NodoRaft.RecibirLatido", args, &respuesta)
+		err := rpctimeout.CallTimeout(nr.nodos[id],
+			"NodoRaft.RecibirLatido", args, &respuesta, time.Second)
 
 		if err == nil {
 			nr.indiceUltimaEntradaNodo[id] = respuesta

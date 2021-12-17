@@ -1,7 +1,10 @@
-Nodo_1 13:31:04.840777 raft.go:620: logger initialized
-Nodo_1 13:31:07.345764 raft.go:181: Contacto con el nodo 0
-Nodo_1 13:31:07.648465 raft.go:181: Contacto con el nodo 2
-Nodo_1 13:31:08.364807 raft.go:220: El master no me contesta, empiezo candidatura
-Nodo_1 13:31:09.769165 raft.go:273: El nodo 0 me ha dicho false
-Nodo_1 13:31:09.769666 raft.go:273: El nodo 2 me ha dicho false
-Nodo_1 13:31:09.769666 raft.go:252: El nodo -1 se ha hecho master del mandato 0
+Nodo_1 10:55:24.702404 raft.go:628: logger initialized
+Nodo_1 10:55:27.197509 raft.go:158: Contacto con el nodo 0
+Nodo_1 10:55:27.501017 raft.go:158: Contacto con el nodo 2
+Nodo_1 10:55:29.211758 raft.go:198: El master no me contesta, empiezo candidatura
+Nodo_1 10:55:30.614984 raft.go:257: El nodo 0 me ha dicho true
+Nodo_1 10:55:30.614984 raft.go:286: Me convierto en master
+Nodo_1 10:55:35.866953 raft.go:357: Intento someter:  lalalal
+Nodo_1 10:55:35.955118 raft.go:459: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_1 10:55:35.955118 raft.go:459: El nodo 1 tiene -1 entradas y vamos por la 0
+Nodo_1 10:55:36.065253 raft.go:513: Se compromete la entrada número 0
