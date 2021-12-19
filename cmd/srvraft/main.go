@@ -23,53 +23,74 @@ func main() {
 
 	nr := raft.NuevoNodo(nodo)
 
-	fmt.Print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
-	fmt.Println("============== Nodo Creado ===============")
-	var empty raft.EmptyValue
+	fmt.Print("\n")
+	fmt.Printf("Nodo %d Creado\n", nodo)
+	time.Sleep(1 * time.Second)
 
 	for {
-		var estado raft.Estado
+		yo, lider := mostrarInfoNodo(nr)
 
-		nr.ObtenerEstado(empty, &estado)
-		fmt.Println("Soy el Nodo: ", estado.Yo)
-		fmt.Println("Estamos en el Mandato: ", estado.CandidaturaActual)
+		if lider == -1 {
+			time.Sleep(1 * time.Second)
 
-		if estado.EsLider {
-			fmt.Println("Soy el Master Actual")
-			fmt.Println("==========================================")
-
-			mostrarEntradas(estado.Entradas, estado.UltimaEntrada, estado.UltimaEntradaComprometida)
-
+		} else if yo == lider {
 			fmt.Print("Introduce Operacion: ")
 
 			var op string
 			fmt.Scanln(&op)
 
 			if op == "Stop" {
-				nr.Para(empty, &empty)
-				os.Exit(0)
+				desconectar(nr)
+				time.Sleep(2 * time.Second)
+
+			} else {
+				var OpASometer raft.OpASometer
+				nr.SometerOperacion(op, &OpASometer)
 			}
 
-			var OpASometer raft.OpASometer
-			nr.SometerOperacion(op, &OpASometer)
+		} else {
+			fmt.Print("Desconectar Nodo [y|otherValue]: ")
 
+			var disconn string
+			fmt.Scanln(&disconn)
+
+			if disconn == "y" {
+				desconectar(nr)
+			}
+		}
+
+		time.Sleep(1 * time.Second)
+	}
+}
+
+func mostrarInfoNodo(nr *raft.NodoRaft) (int, int) {
+	var empty raft.EmptyValue
+	var estado raft.Estado
+
+	nr.ObtenerEstado(empty, &estado)
+
+	fmt.Print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
+	fmt.Printf("================ Nodo %d =================\n", estado.Yo)
+
+	if estado.CandidaturaActual == 0 {
+		fmt.Println("Se acaba de iniciar el sistema")
+		fmt.Println("==========================================")
+	} else {
+		fmt.Println("Estamos en el Mandato: ", estado.CandidaturaActual)
+		if estado.Yo == estado.MasterActual {
+			fmt.Println("Soy el master Actual")
 		} else {
 			if estado.EstamosEnCandidatura {
 				fmt.Println("No hay master, se está buscando uno")
 			} else {
 				fmt.Printf("El master actual es %d\n", estado.MasterActual)
 			}
-
-			fmt.Println("==========================================")
-
-			mostrarEntradas(estado.Entradas, estado.UltimaEntrada, estado.UltimaEntradaComprometida)
-
 		}
-
-		time.Sleep(3 * time.Second)
-		fmt.Print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
 		fmt.Println("==========================================")
+		mostrarEntradas(estado.Entradas, estado.UltimaEntrada, estado.UltimaEntradaComprometida)
 	}
+
+	return estado.Yo, estado.MasterActual
 }
 
 func mostrarEntradas(entradas []string, ultimaEntrada int, ultimaComprometida int) {
@@ -78,7 +99,7 @@ func mostrarEntradas(entradas []string, ultimaEntrada int, ultimaComprometida in
 	for i := 0; i <= ultimaEntrada; i++ {
 		fmt.Print("Entrada", i, "=>", entradas[i])
 		if i == ultimaComprometida {
-			fmt.Print("\t\t<- Ultima Comprometida")
+			fmt.Print("\t<- Ultima Comprometida")
 		}
 		fmt.Println()
 	}
@@ -86,31 +107,21 @@ func mostrarEntradas(entradas []string, ultimaEntrada int, ultimaComprometida in
 	fmt.Println()
 }
 
-func IniciarYComprometer3Entradas(nodo int) {
+func desconectar(nr *raft.NodoRaft) {
 	var empty raft.EmptyValue
-	idOp := 0
-	nr := raft.NuevoNodo(nodo)
-	fmt.Printf("Nodo %d Creado\n", nodo)
-	for {
-		var estado raft.Estado
-		nr.ObtenerEstado(empty, &estado)
 
-		// Me he convertido en líder del mandato 0
-		if estado.EsLider {
-			fmt.Printf("Nodo %d Somete Operación\n", nodo)
-			operacion := "Operacion" + strconv.Itoa(idOp)
-			idOp++
+	nr.Para(empty, &empty)
+	fmt.Println("Se ha desconectado el nodo")
 
-			if idOp == 3 {
-				fmt.Printf("Nodo %d Termina\n", nodo)
-				nr.Para(empty, &empty)
-				return
-			}
+	fmt.Print("Reconectar al sistema?: ")
 
-			var OpASometer raft.OpASometer
-			nr.SometerOperacion(operacion, &OpASometer)
-			time.Sleep(100 * time.Millisecond)
-		}
-		time.Sleep(100 * time.Millisecond)
+	var reconect string
+	fmt.Scanln(&reconect)
+	fmt.Println()
+
+	err := nr.Reconectar(empty, &empty)
+	if err != nil {
+		fmt.Println(err)
 	}
+	fmt.Println("XD")
 }

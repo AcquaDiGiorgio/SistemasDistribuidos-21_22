@@ -24,7 +24,8 @@ const (
 	kLogOutputDir = "../logs/" // Directorio de salida de los logs
 
 	// CONSTANTES TEMPORALES
-	pulseDelay = 100 * time.Millisecond // Delay de cada latido (10 veces / seg)
+	pulseDelay       = 100 * time.Millisecond // Delay de cada latido (10 veces / seg)
+	desconectedDelay = 1 * time.Second
 )
 
 type EmptyValue struct{}
@@ -47,12 +48,12 @@ type entradaIntroducir struct {
 //
 type NodoRaft struct {
 	// Variables de control y depuración
-	mux          sync.Mutex    // Mutex para proteger acceso a estado compartido
-	nodos        []*rpc.Client // Conexiones RPC a todos los nodos (réplicas) Raft
-	logger       *log.Logger   // Logger para depuración
-	canalLatido  chan bool
-	endChan      chan bool
-	canalAplicar chan entradaIntroducir
+	mux             sync.Mutex    // Mutex para proteger acceso a estado compartido
+	nodos           []*rpc.Client // Conexiones RPC a todos los nodos (réplicas) Raft
+	logger          *log.Logger   // Logger para depuración
+	canalLatido     chan bool
+	canalReconexion chan bool
+	desconectado    bool
 
 	// Variables que deberían ser iguales entre todos los nodos (sin tener
 	// en cuenta posibles errores)
@@ -74,6 +75,7 @@ type NodoRaft struct {
 
 	// Variables únicas del Master actual (si el nodo actual no es master, se
 	// deben ignorar sus valores)
+	canalAplicar            chan entradaIntroducir
 	indiceUltimaEntradaNodo []int
 	comprometiendo          []bool
 }
@@ -84,25 +86,7 @@ func NuevoNodo(yo int) *NodoRaft {
 
 	nr := new(NodoRaft)
 	nr.yo = yo
-	nr.candidaturaActual = -1
-	nr.masterActual = -1
-	nr.ultimaEntrada = -1
-	nr.ultimaEntradaComprometida = -1
-	nr.heVotadoA = -1
-	nr.soyCandidato = false
-
-	nr.entradas = make([]string, 1000)
-
-	// Tiempo aleatorio entre 500 y 1000 ms
-	milis := time.Duration(500 + rand.Int()%6*100)
-	nr.periodoLatido = time.Duration(milis * time.Millisecond)
-
-	// Tiempo aleatorio entre 1000 y 3000 ms
-	milis = time.Duration(1000 + rand.Int()%21*100)
-	nr.periodoCandidatura = time.Duration(milis * time.Millisecond)
-
-	nr.canalLatido = make(chan bool)
-	nr.endChan = make(chan bool)
+	nr.inicializarVariables()
 
 	if kEnableDebugLogs {
 		nr.activarLogs()
@@ -114,6 +98,30 @@ func NuevoNodo(yo int) *NodoRaft {
 	go nr.iniciarComunicacion()
 
 	return nr
+}
+
+func (nr *NodoRaft) inicializarVariables() {
+	nr.candidaturaActual = 0
+	nr.masterActual = -1
+	nr.heVotadoA = -1
+	nr.ultimaEntradaComprometida = -1
+	nr.ultimaEntrada = -1
+
+	nr.soyCandidato = false
+	nr.desconectado = false
+
+	nr.entradas = make([]string, 1000)
+
+	nr.canalReconexion = make(chan bool)
+	nr.canalLatido = make(chan bool)
+
+	// Tiempo aleatorio entre 500 y 1000 ms
+	milis := time.Duration(500 + rand.Int()%6*100)
+	nr.periodoLatido = time.Duration(milis * time.Millisecond)
+
+	// Tiempo aleatorio entre 1000 y 3000 ms
+	milis = time.Duration(1000 + rand.Int()%21*100)
+	nr.periodoCandidatura = time.Duration(milis * time.Millisecond)
 }
 
 //
@@ -129,7 +137,7 @@ func (nr *NodoRaft) registrarNodo() {
 	rpc.HandleHTTP()
 
 	// Inicio Escucha
-	listener, err := net.Listen("tcp", constants.MachinesSSH[nr.yo].Ip)
+	listener, err := net.Listen("tcp", constants.MachinesLocal[nr.yo].Ip)
 	if err != nil {
 		os.Exit(1)
 	}
@@ -148,7 +156,7 @@ func (nr *NodoRaft) contactarNodos() {
 	nr.mux.Lock()
 	for i := 0; i < constants.USERS; i++ {
 		if i != nr.yo { // No contacto conmigo
-			nodo, err := rpc.DialHTTP("tcp", constants.MachinesSSH[i].Ip)
+			nodo, err := rpc.DialHTTP("tcp", constants.MachinesLocal[i].Ip)
 			if err == nil { // No ha habido error
 				nr.nodos = append(nr.nodos, nodo)
 				nr.indiceUltimaEntradaNodo =
@@ -181,24 +189,23 @@ func (nr *NodoRaft) iniciarComunicacion() {
 	time.Sleep(1 * time.Second)
 
 	for {
-		select {
-		case <-nr.endChan:
-			return
+		if nr.desconectado {
+			nr.logger.Println("Entro en modo Parado")
+			<-nr.canalReconexion
 
-		case <-time.After(10 * time.Millisecond):
-			if nr.masterActual == nr.yo { // Yo soy el master
-				nr.comunicarLatidos()
-				time.Sleep(pulseDelay)
-			} else {
-				select {
-				case <-nr.canalLatido: // El master ha respondido a tiempo
-					break
+		} else if nr.masterActual == nr.yo { // Yo soy el master
+			nr.comunicarLatidos()
+			time.Sleep(pulseDelay)
 
-				case <-time.After(nr.periodoLatido): // El master ha tardado mucho
-					nr.logger.Println("El master no me contesta, empiezo candidatura")
-					nr.prepararCandidatura()
-					break
-				}
+		} else {
+			select {
+			case <-nr.canalLatido: // El master ha respondido a tiempo
+				break
+
+			case <-time.After(nr.periodoLatido): // El master ha tardado mucho
+				nr.logger.Println("El master no me contesta, empiezo candidatura")
+				nr.prepararCandidatura()
+				break
 			}
 		}
 	}
@@ -209,6 +216,10 @@ func (nr *NodoRaft) iniciarComunicacion() {
 // Se ejecuta tras no recibir un latido del master a tiempo,
 //
 func (nr *NodoRaft) prepararCandidatura() {
+	if nr.desconectado {
+		return
+	}
+
 	nr.mux.Lock()
 	nr.estamosEnCandidatura = true
 	nr.candidaturaActual++
@@ -220,10 +231,6 @@ func (nr *NodoRaft) prepararCandidatura() {
 		nr.mux.Unlock()
 
 		select {
-		case <-nr.endChan:
-			nr.estamosEnCandidatura = false
-			return
-
 		case <-nr.canalLatido: // Alguien se ha convertido en master
 			nr.estamosEnCandidatura = false
 			nr.heVotadoA = -1
@@ -293,7 +300,18 @@ func (nr *NodoRaft) inicializarMaster() {
 // Metodo que termina la ejecución de un nodo
 //
 func (nr *NodoRaft) Para(emptyArgs EmptyValue, emptyReply *EmptyValue) error {
-	nr.endChan <- true
+	nr.logger.Println("Paro al nodo actual")
+	nr.desconectado = true
+	nr.soyCandidato = false
+	nr.heVotadoA = -1
+	nr.estamosEnCandidatura = false
+	return nil
+}
+
+func (nr *NodoRaft) Reconectar(emptyArgs EmptyValue, emptyReply *EmptyValue) error {
+	nr.logger.Println("Reactivo al nodo actual")
+	nr.desconectado = false
+	nr.canalReconexion <- true
 	return nil
 }
 
@@ -306,6 +324,7 @@ type Estado struct {
 	UltimaEntrada             int
 	UltimaEntradaComprometida int
 	EstamosEnCandidatura      bool
+	Desconectado              bool
 }
 
 //
@@ -323,6 +342,7 @@ func (nr *NodoRaft) ObtenerEstado(emptyArgs EmptyValue, estado *Estado) error {
 	estado.UltimaEntradaComprometida = nr.ultimaEntradaComprometida
 	estado.Entradas = nr.entradas
 	estado.EstamosEnCandidatura = nr.estamosEnCandidatura
+	estado.Desconectado = nr.desconectado
 
 	nr.mux.Unlock()
 
@@ -353,6 +373,10 @@ type OpASometer struct {
 }
 
 func (nr *NodoRaft) SometerOperacion(operacion string, oas *OpASometer) error {
+
+	if nr.desconectado {
+		return fmt.Errorf("estoy desconectado del sistema")
+	}
 
 	nr.logger.Println("Intento someter: ", operacion)
 	nr.mux.Lock()
@@ -390,8 +414,12 @@ func (nr *NodoRaft) SometerOperacion(operacion string, oas *OpASometer) error {
 func (nr *NodoRaft) AppendEntries(operacion AplicaOperacion,
 	correct *bool) error {
 
-	nr.logger.Println("El master, me pide meter entradas")
+	if nr.desconectado {
+		return fmt.Errorf("estoy desconectado del sistema")
+	}
+
 	if nr.yo != nr.masterActual {
+		nr.logger.Println("El master, me pide meter entradas")
 		nr.canalLatido <- true // El master sigue vivo
 
 		nr.mux.Lock()
@@ -404,6 +432,7 @@ func (nr *NodoRaft) AppendEntries(operacion AplicaOperacion,
 		nr.mux.Unlock()
 
 		*correct = true
+
 	} else {
 		*correct = false
 	}
@@ -422,21 +451,27 @@ type ArgsLatido struct {
 // el master y las réplicas
 //
 func (nr *NodoRaft) RecibirLatido(args ArgsLatido, ultimaEntrada *int) error {
-	nr.canalLatido <- true
+	if nr.desconectado {
+		return fmt.Errorf("estoy desconectado del sistema")
+	}
 
 	nr.mux.Lock()
+
 	if args.MandatoActual >= nr.candidaturaActual {
 		nr.candidaturaActual = args.MandatoActual
 		nr.masterActual = args.MasterActual
 		nr.ultimaEntradaComprometida = args.Comprometidas
+		nr.canalLatido <- true
 		*ultimaEntrada = nr.ultimaEntrada
 	}
+
 	nr.mux.Unlock()
 
 	return nil
 }
 
 func (nr *NodoRaft) comunicarLatidos() {
+
 	args := ArgsLatido{nr.yo, nr.candidaturaActual,
 		nr.ultimaEntradaComprometida}
 
@@ -455,7 +490,7 @@ func (nr *NodoRaft) comunicarLatidos() {
 		// Hay alguna entrada en mi nodo
 		if nr.ultimaEntrada != -1 {
 			// El nodo con quien contacto no tiene las mismas entradas que yo
-			if nr.indiceUltimaEntradaNodo[id] != nr.ultimaEntrada {
+			if nr.indiceUltimaEntradaNodo[id] < nr.ultimaEntrada {
 				nr.logger.Println("El nodo", id, "tiene",
 					nr.indiceUltimaEntradaNodo[id],
 					"entradas y vamos por la", nr.ultimaEntrada)
@@ -550,6 +585,10 @@ type RespuestaPeticionVoto struct {
 func (nr *NodoRaft) PedirVoto(args ArgsPeticionVoto,
 	reply *RespuestaPeticionVoto) error {
 
+	if nr.desconectado {
+		return fmt.Errorf("estoy desconectado del sistema")
+	}
+
 	acceso := false
 
 	// Si soy candidato o ya he votado, no doy el voto
@@ -559,7 +598,7 @@ func (nr *NodoRaft) PedirVoto(args ArgsPeticionVoto,
 	}
 
 	// Aún no ha habido un master
-	if nr.candidaturaActual == -1 {
+	if nr.candidaturaActual == 0 {
 		nr.mux.Lock()
 		nr.heVotadoA = args.Candidato
 		nr.mux.Unlock()

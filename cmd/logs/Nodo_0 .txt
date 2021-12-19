@@ -1,115 +1,395 @@
-Nodo_0 10:55:25.403369 raft.go:628: logger initialized
-Nodo_0 10:55:27.862411 raft.go:158: Contacto con el nodo 1
-Nodo_0 10:55:28.165355 raft.go:158: Contacto con el nodo 2
-Nodo_0 10:55:29.877793 raft.go:198: El master no me contesta, empiezo candidatura
-Nodo_0 10:55:30.625873 raft.go:230: El nodo 1 se ha hecho master del mandato 0
-Nodo_0 10:55:35.955118 raft.go:393: El master, me pide meter entradas
-Nodo_0 10:55:35.965123 raft.go:400: Op Recibida:
-	entrada[ 0 ] lalalal
-Nodo_0 10:55:40.657060 raft.go:198: El master no me contesta, empiezo candidatura
-Nodo_0 10:55:42.058735 raft.go:274: El nodo 1 no ha contestado a tiempo
-Nodo_0 10:55:42.059735 raft.go:257: El nodo 2 me ha dicho false
-Nodo_0 10:55:43.460639 raft.go:274: El nodo 1 no ha contestado a tiempo
-Nodo_0 10:55:43.460639 raft.go:257: El nodo 2 me ha dicho false
-Nodo_0 10:55:44.860945 raft.go:274: El nodo 1 no ha contestado a tiempo
-Nodo_0 10:55:44.860945 raft.go:257: El nodo 2 me ha dicho false
-Nodo_0 10:55:46.262155 raft.go:274: El nodo 1 no ha contestado a tiempo
-Nodo_0 10:55:46.262155 raft.go:257: El nodo 2 me ha dicho false
-Nodo_0 10:55:47.662391 raft.go:274: El nodo 1 no ha contestado a tiempo
-Nodo_0 10:55:47.662391 raft.go:257: El nodo 2 me ha dicho false
-Nodo_0 10:55:49.063419 raft.go:274: El nodo 1 no ha contestado a tiempo
-Nodo_0 10:55:49.063419 raft.go:257: El nodo 2 me ha dicho false
-Nodo_0 10:55:50.464990 raft.go:274: El nodo 1 no ha contestado a tiempo
-Nodo_0 10:55:50.465141 raft.go:257: El nodo 2 me ha dicho false
-Nodo_0 10:55:51.866250 raft.go:274: El nodo 1 no ha contestado a tiempo
-Nodo_0 10:55:51.866250 raft.go:257: El nodo 2 me ha dicho false
-Nodo_0 10:55:53.266742 raft.go:274: El nodo 1 no ha contestado a tiempo
-Nodo_0 10:55:53.266742 raft.go:257: El nodo 2 me ha dicho false
-Nodo_0 10:55:54.667874 raft.go:274: El nodo 1 no ha contestado a tiempo
-Nodo_0 10:55:54.667874 raft.go:257: El nodo 2 me ha dicho false
-Nodo_0 10:55:56.068853 raft.go:274: El nodo 1 no ha contestado a tiempo
-Nodo_0 10:55:56.068853 raft.go:257: El nodo 2 me ha dicho false
-Nodo_0 10:55:57.470409 raft.go:274: El nodo 1 no ha contestado a tiempo
-Nodo_0 10:55:57.470409 raft.go:257: El nodo 2 me ha dicho false
-Nodo_0 10:55:58.870841 raft.go:274: El nodo 1 no ha contestado a tiempo
-Nodo_0 10:55:58.870841 raft.go:257: El nodo 2 me ha dicho false
-Nodo_0 10:56:00.271698 raft.go:274: El nodo 1 no ha contestado a tiempo
-Nodo_0 10:56:00.271698 raft.go:257: El nodo 2 me ha dicho false
-Nodo_0 10:56:01.672727 raft.go:274: El nodo 1 no ha contestado a tiempo
-Nodo_0 10:56:01.672727 raft.go:257: El nodo 2 me ha dicho false
-Nodo_0 10:56:03.074025 raft.go:274: El nodo 1 no ha contestado a tiempo
-Nodo_0 10:56:03.074077 raft.go:257: El nodo 2 me ha dicho false
-Nodo_0 10:56:04.474241 raft.go:274: El nodo 1 no ha contestado a tiempo
-Nodo_0 10:56:04.474241 raft.go:257: El nodo 2 me ha dicho false
-Nodo_0 10:56:05.874652 raft.go:274: El nodo 1 no ha contestado a tiempo
-Nodo_0 10:56:05.874652 raft.go:257: El nodo 2 me ha dicho false
-Nodo_0 10:56:07.275457 raft.go:274: El nodo 1 no ha contestado a tiempo
-Nodo_0 10:56:07.275457 raft.go:257: El nodo 2 me ha dicho false
-Nodo_0 10:56:08.676324 raft.go:274: El nodo 1 no ha contestado a tiempo
-Nodo_0 10:56:08.676324 raft.go:257: El nodo 2 me ha dicho false
-Nodo_0 10:56:10.077617 raft.go:274: El nodo 1 no ha contestado a tiempo
-Nodo_0 10:56:10.077617 raft.go:257: El nodo 2 me ha dicho false
-Nodo_0 10:56:11.478619 raft.go:274: El nodo 1 no ha contestado a tiempo
-Nodo_0 10:56:11.478619 raft.go:257: El nodo 2 me ha dicho false
-Nodo_0 10:56:12.878865 raft.go:274: El nodo 1 no ha contestado a tiempo
-Nodo_0 10:56:12.878865 raft.go:257: El nodo 2 me ha dicho false
-Nodo_0 10:56:14.279631 raft.go:274: El nodo 1 no ha contestado a tiempo
-Nodo_0 10:56:14.279631 raft.go:257: El nodo 2 me ha dicho false
-Nodo_0 10:56:15.680836 raft.go:274: El nodo 1 no ha contestado a tiempo
-Nodo_0 10:56:15.680836 raft.go:257: El nodo 2 me ha dicho false
-Nodo_0 10:56:17.081493 raft.go:274: El nodo 1 no ha contestado a tiempo
-Nodo_0 10:56:17.081493 raft.go:257: El nodo 2 me ha dicho false
-Nodo_0 10:56:18.481883 raft.go:274: El nodo 1 no ha contestado a tiempo
-Nodo_0 10:56:18.481883 raft.go:257: El nodo 2 me ha dicho false
-Nodo_0 10:56:19.883058 raft.go:274: El nodo 1 no ha contestado a tiempo
-Nodo_0 10:56:19.883058 raft.go:257: El nodo 2 me ha dicho false
-Nodo_0 10:56:21.283814 raft.go:274: El nodo 1 no ha contestado a tiempo
-Nodo_0 10:56:21.283814 raft.go:257: El nodo 2 me ha dicho false
-Nodo_0 10:56:22.685358 raft.go:274: El nodo 1 no ha contestado a tiempo
-Nodo_0 10:56:22.685358 raft.go:257: El nodo 2 me ha dicho false
-Nodo_0 10:56:24.086147 raft.go:274: El nodo 1 no ha contestado a tiempo
-Nodo_0 10:56:24.086147 raft.go:257: El nodo 2 me ha dicho false
-Nodo_0 10:56:25.487543 raft.go:274: El nodo 1 no ha contestado a tiempo
-Nodo_0 10:56:25.487543 raft.go:257: El nodo 2 me ha dicho false
-Nodo_0 10:56:26.887694 raft.go:274: El nodo 1 no ha contestado a tiempo
-Nodo_0 10:56:26.887694 raft.go:257: El nodo 2 me ha dicho false
-Nodo_0 10:56:28.288364 raft.go:274: El nodo 1 no ha contestado a tiempo
-Nodo_0 10:56:28.288364 raft.go:257: El nodo 2 me ha dicho false
-Nodo_0 10:56:29.689409 raft.go:274: El nodo 1 no ha contestado a tiempo
-Nodo_0 10:56:29.689409 raft.go:257: El nodo 2 me ha dicho false
-Nodo_0 10:56:31.089927 raft.go:274: El nodo 1 no ha contestado a tiempo
-Nodo_0 10:56:31.089927 raft.go:257: El nodo 2 me ha dicho false
-Nodo_0 10:56:32.491563 raft.go:274: El nodo 1 no ha contestado a tiempo
-Nodo_0 10:56:32.491563 raft.go:257: El nodo 2 me ha dicho false
-Nodo_0 10:56:33.893110 raft.go:274: El nodo 1 no ha contestado a tiempo
-Nodo_0 10:56:33.893110 raft.go:257: El nodo 2 me ha dicho false
-Nodo_0 10:56:35.294436 raft.go:274: El nodo 1 no ha contestado a tiempo
-Nodo_0 10:56:35.294436 raft.go:257: El nodo 2 me ha dicho false
-Nodo_0 10:56:36.695301 raft.go:274: El nodo 1 no ha contestado a tiempo
-Nodo_0 10:56:36.695451 raft.go:257: El nodo 2 me ha dicho false
-Nodo_0 10:56:38.097008 raft.go:274: El nodo 1 no ha contestado a tiempo
-Nodo_0 10:56:38.097008 raft.go:257: El nodo 2 me ha dicho false
-Nodo_0 10:56:39.497558 raft.go:274: El nodo 1 no ha contestado a tiempo
-Nodo_0 10:56:39.497558 raft.go:257: El nodo 2 me ha dicho false
-Nodo_0 10:56:40.898208 raft.go:274: El nodo 1 no ha contestado a tiempo
-Nodo_0 10:56:40.898208 raft.go:257: El nodo 2 me ha dicho false
-Nodo_0 10:56:42.299091 raft.go:274: El nodo 1 no ha contestado a tiempo
-Nodo_0 10:56:42.299091 raft.go:257: El nodo 2 me ha dicho false
-Nodo_0 10:56:43.699731 raft.go:274: El nodo 1 no ha contestado a tiempo
-Nodo_0 10:56:43.699731 raft.go:257: El nodo 2 me ha dicho false
-Nodo_0 10:56:45.101206 raft.go:274: El nodo 1 no ha contestado a tiempo
-Nodo_0 10:56:45.101206 raft.go:257: El nodo 2 me ha dicho false
-Nodo_0 10:56:46.502290 raft.go:274: El nodo 1 no ha contestado a tiempo
-Nodo_0 10:56:46.502290 raft.go:257: El nodo 2 me ha dicho false
-Nodo_0 10:56:47.902525 raft.go:274: El nodo 1 no ha contestado a tiempo
-Nodo_0 10:56:47.902525 raft.go:257: El nodo 2 me ha dicho false
-Nodo_0 10:56:49.303737 raft.go:274: El nodo 1 no ha contestado a tiempo
-Nodo_0 10:56:49.304738 raft.go:257: El nodo 2 me ha dicho false
-Nodo_0 10:56:49.313743 raft.go:230: El nodo 2 se ha hecho master del mandato 1
-Nodo_0 10:56:49.423961 raft.go:393: El master, me pide meter entradas
-Nodo_0 10:56:49.433967 raft.go:400: Op Recibida:
-	entrada[ 1 ] lala
-Nodo_0 10:57:13.748807 raft.go:393: El master, me pide meter entradas
-Nodo_0 10:57:13.758812 raft.go:400: Op Recibida:
-	entrada[ 2 ] ijwbgwrg
-Nodo_0 10:57:21.192452 raft.go:198: El master no me contesta, empiezo candidatura
+Nodo_0 13:03:05.479793 raft.go:667: logger initialized
+Nodo_0 13:03:07.797527 raft.go:166: Contacto con el nodo 1
+Nodo_0 13:03:08.111484 raft.go:166: Contacto con el nodo 2
+Nodo_0 13:03:09.635191 raft.go:206: El master no me contesta, empiezo candidatura
+Nodo_0 13:03:11.384528 raft.go:237: El nodo 1 se ha hecho master del mandato 1
+Nodo_0 13:03:16.168524 raft.go:422: El master, me pide meter entradas
+Nodo_0 13:03:16.168524 raft.go:428: Op Recibida:
+	entrada[ 0 ] Pepe
+Nodo_0 13:03:24.410508 raft.go:206: El master no me contesta, empiezo candidatura
+Nodo_0 13:03:26.414971 raft.go:281: El nodo 1 no ha contestado a tiempo
+Nodo_0 13:03:26.416151 raft.go:264: El nodo 2 me ha dicho false
+Nodo_0 13:03:28.430263 raft.go:281: El nodo 1 no ha contestado a tiempo
+Nodo_0 13:03:28.430837 raft.go:264: El nodo 2 me ha dicho false
+Nodo_0 13:03:30.435146 raft.go:281: El nodo 1 no ha contestado a tiempo
+Nodo_0 13:03:30.435745 raft.go:264: El nodo 2 me ha dicho false
+Nodo_0 13:03:32.438158 raft.go:281: El nodo 1 no ha contestado a tiempo
+Nodo_0 13:03:32.438158 raft.go:264: El nodo 2 me ha dicho false
+Nodo_0 13:03:34.453008 raft.go:281: El nodo 1 no ha contestado a tiempo
+Nodo_0 13:03:34.453573 raft.go:264: El nodo 2 me ha dicho false
+Nodo_0 13:03:36.455829 raft.go:281: El nodo 1 no ha contestado a tiempo
+Nodo_0 13:03:36.455829 raft.go:264: El nodo 2 me ha dicho false
+Nodo_0 13:03:38.465026 raft.go:281: El nodo 1 no ha contestado a tiempo
+Nodo_0 13:03:38.465530 raft.go:264: El nodo 2 me ha dicho false
+Nodo_0 13:03:40.467268 raft.go:281: El nodo 1 no ha contestado a tiempo
+Nodo_0 13:03:40.467861 raft.go:264: El nodo 2 me ha dicho false
+Nodo_0 13:03:42.480006 raft.go:281: El nodo 1 no ha contestado a tiempo
+Nodo_0 13:03:42.480006 raft.go:264: El nodo 2 me ha dicho false
+Nodo_0 13:03:44.488863 raft.go:281: El nodo 1 no ha contestado a tiempo
+Nodo_0 13:03:44.488863 raft.go:264: El nodo 2 me ha dicho false
+Nodo_0 13:03:46.494788 raft.go:281: El nodo 1 no ha contestado a tiempo
+Nodo_0 13:03:46.494788 raft.go:264: El nodo 2 me ha dicho false
+Nodo_0 13:03:48.507740 raft.go:281: El nodo 1 no ha contestado a tiempo
+Nodo_0 13:03:48.507740 raft.go:264: El nodo 2 me ha dicho true
+Nodo_0 13:03:48.507740 raft.go:293: Me convierto en master
+Nodo_0 13:03:48.507740 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:48.616170 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:48.724349 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:48.831949 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:48.940558 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:49.047674 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:49.156815 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:49.267148 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:49.376303 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:49.484018 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:49.593172 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:49.701611 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:49.809656 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:49.918908 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:50.028083 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:50.139990 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:50.251156 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:50.361486 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:50.471631 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:50.582123 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:50.691249 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:50.799334 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:50.906786 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:51.015213 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:51.123324 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:51.233836 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:51.342905 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:51.452009 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:51.561452 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:51.670501 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:51.779938 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:51.887571 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:51.996374 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:52.103413 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:52.211519 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:52.318475 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:52.425872 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:52.533148 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:52.640217 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:52.749519 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:52.857251 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:52.966727 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:53.076979 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:53.184761 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:53.294286 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:53.401495 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:53.511711 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:53.619574 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:53.728207 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:53.836489 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:53.943138 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:54.050584 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:54.160663 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:54.271767 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:54.381418 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:54.489718 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:54.598116 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:54.707603 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:54.818133 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:54.926251 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:55.035767 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:55.142874 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:55.251029 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:55.362375 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:55.470809 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:55.579472 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:55.688487 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:55.796185 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:55.903706 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:56.012632 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:56.121396 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:56.229299 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:56.339834 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:56.446672 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:56.555646 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:56.665217 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:56.774742 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:56.883849 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:56.992191 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:57.100952 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:57.209361 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:57.320278 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:57.428981 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:57.537274 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:57.644937 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:57.752243 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:57.861442 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:57.967632 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:58.076689 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:58.184907 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:58.292072 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:58.402677 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:58.511428 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:58.621982 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:58.732005 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:58.840470 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:58.948535 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:59.056493 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:59.168234 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:59.277800 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:59.386641 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:59.493840 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:59.599852 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:59.709415 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:59.819559 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:03:59.927737 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:04:00.036348 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:04:00.145435 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:04:00.253656 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:04:00.363003 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:04:00.469689 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:04:00.576448 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:04:00.684341 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:04:00.791315 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:04:00.898827 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:04:01.006977 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:04:01.114143 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:04:01.221177 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:04:01.328679 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:04:01.437390 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:04:01.544565 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:04:01.652309 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:04:01.760393 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:04:01.868658 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:04:01.978475 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:04:02.086831 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:04:02.195890 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:04:02.305029 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:04:02.414674 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:04:02.522645 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:04:02.629861 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:04:02.740192 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:04:02.848571 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:04:02.957138 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:04:03.065507 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:04:03.173064 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:04:03.281549 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:04:03.390261 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:04:03.501809 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:04:03.609434 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:04:03.718880 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:04:03.826978 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:04:03.935525 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:04:04.044395 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 13:04:04.090827 raft.go:381: Intento someter:  Ramon
+Nodo_0 13:04:04.153027 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 1
+Nodo_0 13:04:04.153535 raft.go:494: El nodo 1 tiene 0 entradas y vamos por la 1
+Nodo_0 13:04:04.261512 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 1
+Nodo_0 13:04:04.261512 raft.go:548: Se compromete la entrada número 1
+Nodo_0 13:04:04.371955 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 1
+Nodo_0 13:04:04.480379 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 1
+Nodo_0 13:04:04.588822 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 1
+Nodo_0 13:04:04.696017 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 1
+Nodo_0 13:04:04.805181 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 1
+Nodo_0 13:04:04.912789 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 1
+Nodo_0 13:04:05.021669 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 1
+Nodo_0 13:04:05.129065 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 1
+Nodo_0 13:04:05.237294 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 1
+Nodo_0 13:04:05.344341 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 1
+Nodo_0 13:04:05.452396 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 1
+Nodo_0 13:04:05.564007 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 1
+Nodo_0 13:04:05.671917 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 1
+Nodo_0 13:04:05.782361 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 1
+Nodo_0 13:04:05.892413 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 1
+Nodo_0 13:04:06.000217 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 1
+Nodo_0 13:04:06.107366 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 1
+Nodo_0 13:04:06.216319 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 1
+Nodo_0 13:04:06.323610 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 1
+Nodo_0 13:04:06.431844 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 1
+Nodo_0 13:04:06.540511 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 1
+Nodo_0 13:04:06.649490 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 1
+Nodo_0 13:04:06.757682 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 1
+Nodo_0 13:04:06.866815 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 1
+Nodo_0 13:04:06.974208 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 1
+Nodo_0 13:04:07.083335 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 1
+Nodo_0 13:04:07.191582 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 1
+Nodo_0 13:04:07.301439 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 1
+Nodo_0 13:04:07.411564 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 1
+Nodo_0 13:04:07.519592 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 1
+Nodo_0 13:04:07.628394 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 1
+Nodo_0 13:04:07.737876 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 1
+Nodo_0 13:04:07.892262 raft.go:494: El nodo 0 tiene 0 entradas y vamos por la 1
+Nodo_0 13:04:18.362597 raft.go:381: Intento someter:  Fede
+Nodo_0 13:04:18.435673 raft.go:494: El nodo 0 tiene 1 entradas y vamos por la 2
+Nodo_0 13:04:18.435673 raft.go:494: El nodo 1 tiene 1 entradas y vamos por la 2
+Nodo_0 13:04:18.543726 raft.go:548: Se compromete la entrada número 2
+Nodo_0 13:04:34.986452 raft.go:381: Intento someter:  pep
+Nodo_0 13:04:35.091110 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:35.092073 raft.go:494: El nodo 1 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:35.200870 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:35.201429 raft.go:548: Se compromete la entrada número 3
+Nodo_0 13:04:35.307855 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:35.416718 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:35.524343 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:35.635197 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:35.743461 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:35.850502 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:35.959865 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:36.068535 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:36.177639 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:36.287732 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:36.396691 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:36.505255 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:36.613729 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:36.722564 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:36.833918 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:36.941604 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:37.049823 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:37.158405 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:37.267223 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:37.376486 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:37.486763 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:37.596953 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:37.704822 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:37.812907 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:37.920380 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:38.029048 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:38.138444 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:38.250052 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:38.358131 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:38.467200 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:38.576005 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:38.685404 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:38.797049 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:38.903988 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:39.013371 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:39.120865 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:39.227737 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:39.336719 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:39.446731 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:39.554161 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:39.663034 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:39.772360 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:39.881333 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:39.992157 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:40.099123 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:40.209262 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:40.317914 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:40.428062 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:40.536703 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:40.645026 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:40.752560 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:40.860750 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:40.970211 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:41.080273 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:41.188794 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:41.298182 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:41.406132 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:41.516015 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:41.623428 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:41.731765 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:41.841162 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:41.947453 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:42.055389 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:42.165541 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:42.276207 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:42.385405 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:42.495748 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:42.604496 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:42.711647 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:42.819197 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:42.929342 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:43.037254 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:43.145938 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:43.254421 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:43.362460 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:43.470887 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:43.581340 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:43.689610 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:43.799207 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:43.909418 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 3
+Nodo_0 13:04:43.978924 raft.go:381: Intento someter:  manolo
+Nodo_0 13:04:44.017106 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 4
+Nodo_0 13:04:44.017106 raft.go:494: El nodo 1 tiene 3 entradas y vamos por la 4
+Nodo_0 13:04:44.126651 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 4
+Nodo_0 13:04:44.127252 raft.go:494: El nodo 1 tiene 3 entradas y vamos por la 4
+Nodo_0 13:04:44.235107 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 4
+Nodo_0 13:04:44.235664 raft.go:494: El nodo 1 tiene 3 entradas y vamos por la 4
+Nodo_0 13:04:44.344681 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 4
+Nodo_0 13:04:44.345139 raft.go:494: El nodo 1 tiene 3 entradas y vamos por la 4
+Nodo_0 13:04:44.453726 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 4
+Nodo_0 13:04:44.453726 raft.go:494: El nodo 1 tiene 3 entradas y vamos por la 4
+Nodo_0 13:04:44.563744 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 4
+Nodo_0 13:04:44.564411 raft.go:494: El nodo 1 tiene 3 entradas y vamos por la 4
+Nodo_0 13:04:44.670901 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 4
+Nodo_0 13:04:44.671373 raft.go:494: El nodo 1 tiene 3 entradas y vamos por la 4
+Nodo_0 13:04:44.781646 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 4
+Nodo_0 13:04:44.781646 raft.go:494: El nodo 1 tiene 3 entradas y vamos por la 4
+Nodo_0 13:04:44.890704 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 4
+Nodo_0 13:04:44.891460 raft.go:494: El nodo 1 tiene 3 entradas y vamos por la 4
+Nodo_0 13:04:44.999619 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 4
+Nodo_0 13:04:44.999619 raft.go:494: El nodo 1 tiene 3 entradas y vamos por la 4
+Nodo_0 13:04:45.108628 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 4
+Nodo_0 13:04:45.109110 raft.go:494: El nodo 1 tiene 3 entradas y vamos por la 4
+Nodo_0 13:04:45.217973 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 4
+Nodo_0 13:04:45.218634 raft.go:494: El nodo 1 tiene 3 entradas y vamos por la 4
+Nodo_0 13:04:45.326488 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 4
+Nodo_0 13:04:45.326945 raft.go:494: El nodo 1 tiene 3 entradas y vamos por la 4
+Nodo_0 13:04:45.434398 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 4
+Nodo_0 13:04:45.434904 raft.go:494: El nodo 1 tiene 3 entradas y vamos por la 4
+Nodo_0 13:04:45.541280 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 4
+Nodo_0 13:04:45.541883 raft.go:494: El nodo 1 tiene 3 entradas y vamos por la 4
+Nodo_0 13:04:45.651199 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 4
+Nodo_0 13:04:45.651745 raft.go:494: El nodo 1 tiene 3 entradas y vamos por la 4
+Nodo_0 13:04:45.759268 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 4
+Nodo_0 13:04:45.759856 raft.go:494: El nodo 1 tiene 3 entradas y vamos por la 4
+Nodo_0 13:04:45.869723 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 4
+Nodo_0 13:04:45.870172 raft.go:494: El nodo 1 tiene 3 entradas y vamos por la 4
+Nodo_0 13:04:45.977738 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 4
+Nodo_0 13:04:45.978189 raft.go:494: El nodo 1 tiene 3 entradas y vamos por la 4
+Nodo_0 13:04:46.084680 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 4
+Nodo_0 13:04:46.085078 raft.go:494: El nodo 1 tiene 3 entradas y vamos por la 4
+Nodo_0 13:04:46.191794 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 4
+Nodo_0 13:04:46.192455 raft.go:494: El nodo 1 tiene 3 entradas y vamos por la 4
+Nodo_0 13:04:46.299745 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 4
+Nodo_0 13:04:46.300704 raft.go:494: El nodo 1 tiene 3 entradas y vamos por la 4
+Nodo_0 13:04:46.409103 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 4
+Nodo_0 13:04:46.409624 raft.go:494: El nodo 1 tiene 3 entradas y vamos por la 4
+Nodo_0 13:04:46.518547 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 4
+Nodo_0 13:04:46.519187 raft.go:494: El nodo 1 tiene 3 entradas y vamos por la 4
+Nodo_0 13:04:46.625462 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 4
+Nodo_0 13:04:46.625462 raft.go:494: El nodo 1 tiene 3 entradas y vamos por la 4
+Nodo_0 13:04:46.734156 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 4
+Nodo_0 13:04:46.734156 raft.go:494: El nodo 1 tiene 3 entradas y vamos por la 4
+Nodo_0 13:04:46.844140 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 4
+Nodo_0 13:04:46.844795 raft.go:494: El nodo 1 tiene 3 entradas y vamos por la 4
+Nodo_0 13:04:46.952522 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 4
+Nodo_0 13:04:46.952522 raft.go:494: El nodo 1 tiene 3 entradas y vamos por la 4
+Nodo_0 13:04:47.060966 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 4
+Nodo_0 13:04:47.060966 raft.go:494: El nodo 1 tiene 3 entradas y vamos por la 4
+Nodo_0 13:04:47.169961 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 4
+Nodo_0 13:04:47.170537 raft.go:494: El nodo 1 tiene 3 entradas y vamos por la 4
+Nodo_0 13:04:47.278275 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 4
+Nodo_0 13:04:47.278788 raft.go:494: El nodo 1 tiene 3 entradas y vamos por la 4
+Nodo_0 13:04:47.389373 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 4
+Nodo_0 13:04:47.390030 raft.go:494: El nodo 1 tiene 3 entradas y vamos por la 4
+Nodo_0 13:04:47.496037 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 4
+Nodo_0 13:04:47.496542 raft.go:494: El nodo 1 tiene 3 entradas y vamos por la 4
+Nodo_0 13:04:47.605064 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 4
+Nodo_0 13:04:47.605365 raft.go:494: El nodo 1 tiene 3 entradas y vamos por la 4
+Nodo_0 13:04:47.716811 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 4
+Nodo_0 13:04:47.717373 raft.go:494: El nodo 1 tiene 3 entradas y vamos por la 4
+Nodo_0 13:04:47.824989 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 4
+Nodo_0 13:04:47.825589 raft.go:494: El nodo 1 tiene 3 entradas y vamos por la 4
+Nodo_0 13:04:47.932627 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 4
+Nodo_0 13:04:47.933422 raft.go:494: El nodo 1 tiene 3 entradas y vamos por la 4
+Nodo_0 13:04:48.041232 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 4
+Nodo_0 13:04:48.041775 raft.go:494: El nodo 1 tiene 3 entradas y vamos por la 4
+Nodo_0 13:04:48.147830 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 4
+Nodo_0 13:04:48.148247 raft.go:494: El nodo 1 tiene 3 entradas y vamos por la 4
+Nodo_0 13:04:48.255091 raft.go:494: El nodo 0 tiene 2 entradas y vamos por la 4
+Nodo_0 13:04:48.255669 raft.go:494: El nodo 1 tiene 3 entradas y vamos por la 4
+Nodo_0 13:04:48.362865 raft.go:494: El nodo 0 tiene 3 entradas y vamos por la 4
+Nodo_0 13:04:48.363236 raft.go:494: El nodo 1 tiene 3 entradas y vamos por la 4
+Nodo_0 13:04:48.473147 raft.go:548: Se compromete la entrada número 4
+Nodo_0 13:04:48.473201 raft.go:494: El nodo 1 tiene 3 entradas y vamos por la 4
+Nodo_0 13:04:48.580783 raft.go:494: El nodo 1 tiene 3 entradas y vamos por la 4
+Nodo_0 13:04:54.754363 raft.go:381: Intento someter:  Samu
+Nodo_0 13:04:54.786323 raft.go:494: El nodo 0 tiene 4 entradas y vamos por la 5
+Nodo_0 13:04:54.786323 raft.go:494: El nodo 1 tiene 4 entradas y vamos por la 5
+Nodo_0 13:04:54.895253 raft.go:548: Se compromete la entrada número 5
