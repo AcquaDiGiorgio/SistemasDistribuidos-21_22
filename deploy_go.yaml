@@ -4,42 +4,84 @@ metadata:
   name: miservicio
 spec:
   selector:
-    run: g
+    run: conexion
   ports:
     - protocol: TCP
-      port: 6000
-      targetPort: 6000
+      port: 7000
+      targetPort: 7000
 
 ---
 kind: Deployment
 apiVersion: apps/v1
 metadata:
-  name: dg
+  name: de-1
   labels:
-    run: g
+    run: conexion
 spec:
   replicas: 3
   selector:
     matchLabels:
-      run: g
+      run: conexion
   template:
     metadata:
       labels:
-        run: g
+        run: conexion
     spec:
       containers:
-      - name: replica
-        image: localhost:5000/servidor:latest
-        env:
-        - name: MYPODIP
-          valueFrom:
-            fieldRef:
-              fieldPath: status.podIP
-                # variable MISERVICIO_SERVICE_HOST asignada automaticamente 
-                # del SERVICIO miservicio creado previamente
+      - name: nr1
+        image: localhost:5000/raft:latest
         command:
-        - /servidor
-        - $(MISERVICIO_SERVICE_HOST):$(MISERVICIO_SERVICE_PORT)
+        - sleep
+        - "3600"
         ports:
-        - containerPort: 6000
-
+        - containerPort: 7000
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: de-2
+  labels:
+    run: conexion
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      run: conexion
+  template:
+    metadata:
+      labels:
+        run: conexion
+    spec:
+      containers:
+      - name: nr2
+        image: localhost:5000/raft:latest
+        command:
+        - sleep
+        - "3600"
+        ports:
+        - containerPort: 7000
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: de-3
+  labels:
+    run: conexion
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      run: conexion
+  template:
+    metadata:
+      labels:
+        run: conexion
+    spec:
+      containers:
+      - name: nr3
+        image: localhost:5000/raft:latest
+        command:
+        - sleep
+        - "3600"
+        ports:
+        - containerPort: 7000

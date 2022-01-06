@@ -4,14 +4,14 @@ apiVersion: v1
 kind: Service
 metadata:
   # Nombre del servicio
-  name: conexion
+  name: miservicio
 spec:
   clusterIP: None
   selector:
     # tiene que coincidir con label definido en pod
     app: conexion
-  ports:
-  - port: 7000
+    ports:
+      - port: 7000
 ---
 # Puesta en marcha del PRIMER Pod para nodo-raft-1 (nr1) interactivo
 apiVersion: v1
