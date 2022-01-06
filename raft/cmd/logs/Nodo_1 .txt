@@ -1,0 +1,67 @@
+Nodo_1 23:35:07.573334 raft.go:667: logger initialized
+Nodo_1 23:35:09.896346 raft.go:166: Contacto con el nodo 0
+Nodo_1 23:35:10.205849 raft.go:166: Contacto con el nodo 2
+Nodo_1 23:35:11.723493 raft.go:206: El líder no me contesta, empiezo candidatura
+Nodo_1 23:35:13.417953 raft.go:237: El nodo 0 se ha hecho líder del mandato 1
+Nodo_1 23:35:19.717351 raft.go:422: El líder, me pide meter entradas
+Nodo_1 23:35:19.717351 raft.go:428: Op Recibida:
+	entrada[ 0 ] pepe
+Nodo_1 23:35:26.084989 raft.go:303: Paro al nodo actual
+Nodo_1 23:35:26.536091 raft.go:206: El líder no me contesta, empiezo candidatura
+Nodo_1 23:35:26.536156 raft.go:193: Entro en modo Parado
+Nodo_1 23:35:29.884678 raft.go:312: Reactivo al nodo actual
+Nodo_1 23:35:29.949409 raft.go:422: El líder, me pide meter entradas
+Nodo_1 23:35:29.949409 raft.go:428: Op Recibida:
+	entrada[ 1 ] Sam
+Nodo_1 23:35:35.711671 raft.go:422: El líder, me pide meter entradas
+Nodo_1 23:35:35.711671 raft.go:428: Op Recibida:
+	entrada[ 2 ] Ram
+Nodo_1 23:35:39.268660 raft.go:206: El líder no me contesta, empiezo candidatura
+Nodo_1 23:35:41.271019 raft.go:281: El nodo 0 no ha contestado a tiempo
+Nodo_1 23:35:41.271159 raft.go:264: El nodo 2 me ha dicho false
+Nodo_1 23:35:43.277395 raft.go:281: El nodo 0 no ha contestado a tiempo
+Nodo_1 23:35:43.278012 raft.go:264: El nodo 2 me ha dicho false
+Nodo_1 23:35:45.279093 raft.go:281: El nodo 0 no ha contestado a tiempo
+Nodo_1 23:35:45.279093 raft.go:264: El nodo 2 me ha dicho false
+Nodo_1 23:35:47.283478 raft.go:281: El nodo 0 no ha contestado a tiempo
+Nodo_1 23:35:47.284034 raft.go:264: El nodo 2 me ha dicho false
+Nodo_1 23:35:49.293498 raft.go:281: El nodo 0 no ha contestado a tiempo
+Nodo_1 23:35:49.293498 raft.go:264: El nodo 2 me ha dicho false
+Nodo_1 23:35:51.294321 raft.go:281: El nodo 0 no ha contestado a tiempo
+Nodo_1 23:35:51.294321 raft.go:264: El nodo 2 me ha dicho false
+Nodo_1 23:35:53.302992 raft.go:281: El nodo 0 no ha contestado a tiempo
+Nodo_1 23:35:53.302992 raft.go:264: El nodo 2 me ha dicho false
+Nodo_1 23:35:55.312754 raft.go:281: El nodo 0 no ha contestado a tiempo
+Nodo_1 23:35:55.313272 raft.go:264: El nodo 2 me ha dicho false
+Nodo_1 23:35:57.326630 raft.go:281: El nodo 0 no ha contestado a tiempo
+Nodo_1 23:35:57.327156 raft.go:264: El nodo 2 me ha dicho false
+Nodo_1 23:35:59.336147 raft.go:281: El nodo 0 no ha contestado a tiempo
+Nodo_1 23:35:59.336670 raft.go:264: El nodo 2 me ha dicho false
+Nodo_1 23:36:01.348504 raft.go:281: El nodo 0 no ha contestado a tiempo
+Nodo_1 23:36:01.348504 raft.go:264: El nodo 2 me ha dicho false
+Nodo_1 23:36:03.354581 raft.go:281: El nodo 0 no ha contestado a tiempo
+Nodo_1 23:36:03.354581 raft.go:264: El nodo 2 me ha dicho false
+Nodo_1 23:36:05.363299 raft.go:281: El nodo 0 no ha contestado a tiempo
+Nodo_1 23:36:05.363299 raft.go:264: El nodo 2 me ha dicho false
+Nodo_1 23:36:07.364297 raft.go:281: El nodo 0 no ha contestado a tiempo
+Nodo_1 23:36:07.364846 raft.go:264: El nodo 2 me ha dicho false
+Nodo_1 23:36:07.365367 raft.go:237: El nodo 2 se ha hecho líder del mandato 2
+Nodo_1 23:36:09.205100 raft.go:422: El líder, me pide meter entradas
+Nodo_1 23:36:09.205100 raft.go:428: Op Recibida:
+	entrada[ 3 ] 
+Nodo_1 23:36:14.983438 raft.go:422: El líder, me pide meter entradas
+Nodo_1 23:36:14.983438 raft.go:428: Op Recibida:
+	entrada[ 4 ] Ram
+Nodo_1 23:36:22.389090 raft.go:422: El líder, me pide meter entradas
+Nodo_1 23:36:22.389090 raft.go:428: Op Recibida:
+	entrada[ 5 ] oj
+Nodo_1 23:36:25.644545 raft.go:422: El líder, me pide meter entradas
+Nodo_1 23:36:25.644545 raft.go:428: Op Recibida:
+	entrada[ 1 ] Sam
+Nodo_1 23:36:57.249882 raft.go:422: El líder, me pide meter entradas
+Nodo_1 23:36:57.249882 raft.go:428: Op Recibida:
+	entrada[ 7 ] no
+Nodo_1 23:37:07.275577 raft.go:422: El líder, me pide meter entradas
+Nodo_1 23:37:07.275577 raft.go:428: Op Recibida:
+	entrada[ 8 ] 
+Nodo_1 23:37:13.121822 raft.go:206: El líder no me contesta, empiezo candidatura

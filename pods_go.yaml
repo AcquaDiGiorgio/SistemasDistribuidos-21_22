@@ -1,0 +1,77 @@
+# Activación de un recurso Service "headless", solo para obtener  el alta
+# de los nombres de Pods en el DNS (para descubrir su IP)
+apiVersion: v1
+kind: Service
+metadata:
+  # Nombre del servicio
+  name: conexion
+spec:
+  clusterIP: None
+  selector:
+    # tiene que coincidir con label definido en pod
+    app: conexion
+  ports:
+  - port: 7000
+---
+# Puesta en marcha del PRIMER Pod para nodo-raft-1 (nr1) interactivo
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nr1
+  labels:
+    app: conexion
+spec:
+  hostname: nr1
+  subdomain: conexion
+  dnsPolicy: ClusterFirst
+  restartPolicy: Never
+  containers:
+  - name: raft
+    image: localhost:5000/raft:latest
+    command:
+    - sleep
+    - "3600"
+    ports:
+    - containerPort: 7000
+---
+# Puesta en marcha de SEGUNDO Pod para nodo-raft-2 (nr2) interactivo
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nr2
+  labels:
+    app: conexions
+spec:
+  hostname: nr2
+  subdomain: conexion
+  dnsPolicy: ClusterFirst
+  restartPolicy: Never
+  containers:
+  - name: raft
+    image: localhost:5000/raft:latest
+    command:
+    - sleep
+    - "3600"
+    ports:
+    - containerPort: 7000
+---
+# Puesta en marcha del TERCER Pod para nodo-raft-3 (nr3) interactivo
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nr3
+  labels:
+    app: conexion
+spec:
+  hostname: nr3
+  subdomain: conexion
+  dnsPolicy: ClusterFirst
+  restartPolicy: Never
+  containers:
+  - name: raft
+    image: localhost:5000/raft:latest
+    command:
+    - sleep
+    - "3600"
+    ports:
+    - containerPort: 7000

@@ -1,0 +1,668 @@
+package raft
+
+import (
+	"fmt"
+	"io/ioutil"
+	"log"
+	"math/rand"
+	"net"
+	"net/http"
+	"net/rpc"
+	"os"
+	"raft/internal/comun/constants"
+	"raft/internal/comun/rpctimeout"
+	"strconv"
+	"sync"
+	"time"
+)
+
+const (
+	//CONSTANTES DE LOS LOGS
+	kEnableDebugLogs = true  // false deshabilita los logs
+	kLogToStdout     = false // true: logs -> stdout
+	// flase: logs -> kLogOutputDir
+	kLogOutputDir = "../logs/" // Directorio de salida de los logs
+
+	// CONSTANTES TEMPORALES
+	pulseDelay       = 100 * time.Millisecond // Delay de cada latido (10 veces / seg)
+	desconectedDelay = 1 * time.Second
+)
+
+type EmptyValue struct{}
+
+// A medida que el nodo Raft conoce las operaciones de las  entradas de registro
+// comprometidas, envía un AplicaOperacion, con cada una de ellas, al canal
+// "canalAplicar" (funcion NuevoNodo) de la maquina de estados
+type AplicaOperacion struct {
+	Indice    int // en la entrada de registro
+	Operacion string
+}
+
+type entradaIntroducir struct {
+	Entrada string
+	Quien   int
+}
+
+//
+// Tipo de dato Go que representa un solo nodo (réplica) de raft
+//
+type NodoRaft struct {
+	// Variables de control y depuración
+	mux             sync.Mutex    // Mutex para proteger acceso a estado compartido
+	nodos           []*rpc.Client // Conexiones RPC a todos los nodos (réplicas) Raft
+	logger          *log.Logger   // Logger para depuración
+	canalLatido     chan bool
+	canalReconexion chan bool
+	desconectado    bool
+
+	// Variables que deberían ser iguales entre todos los nodos (sin tener
+	// en cuenta posibles errores)
+	candidaturaActual int
+	liderActual       int
+
+	// Varaibles de cada candidatura
+	estamosEnCandidatura bool
+	soyCandidato         bool
+	heVotadoA            int
+
+	// Variables propias de cada Nodo
+	yo                        int
+	entradas                  []string
+	ultimaEntrada             int
+	ultimaEntradaComprometida int
+	periodoLatido             time.Duration
+	periodoCandidatura        time.Duration
+
+	// Variables únicas del líder actual (si el nodo actual no es líder, se
+	// deben ignorar sus valores)
+	canalAplicar            chan entradaIntroducir
+	indiceUltimaEntradaNodo []int
+	comprometiendo          []bool
+}
+
+// Creacion de un nuevo nodo de eleccion
+//
+func NuevoNodo(yo int) *NodoRaft {
+
+	nr := new(NodoRaft)
+	nr.yo = yo
+	nr.inicializarVariables()
+
+	if kEnableDebugLogs {
+		nr.activarLogs()
+	} else {
+		nr.logger = log.New(ioutil.Discard, "", 0)
+	}
+
+	go nr.registrarNodo()
+	go nr.iniciarComunicacion()
+
+	return nr
+}
+
+func (nr *NodoRaft) inicializarVariables() {
+	nr.candidaturaActual = 0
+	nr.liderActual = -1
+	nr.heVotadoA = -1
+	nr.ultimaEntradaComprometida = -1
+	nr.ultimaEntrada = -1
+
+	nr.soyCandidato = false
+	nr.desconectado = false
+
+	nr.entradas = make([]string, 1000)
+
+	nr.canalReconexion = make(chan bool)
+	nr.canalLatido = make(chan bool)
+
+	// Tiempo aleatorio entre 500 y 1000 ms
+	milis := time.Duration(500 + rand.Int()%6*100)
+	nr.periodoLatido = time.Duration(milis * time.Millisecond)
+
+	// Tiempo aleatorio entre 1000 y 3000 ms
+	milis = time.Duration(1000 + rand.Int()%21*100)
+	nr.periodoCandidatura = time.Duration(milis * time.Millisecond)
+}
+
+//
+// Función que prepara a un nodo para la recepción de llamadas
+// RPC
+//
+// Debe ejecutarse como gorutina o el sistema se queda bloqueado
+//
+func (nr *NodoRaft) registrarNodo() {
+
+	// Registro y Creación del RPC
+	rpc.Register(nr)
+	rpc.HandleHTTP()
+
+	// Inicio Escucha
+	listener, err := net.Listen("tcp", constants.MachinesSSH[nr.yo].Ip)
+	if err != nil {
+		os.Exit(1)
+	}
+
+	// Sirve petiticiones
+	http.Serve(listener, nil)
+}
+
+//
+// Inicializa el vector que guarda los usuarios del sistema
+//
+// TODOS los nodos deben haber sido registrados antes de que esta función
+// se ejecute
+//
+func (nr *NodoRaft) contactarNodos() {
+	nr.mux.Lock()
+	for i := 0; i < constants.USERS; i++ {
+		if i != nr.yo { // No contacto conmigo
+			nodo, err := rpc.DialHTTP("tcp", constants.MachinesSSH[i].Ip)
+			if err == nil { // No ha habido error
+				nr.nodos = append(nr.nodos, nodo)
+				nr.indiceUltimaEntradaNodo =
+					append(nr.indiceUltimaEntradaNodo, -1)
+
+				nr.comprometiendo = append(nr.comprometiendo, false)
+				nr.logger.Println("Contacto con el nodo", i)
+			} else {
+				nr.logger.Panicln("ERROR CONTACTO: ", err.Error())
+			}
+		}
+	}
+	nr.mux.Unlock()
+}
+
+//
+// Inicia la ecucha permanente de latidos del líder o, por contra,
+// si el nodo es líder, envia latidos
+//
+// También incia el periodo de candidatura si no recibe un latido
+// a tiempo
+//
+// Si se van a hacer operaciones externas, se debe ejecutar con una
+// gorutina
+//
+func (nr *NodoRaft) iniciarComunicacion() {
+
+	time.Sleep(2 * time.Second) // Esperamos que todas las réplicas estén registradas
+	nr.contactarNodos()         // Contactamos con ellas
+	time.Sleep(1 * time.Second)
+
+	for {
+		if nr.desconectado {
+			nr.logger.Println("Entro en modo Parado")
+			<-nr.canalReconexion
+
+		} else if nr.liderActual == nr.yo { // Yo soy el líder
+			nr.comunicarLatidos()
+			time.Sleep(pulseDelay)
+
+		} else {
+			select {
+			case <-nr.canalLatido: // El líder ha respondido a tiempo
+				break
+
+			case <-time.After(nr.periodoLatido): // El líder ha tardado mucho
+				nr.logger.Println("El líder no me contesta, empiezo candidatura")
+				nr.prepararCandidatura()
+				break
+			}
+		}
+	}
+}
+
+//
+// Periodo de candidatura de un nodo.
+// Se ejecuta tras no recibir un latido del líder a tiempo,
+//
+func (nr *NodoRaft) prepararCandidatura() {
+	if nr.desconectado {
+		return
+	}
+
+	nr.mux.Lock()
+	nr.estamosEnCandidatura = true
+	nr.candidaturaActual++
+	nr.mux.Unlock()
+	for { // Periodo de candidatura
+		nr.mux.Lock()
+		votosCandidaturaActual := 1
+		nr.soyCandidato = false
+		nr.mux.Unlock()
+
+		select {
+		case <-nr.canalLatido: // Alguien se ha convertido en líder
+			nr.estamosEnCandidatura = false
+			nr.heVotadoA = -1
+			nr.logger.Println("El nodo", nr.liderActual,
+				"se ha hecho líder del mandato", nr.candidaturaActual)
+			return
+
+		case <-time.After(nr.periodoCandidatura):
+			nr.mux.Lock()
+
+			args := ArgsPeticionVoto{
+				nr.candidaturaActual,
+				nr.yo,
+				nr.ultimaEntrada,
+				nr.ultimaEntradaComprometida}
+
+			nr.soyCandidato = true
+			nr.heVotadoA = -1
+			nr.mux.Unlock()
+
+			var sum int //DEBUG
+			for id := range nr.nodos {
+				var respuesta RespuestaPeticionVoto
+				ok := nr.enviarPeticionVoto(id, args, &respuesta)
+
+				if id == nr.yo { //DEBUG
+					sum++
+				}
+
+				if ok && nr.heVotadoA == -1 { // El nodo no está caído
+					nr.logger.Println("El nodo", id+sum,
+						"me ha dicho", respuesta.VotoGrantizado)
+
+					if !respuesta.VotoGrantizado { // No me da el voto
+						if nr.candidaturaActual < respuesta.Candidatura {
+							nr.mux.Lock()
+							nr.candidaturaActual = respuesta.Candidatura
+							nr.mux.Unlock()
+						}
+					} else { // Me da el voto
+						votosCandidaturaActual++
+						if votosCandidaturaActual > constants.USERS/2 {
+							nr.inicializarLiderr()
+							return
+						}
+					}
+				} else {
+					nr.logger.Println("El nodo", id+sum,
+						"no ha contestado a tiempo")
+				}
+			}
+
+		}
+	}
+}
+
+func (nr *NodoRaft) inicializarLiderr() {
+	nr.liderActual = nr.yo
+
+	nr.logger.Println("Me convierto en líder")
+
+	nr.canalAplicar = make(chan entradaIntroducir, 20)
+	go nr.introducirEntradas()
+}
+
+//
+// Metodo que termina la ejecución de un nodo
+//
+func (nr *NodoRaft) Para(emptyArgs EmptyValue, emptyReply *EmptyValue) error {
+	nr.logger.Println("Paro al nodo actual")
+	nr.desconectado = true
+	nr.soyCandidato = false
+	nr.heVotadoA = -1
+	nr.estamosEnCandidatura = false
+	return nil
+}
+
+func (nr *NodoRaft) Reconectar(emptyArgs EmptyValue, emptyReply *EmptyValue) error {
+	nr.logger.Println("Reactivo al nodo actual")
+	nr.desconectado = false
+	nr.canalReconexion <- true
+	return nil
+}
+
+type Estado struct {
+	Yo                        int
+	CandidaturaActual         int
+	EsLider                   bool
+	LiderActual               int
+	Entradas                  []string
+	UltimaEntrada             int
+	UltimaEntradaComprometida int
+	EstamosEnCandidatura      bool
+	Desconectado              bool
+}
+
+//
+// Devuelve "yo", mandato en curso y si este nodo cree ser lider
+//
+func (nr *NodoRaft) ObtenerEstado(emptyArgs EmptyValue, estado *Estado) error {
+
+	nr.mux.Lock()
+
+	estado.Yo = nr.yo
+	estado.CandidaturaActual = nr.candidaturaActual
+	estado.EsLider = nr.liderActual == nr.yo
+	estado.LiderActual = nr.liderActual
+	estado.UltimaEntrada = nr.ultimaEntrada
+	estado.UltimaEntradaComprometida = nr.ultimaEntradaComprometida
+	estado.Entradas = nr.entradas
+	estado.EstamosEnCandidatura = nr.estamosEnCandidatura
+	estado.Desconectado = nr.desconectado
+
+	nr.mux.Unlock()
+
+	return nil
+}
+
+//
+// El servicio que utilice Raft (base de datos clave/valor, por ejemplo)
+// Quiere buscar un acuerdo de posicion en registro para siguiente operacion
+// solicitada por cliente.
+//
+// Si el nodo no es el lider, devolver falso
+// Sino, comenzar la operacion de consenso sobre la operacion y devolver con
+// rapidez
+//
+// No hay garantia que esta operacion consiga comprometerse n una entrada de
+// de registro, dado que el lider puede fallar y la entrada ser reemplazada
+// en el futuro.
+// Primer valor devuelto es el indice del registro donde se va a colocar
+// la operacion si consigue comprometerse.
+// El segundo valor es el mandato en curso
+// El tercer valor es true si el nodo cree ser el lider
+//
+type OpASometer struct {
+	Indice  int
+	Mandato int
+	EsLider bool
+}
+
+func (nr *NodoRaft) SometerOperacion(operacion string, oas *OpASometer) error {
+
+	if nr.desconectado {
+		return fmt.Errorf("estoy desconectado del sistema")
+	}
+
+	nr.logger.Println("Intento someter: ", operacion)
+	nr.mux.Lock()
+
+	esLider := nr.yo == nr.liderActual
+
+	if !esLider {
+		nr.mux.Unlock()
+		return fmt.Errorf("el nodo actual no puede someter operaciones")
+	}
+
+	nr.ultimaEntrada++
+	oas.Indice = nr.ultimaEntrada
+	oas.Mandato = nr.candidaturaActual
+	oas.EsLider = esLider
+
+	nr.mux.Unlock()
+
+	if esLider {
+		nr.mux.Lock()
+		nr.entradas[nr.ultimaEntrada] = operacion
+		nr.mux.Unlock()
+	}
+
+	return nil
+}
+
+//
+// Función RPC que recibe un nodo cuando un líder le pide introducir
+// una entrada
+//
+// Recibe la operación a someter
+// Devuelve si la ha introducido
+//
+func (nr *NodoRaft) AppendEntries(operacion AplicaOperacion,
+	correct *bool) error {
+
+	if nr.desconectado {
+		return fmt.Errorf("estoy desconectado del sistema")
+	}
+
+	if nr.yo != nr.liderActual {
+		nr.logger.Println("El líder, me pide meter entradas")
+		nr.canalLatido <- true // El líder sigue vivo
+
+		nr.mux.Lock()
+
+		nr.ultimaEntrada++
+		nr.logger.Println("Op Recibida:\n\tentrada[", operacion.Indice,
+			"]", operacion.Operacion)
+		nr.entradas[operacion.Indice] = operacion.Operacion
+
+		nr.mux.Unlock()
+
+		*correct = true
+
+	} else {
+		*correct = false
+	}
+
+	return nil
+}
+
+type ArgsLatido struct {
+	LiderActual   int
+	MandatoActual int
+	Comprometidas int
+}
+
+//
+// Funciones relacionadas con los latidos entre
+// el líder y las réplicas
+//
+func (nr *NodoRaft) RecibirLatido(args ArgsLatido, ultimaEntrada *int) error {
+	if nr.desconectado {
+		return fmt.Errorf("estoy desconectado del sistema")
+	}
+
+	nr.mux.Lock()
+
+	if args.MandatoActual >= nr.candidaturaActual {
+		nr.candidaturaActual = args.MandatoActual
+		nr.liderActual = args.LiderActual
+		nr.ultimaEntradaComprometida = args.Comprometidas
+		nr.canalLatido <- true
+		*ultimaEntrada = nr.ultimaEntrada
+	}
+
+	nr.mux.Unlock()
+
+	return nil
+}
+
+func (nr *NodoRaft) comunicarLatidos() {
+
+	args := ArgsLatido{nr.yo, nr.candidaturaActual,
+		nr.ultimaEntradaComprometida}
+
+	var respuesta int
+
+	for id := range nr.nodos {
+		err := rpctimeout.CallTimeout(nr.nodos[id],
+			"NodoRaft.RecibirLatido", args, &respuesta, time.Second)
+
+		if err == nil {
+			nr.indiceUltimaEntradaNodo[id] = respuesta
+		}
+
+		nr.comprobarCompromiso()
+
+		// Hay alguna entrada en mi nodo
+		if nr.ultimaEntrada != -1 {
+			// El nodo con quien contacto no tiene las mismas entradas que yo
+			if nr.indiceUltimaEntradaNodo[id] < nr.ultimaEntrada {
+				nr.logger.Println("El nodo", id, "tiene",
+					nr.indiceUltimaEntradaNodo[id],
+					"entradas y vamos por la", nr.ultimaEntrada)
+
+				indice := nr.indiceUltimaEntradaNodo[id] + 1
+
+				nr.mux.Lock()
+				comprometiendoEntrada := nr.comprometiendo[id]
+				nr.mux.Unlock()
+
+				if !comprometiendoEntrada {
+					entrada := entradaIntroducir{nr.entradas[indice], id}
+					nr.canalAplicar <- entrada
+				}
+			}
+		}
+	}
+}
+
+func (nr *NodoRaft) introducirEntradas() {
+	for {
+		entradaIntroducir := <-nr.canalAplicar
+		var correcto bool
+
+		nr.mux.Lock()
+
+		nr.comprometiendo[entradaIntroducir.Quien] = true
+
+		operacion := AplicaOperacion{
+			nr.indiceUltimaEntradaNodo[entradaIntroducir.Quien] + 1,
+			entradaIntroducir.Entrada}
+
+		nr.mux.Unlock()
+
+		rpctimeout.CallTimeout(nr.nodos[entradaIntroducir.Quien],
+			"NodoRaft.AppendEntries", operacion, &correcto, time.Second)
+
+		nr.mux.Lock()
+		nr.comprometiendo[entradaIntroducir.Quien] = false
+		nr.mux.Unlock()
+	}
+}
+
+func (nr *NodoRaft) comprobarCompromiso() {
+	nr.mux.Lock()
+	nextEntry := nr.ultimaEntradaComprometida + 1
+	nr.mux.Unlock()
+
+	graterOrEqual := 1
+
+	for _, val := range nr.indiceUltimaEntradaNodo {
+		if val >= nextEntry {
+			graterOrEqual++
+			if graterOrEqual > constants.USERS/2 {
+				nr.logger.Println("Se compromete la entrada número", val)
+				nr.mux.Lock()
+				nr.ultimaEntradaComprometida++
+				nr.mux.Unlock()
+				return
+			}
+		}
+	}
+}
+
+//
+// ArgsPeticionVoto
+// ===============
+// Estructura de argumentos de RPC PedirVoto.
+//
+type ArgsPeticionVoto struct {
+	CandidaturaActual         int
+	Candidato                 int
+	UltimaEntrada             int
+	UltimaEntradaComprometida int
+}
+
+//
+// RespuestaPeticionVoto
+// ================
+// Struct respuesta de RPC PedirVoto
+//
+type RespuestaPeticionVoto struct {
+	Candidatura    int
+	VotoGrantizado bool
+}
+
+//
+// PedirVoto
+// ===========
+// Metodo para RPC PedirVoto
+//
+func (nr *NodoRaft) PedirVoto(args ArgsPeticionVoto,
+	reply *RespuestaPeticionVoto) error {
+
+	if nr.desconectado {
+		return fmt.Errorf("estoy desconectado del sistema")
+	}
+
+	acceso := false
+
+	// Si soy candidato o ya he votado, no doy el voto
+	if nr.soyCandidato || nr.heVotadoA != -1 {
+		*reply = RespuestaPeticionVoto{nr.candidaturaActual, acceso}
+		return nil
+	}
+
+	// Aún no ha habido un líder
+	if nr.candidaturaActual == 0 {
+		nr.mux.Lock()
+		nr.heVotadoA = args.Candidato
+		nr.mux.Unlock()
+		acceso = true
+
+		// El candidato tiene por lo menos la misma cantidad de entradas
+		// y de entradas comprometidas que este nodo
+	} else if args.CandidaturaActual >= nr.candidaturaActual &&
+		args.UltimaEntrada >= nr.ultimaEntrada &&
+		args.UltimaEntradaComprometida >= nr.ultimaEntradaComprometida {
+
+		nr.mux.Lock()
+		nr.heVotadoA = args.Candidato
+		nr.mux.Unlock()
+		acceso = true
+	}
+
+	*reply = RespuestaPeticionVoto{nr.candidaturaActual, acceso}
+
+	return nil
+}
+
+//
+// nodo int 				-- indice del servidor destino en nr.nodos[]
+// args *RequestVoteArgs 	-- argumetnos par la llamada RPC
+// reply *RequestVoteReply 	-- respuesta RPC
+//
+// Si en la llamada RPC, la respuesta llega en un intervalo de tiempo,
+// la funcion devuelve true, sino devuelve false
+//
+// Un resultado falso podria ser causado por una replica caida,
+// un servidor vivo que no es alcanzable,
+// una petición perdida, o una respuesta perdida
+//
+func (nr *NodoRaft) enviarPeticionVoto(nodo int, args ArgsPeticionVoto,
+	reply *RespuestaPeticionVoto) (ok bool) {
+
+	err := rpctimeout.CallTimeout(nr.nodos[nodo], "NodoRaft.PedirVoto",
+		args, &reply, time.Second)
+
+	return err == nil
+}
+
+//
+// Función que activa los logs de este nodo
+//
+func (nr *NodoRaft) activarLogs() {
+	nombreNodo := strconv.Itoa(nr.yo)
+	logPrefix := fmt.Sprintf("Nodo_%s ", nombreNodo)
+	if kLogToStdout {
+		nr.logger = log.New(os.Stdout, nombreNodo,
+			log.Lmicroseconds|log.Lshortfile)
+	} else {
+		err := os.MkdirAll(kLogOutputDir, os.ModePerm)
+		if err != nil {
+			panic(err.Error())
+		}
+		logOutputFile, err := os.OpenFile(fmt.Sprintf("%s/%s.txt",
+			kLogOutputDir, logPrefix), os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
+		if err != nil {
+			panic(err.Error())
+		}
+		nr.logger = log.New(logOutputFile, logPrefix,
+			log.Lmicroseconds|log.Lshortfile)
+	}
+	nr.logger.Println("logger initialized")
+}

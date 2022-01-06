@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: miservicio
+spec:
+  selector:
+    run: g
+  ports:
+    - protocol: TCP
+      port: 6000
+      targetPort: 6000
+
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: dg
+  labels:
+    run: g
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      run: g
+  template:
+    metadata:
+      labels:
+        run: g
+    spec:
+      containers:
+      - name: replica
+        image: localhost:5000/servidor:latest
+        env:
+        - name: MYPODIP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+                # variable MISERVICIO_SERVICE_HOST asignada automaticamente 
+                # del SERVICIO miservicio creado previamente
+        command:
+        - /servidor
+        - $(MISERVICIO_SERVICE_HOST):$(MISERVICIO_SERVICE_PORT)
+        ports:
+        - containerPort: 6000
+
