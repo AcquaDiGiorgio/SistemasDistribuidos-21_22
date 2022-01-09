@@ -1,6 +1,6 @@
-kubectl delete pod raft1
-kubectl delete pod raft2
-kubectl delete pod raft3
+kubectl delete pod nr1
+kubectl delete pod nr2
+kubectl delete pod nr3
 kubectl delete service conexion
 echo "--------- Esperar un poco para dar tiempo que terminen Pods previos"
 sleep 1

@@ -1,31 +1,60 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: miservicio
+  name: deploy-1
 spec:
   selector:
-    run: conexion
+    run: deploy-1
   ports:
     - protocol: TCP
       port: 7000
       targetPort: 7000
-
+  externalIPs: 
+    - 192.168.0.1
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: deploy-2
+spec:
+  selector:
+    run: deploy-2
+  ports:
+    - protocol: TCP
+      port: 7000
+      targetPort: 7000
+  externalIPs: 
+    - 192.168.0.2
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: deploy-3
+spec:
+  selector:
+    run: deploy-3
+  ports:
+    - protocol: TCP
+      port: 7000
+      targetPort: 7000
+  externalIPs: 
+    - 192.168.0.3
 ---
 kind: Deployment
 apiVersion: apps/v1
 metadata:
   name: de-1
   labels:
-    run: conexion
+    run: deploy-1
 spec:
   replicas: 3
   selector:
     matchLabels:
-      run: conexion
+      run: deploy-1
   template:
     metadata:
       labels:
-        run: conexion
+        run: deploy-1
     spec:
       containers:
       - name: nr1
@@ -41,16 +70,16 @@ apiVersion: apps/v1
 metadata:
   name: de-2
   labels:
-    run: conexion
+    run: deploy-2
 spec:
   replicas: 3
   selector:
     matchLabels:
-      run: conexion
+      run: deploy-2
   template:
     metadata:
       labels:
-        run: conexion
+        run: deploy-2
     spec:
       containers:
       - name: nr2
@@ -66,16 +95,16 @@ apiVersion: apps/v1
 metadata:
   name: de-3
   labels:
-    run: conexion
+    run: deploy-3
 spec:
   replicas: 3
   selector:
     matchLabels:
-      run: conexion
+      run: deploy-3
   template:
     metadata:
       labels:
-        run: conexion
+        run: deploy-3
     spec:
       containers:
       - name: nr3

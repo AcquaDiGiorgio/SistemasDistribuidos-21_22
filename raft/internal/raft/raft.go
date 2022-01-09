@@ -54,6 +54,7 @@ type NodoRaft struct {
 	canalLatido     chan bool
 	canalReconexion chan bool
 	desconectado    bool
+	errVec          []bool
 
 	// Variables que deberían ser iguales entre todos los nodos (sin tener
 	// en cuenta posibles errores)
@@ -111,9 +112,17 @@ func (nr *NodoRaft) inicializarVariables() {
 	nr.desconectado = false
 
 	nr.entradas = make([]string, 1000)
+	nr.nodos = make([]*rpc.Client, constants.USERS-1)
 
 	nr.canalReconexion = make(chan bool)
 	nr.canalLatido = make(chan bool)
+
+	for i := 1; i < constants.USERS; i++ {
+		nr.errVec = append(nr.errVec, true)
+		nr.comprometiendo = append(nr.comprometiendo, false)
+		nr.indiceUltimaEntradaNodo =
+			append(nr.indiceUltimaEntradaNodo, -1)
+	}
 
 	// Tiempo aleatorio entre 500 y 1000 ms
 	milis := time.Duration(500 + rand.Int()%6*100)
@@ -137,7 +146,7 @@ func (nr *NodoRaft) registrarNodo() {
 	rpc.HandleHTTP()
 
 	// Inicio Escucha
-	listener, err := net.Listen("tcp", constants.MachinesSSH[nr.yo].Ip)
+	listener, err := net.Listen("tcp", constants.MachinesKubernetesDeployment[nr.yo].Ip)
 	if err != nil {
 		os.Exit(1)
 	}
@@ -153,23 +162,38 @@ func (nr *NodoRaft) registrarNodo() {
 // se ejecute
 //
 func (nr *NodoRaft) contactarNodos() {
-	nr.mux.Lock()
-	for i := 0; i < constants.USERS; i++ {
-		if i != nr.yo { // No contacto conmigo
-			nodo, err := rpc.DialHTTP("tcp", constants.MachinesSSH[i].Ip)
-			if err == nil { // No ha habido error
-				nr.nodos = append(nr.nodos, nodo)
-				nr.indiceUltimaEntradaNodo =
-					append(nr.indiceUltimaEntradaNodo, -1)
+	var id int
+	for {
+		id = 0
+		for i := 0; i < constants.USERS; i++ {
+			if i != nr.yo { // No contacto conmigo
+				if nr.errVec[id] {
+					nr.logger.Println("Intento contactar con el nodo", i)
+					nodo, err := rpc.DialHTTP("tcp", constants.MachinesKubernetesDeployment[i].Ip)
 
-				nr.comprometiendo = append(nr.comprometiendo, false)
-				nr.logger.Println("Contacto con el nodo", i)
-			} else {
-				nr.logger.Panicln("ERROR CONTACTO: ", err.Error())
+					if err == nil { // No ha habido error
+						nr.logger.Println("Exito en el contacto con el nodo", i)
+						nr.mux.Lock()
+
+						nr.nodos[id] = nodo
+
+						nr.errVec[id] = false
+						nr.mux.Unlock()
+
+					} else {
+						nr.logger.Println("Fallo en el contacto con el nodo", i)
+						nr.mux.Lock()
+						nr.errVec[id] = true
+						nr.mux.Unlock()
+
+						nr.indiceUltimaEntradaNodo[id] = -1
+					}
+				}
+				id++
 			}
 		}
+		time.Sleep(3 * time.Second)
 	}
-	nr.mux.Unlock()
 }
 
 //
@@ -185,8 +209,8 @@ func (nr *NodoRaft) contactarNodos() {
 func (nr *NodoRaft) iniciarComunicacion() {
 
 	time.Sleep(2 * time.Second) // Esperamos que todas las réplicas estén registradas
-	nr.contactarNodos()         // Contactamos con ellas
-	time.Sleep(1 * time.Second)
+	go nr.contactarNodos()      // Contactamos con ellas
+	time.Sleep(3 * time.Second) // Esperamos a haber contactado con todos
 
 	for {
 		if nr.desconectado {
@@ -200,6 +224,7 @@ func (nr *NodoRaft) iniciarComunicacion() {
 		} else {
 			select {
 			case <-nr.canalLatido: // El líder ha respondido a tiempo
+				nr.logger.Println(" >> Llega latido")
 				break
 
 			case <-time.After(nr.periodoLatido): // El líder ha tardado mucho
@@ -277,9 +302,13 @@ func (nr *NodoRaft) prepararCandidatura() {
 							return
 						}
 					}
-				} else {
+				} else if !ok { // El nodo no me ha respondido a tiempo
 					nr.logger.Println("El nodo", id+sum,
 						"no ha contestado a tiempo")
+					nr.errVec[id] = true
+
+				} else { // Ya he votado en esta candidatura
+					nr.logger.Println("Ya he votado, no puedo pedir voto")
 				}
 			}
 
@@ -291,6 +320,10 @@ func (nr *NodoRaft) inicializarLiderr() {
 	nr.liderActual = nr.yo
 
 	nr.logger.Println("Me convierto en líder")
+
+	for id := range nr.nodos {
+		nr.indiceUltimaEntradaNodo[id] = nr.ultimaEntradaComprometida
+	}
 
 	nr.canalAplicar = make(chan entradaIntroducir, 20)
 	go nr.introducirEntradas()
@@ -424,10 +457,13 @@ func (nr *NodoRaft) AppendEntries(operacion AplicaOperacion,
 
 		nr.mux.Lock()
 
-		nr.ultimaEntrada++
 		nr.logger.Println("Op Recibida:\n\tentrada[", operacion.Indice,
 			"]", operacion.Operacion)
 		nr.entradas[operacion.Indice] = operacion.Operacion
+
+		if operacion.Indice != nr.ultimaEntrada {
+			nr.ultimaEntrada++
+		}
 
 		nr.mux.Unlock()
 
@@ -478,34 +514,41 @@ func (nr *NodoRaft) comunicarLatidos() {
 	var respuesta int
 
 	for id := range nr.nodos {
+		nr.logger.Println(" >> Envío latido a", id)
 		err := rpctimeout.CallTimeout(nr.nodos[id],
-			"NodoRaft.RecibirLatido", args, &respuesta, time.Second)
+			"NodoRaft.RecibirLatido", args, &respuesta, 200*time.Millisecond)
 
 		if err == nil {
+			nr.mux.Lock()
 			nr.indiceUltimaEntradaNodo[id] = respuesta
-		}
+			nr.mux.Unlock()
 
-		nr.comprobarCompromiso()
+			nr.comprobarCompromiso()
 
-		// Hay alguna entrada en mi nodo
-		if nr.ultimaEntrada != -1 {
-			// El nodo con quien contacto no tiene las mismas entradas que yo
-			if nr.indiceUltimaEntradaNodo[id] < nr.ultimaEntrada {
-				nr.logger.Println("El nodo", id, "tiene",
-					nr.indiceUltimaEntradaNodo[id],
-					"entradas y vamos por la", nr.ultimaEntrada)
+			// Hay alguna entrada en mi nodo
+			if nr.ultimaEntrada != -1 {
+				// El nodo con quien contacto no tiene las mismas entradas que yo
+				if nr.indiceUltimaEntradaNodo[id] < nr.ultimaEntrada {
+					nr.logger.Println("El nodo", id, "tiene",
+						nr.indiceUltimaEntradaNodo[id],
+						"entradas y vamos por la", nr.ultimaEntrada)
 
-				indice := nr.indiceUltimaEntradaNodo[id] + 1
+					indice := nr.indiceUltimaEntradaNodo[id] + 1
 
-				nr.mux.Lock()
-				comprometiendoEntrada := nr.comprometiendo[id]
-				nr.mux.Unlock()
+					nr.mux.Lock()
+					comprometiendoEntrada := nr.comprometiendo[id]
+					nr.mux.Unlock()
 
-				if !comprometiendoEntrada {
-					entrada := entradaIntroducir{nr.entradas[indice], id}
-					nr.canalAplicar <- entrada
+					if !comprometiendoEntrada {
+						nr.comprometiendo[id] = true
+						entrada := entradaIntroducir{nr.entradas[indice], id}
+						nr.canalAplicar <- entrada
+					}
 				}
 			}
+		} else if !nr.errVec[id] {
+			nr.logger.Println("-| ComLatido: La posicion del vector", id, "ha fallado")
+			nr.errVec[id] = true
 		}
 	}
 }
@@ -517,16 +560,19 @@ func (nr *NodoRaft) introducirEntradas() {
 
 		nr.mux.Lock()
 
-		nr.comprometiendo[entradaIntroducir.Quien] = true
-
 		operacion := AplicaOperacion{
 			nr.indiceUltimaEntradaNodo[entradaIntroducir.Quien] + 1,
 			entradaIntroducir.Entrada}
 
 		nr.mux.Unlock()
 
-		rpctimeout.CallTimeout(nr.nodos[entradaIntroducir.Quien],
-			"NodoRaft.AppendEntries", operacion, &correcto, time.Second)
+		err := rpctimeout.CallTimeout(nr.nodos[entradaIntroducir.Quien],
+			"NodoRaft.AppendEntries", operacion, &correcto, 200*time.Millisecond)
+
+		if err != nil && !nr.errVec[entradaIntroducir.Quien] {
+			nr.logger.Println("-| IntrEntrada: La posicion del vector", entradaIntroducir.Quien, "ha fallado")
+			nr.errVec[entradaIntroducir.Quien] = true
+		}
 
 		nr.mux.Lock()
 		nr.comprometiendo[entradaIntroducir.Quien] = false

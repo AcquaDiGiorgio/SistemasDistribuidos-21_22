@@ -1,103 +1,476 @@
-Nodo_0 23:35:07.255532 raft.go:667: logger initialized
-Nodo_0 23:35:09.582784 raft.go:166: Contacto con el nodo 1
-Nodo_0 23:35:09.896346 raft.go:166: Contacto con el nodo 2
-Nodo_0 23:35:11.414117 raft.go:206: El líder no me contesta, empiezo candidatura
-Nodo_0 23:35:13.417409 raft.go:264: El nodo 1 me ha dicho true
-Nodo_0 23:35:13.417409 raft.go:293: Me convierto en líder
-Nodo_0 23:35:19.661410 raft.go:381: Intento someter:  pepe
-Nodo_0 23:35:19.717351 raft.go:494: El nodo 0 tiene -1 entradas y vamos por la 0
-Nodo_0 23:35:19.717351 raft.go:494: El nodo 1 tiene -1 entradas y vamos por la 0
-Nodo_0 23:35:19.826277 raft.go:548: Se compromete la entrada número 0
-Nodo_0 23:35:27.613152 raft.go:381: Intento someter:  Sam
-Nodo_0 23:35:27.660878 raft.go:494: El nodo 0 tiene 0 entradas y vamos por la 1
-Nodo_0 23:35:27.660878 raft.go:494: El nodo 1 tiene 0 entradas y vamos por la 1
-Nodo_0 23:35:27.768758 raft.go:494: El nodo 0 tiene 0 entradas y vamos por la 1
-Nodo_0 23:35:27.768758 raft.go:494: El nodo 1 tiene 0 entradas y vamos por la 1
-Nodo_0 23:35:27.879177 raft.go:494: El nodo 0 tiene 0 entradas y vamos por la 1
-Nodo_0 23:35:27.879687 raft.go:494: El nodo 1 tiene 0 entradas y vamos por la 1
-Nodo_0 23:35:27.986734 raft.go:494: El nodo 0 tiene 0 entradas y vamos por la 1
-Nodo_0 23:35:27.986734 raft.go:494: El nodo 1 tiene 0 entradas y vamos por la 1
-Nodo_0 23:35:28.096235 raft.go:494: El nodo 0 tiene 0 entradas y vamos por la 1
-Nodo_0 23:35:28.096235 raft.go:494: El nodo 1 tiene 0 entradas y vamos por la 1
-Nodo_0 23:35:28.206376 raft.go:494: El nodo 0 tiene 0 entradas y vamos por la 1
-Nodo_0 23:35:28.206376 raft.go:494: El nodo 1 tiene 0 entradas y vamos por la 1
-Nodo_0 23:35:28.315486 raft.go:494: El nodo 0 tiene 0 entradas y vamos por la 1
-Nodo_0 23:35:28.315486 raft.go:494: El nodo 1 tiene 0 entradas y vamos por la 1
-Nodo_0 23:35:28.424335 raft.go:494: El nodo 0 tiene 0 entradas y vamos por la 1
-Nodo_0 23:35:28.424845 raft.go:494: El nodo 1 tiene 0 entradas y vamos por la 1
-Nodo_0 23:35:28.533647 raft.go:494: El nodo 0 tiene 0 entradas y vamos por la 1
-Nodo_0 23:35:28.534191 raft.go:494: El nodo 1 tiene 0 entradas y vamos por la 1
-Nodo_0 23:35:28.643067 raft.go:494: El nodo 0 tiene 0 entradas y vamos por la 1
-Nodo_0 23:35:28.643590 raft.go:494: El nodo 1 tiene 0 entradas y vamos por la 1
-Nodo_0 23:35:28.752529 raft.go:494: El nodo 0 tiene 0 entradas y vamos por la 1
-Nodo_0 23:35:28.753032 raft.go:494: El nodo 1 tiene 0 entradas y vamos por la 1
-Nodo_0 23:35:28.861779 raft.go:494: El nodo 0 tiene 0 entradas y vamos por la 1
-Nodo_0 23:35:28.862296 raft.go:494: El nodo 1 tiene 0 entradas y vamos por la 1
-Nodo_0 23:35:28.971590 raft.go:494: El nodo 0 tiene 0 entradas y vamos por la 1
-Nodo_0 23:35:28.971590 raft.go:494: El nodo 1 tiene 0 entradas y vamos por la 1
-Nodo_0 23:35:29.079574 raft.go:494: El nodo 0 tiene 0 entradas y vamos por la 1
-Nodo_0 23:35:29.079574 raft.go:494: El nodo 1 tiene 0 entradas y vamos por la 1
-Nodo_0 23:35:29.188432 raft.go:494: El nodo 0 tiene 0 entradas y vamos por la 1
-Nodo_0 23:35:29.188432 raft.go:494: El nodo 1 tiene 0 entradas y vamos por la 1
-Nodo_0 23:35:29.297318 raft.go:494: El nodo 0 tiene 0 entradas y vamos por la 1
-Nodo_0 23:35:29.297860 raft.go:494: El nodo 1 tiene 0 entradas y vamos por la 1
-Nodo_0 23:35:29.407559 raft.go:494: El nodo 0 tiene 0 entradas y vamos por la 1
-Nodo_0 23:35:29.407559 raft.go:494: El nodo 1 tiene 0 entradas y vamos por la 1
-Nodo_0 23:35:29.515666 raft.go:494: El nodo 0 tiene 0 entradas y vamos por la 1
-Nodo_0 23:35:29.515666 raft.go:494: El nodo 1 tiene 0 entradas y vamos por la 1
-Nodo_0 23:35:29.624305 raft.go:494: El nodo 0 tiene 0 entradas y vamos por la 1
-Nodo_0 23:35:29.624305 raft.go:494: El nodo 1 tiene 0 entradas y vamos por la 1
-Nodo_0 23:35:29.733600 raft.go:494: El nodo 0 tiene 0 entradas y vamos por la 1
-Nodo_0 23:35:29.733600 raft.go:494: El nodo 1 tiene 0 entradas y vamos por la 1
-Nodo_0 23:35:29.840739 raft.go:494: El nodo 0 tiene 0 entradas y vamos por la 1
-Nodo_0 23:35:29.840739 raft.go:494: El nodo 1 tiene 0 entradas y vamos por la 1
-Nodo_0 23:35:29.949409 raft.go:494: El nodo 0 tiene 0 entradas y vamos por la 1
-Nodo_0 23:35:29.949409 raft.go:494: El nodo 1 tiene 0 entradas y vamos por la 1
-Nodo_0 23:35:30.056928 raft.go:548: Se compromete la entrada número 1
-Nodo_0 23:35:30.056928 raft.go:494: El nodo 1 tiene 0 entradas y vamos por la 1
-Nodo_0 23:35:30.164957 raft.go:494: El nodo 1 tiene 0 entradas y vamos por la 1
-Nodo_0 23:35:30.271577 raft.go:494: El nodo 1 tiene 0 entradas y vamos por la 1
-Nodo_0 23:35:30.379258 raft.go:494: El nodo 1 tiene 0 entradas y vamos por la 1
-Nodo_0 23:35:30.487624 raft.go:494: El nodo 1 tiene 0 entradas y vamos por la 1
-Nodo_0 23:35:30.597616 raft.go:494: El nodo 1 tiene 0 entradas y vamos por la 1
-Nodo_0 23:35:30.705957 raft.go:494: El nodo 1 tiene 0 entradas y vamos por la 1
-Nodo_0 23:35:30.814707 raft.go:494: El nodo 1 tiene 0 entradas y vamos por la 1
-Nodo_0 23:35:30.922339 raft.go:494: El nodo 1 tiene 0 entradas y vamos por la 1
-Nodo_0 23:35:31.031663 raft.go:494: El nodo 1 tiene 0 entradas y vamos por la 1
-Nodo_0 23:35:31.139390 raft.go:494: El nodo 1 tiene 0 entradas y vamos por la 1
-Nodo_0 23:35:31.247209 raft.go:494: El nodo 1 tiene 0 entradas y vamos por la 1
-Nodo_0 23:35:31.356229 raft.go:494: El nodo 1 tiene 0 entradas y vamos por la 1
-Nodo_0 23:35:31.464766 raft.go:494: El nodo 1 tiene 0 entradas y vamos por la 1
-Nodo_0 23:35:31.572824 raft.go:494: El nodo 1 tiene 0 entradas y vamos por la 1
-Nodo_0 23:35:31.681244 raft.go:494: El nodo 1 tiene 0 entradas y vamos por la 1
-Nodo_0 23:35:31.790243 raft.go:494: El nodo 1 tiene 0 entradas y vamos por la 1
-Nodo_0 23:35:35.628770 raft.go:381: Intento someter:  Ram
-Nodo_0 23:35:35.711671 raft.go:494: El nodo 0 tiene 1 entradas y vamos por la 2
-Nodo_0 23:35:35.711671 raft.go:494: El nodo 1 tiene 1 entradas y vamos por la 2
-Nodo_0 23:35:35.819518 raft.go:548: Se compromete la entrada número 2
-Nodo_0 23:35:38.811921 raft.go:303: Paro al nodo actual
-Nodo_0 23:35:38.864618 raft.go:193: Entro en modo Parado
-Nodo_0 23:36:25.644034 raft.go:312: Reactivo al nodo actual
-Nodo_0 23:36:25.644545 raft.go:494: El nodo 0 tiene 0 entradas y vamos por la 2
-Nodo_0 23:36:25.645081 raft.go:494: El nodo 1 tiene 0 entradas y vamos por la 2
-Nodo_0 23:36:25.758001 raft.go:422: El líder, me pide meter entradas
-Nodo_0 23:36:25.758001 raft.go:428: Op Recibida:
-	entrada[ 3 ] 
-Nodo_0 23:36:25.867862 raft.go:422: El líder, me pide meter entradas
-Nodo_0 23:36:25.867862 raft.go:428: Op Recibida:
-	entrada[ 4 ] Ram
-Nodo_0 23:36:25.976151 raft.go:422: El líder, me pide meter entradas
-Nodo_0 23:36:25.976151 raft.go:428: Op Recibida:
-	entrada[ 5 ] oj
-Nodo_0 23:36:45.717203 raft.go:422: El líder, me pide meter entradas
-Nodo_0 23:36:45.717203 raft.go:428: Op Recibida:
-	entrada[ 6 ] sa
-Nodo_0 23:36:57.249882 raft.go:422: El líder, me pide meter entradas
-Nodo_0 23:36:57.249882 raft.go:428: Op Recibida:
-	entrada[ 7 ] no
-Nodo_0 23:37:07.274947 raft.go:422: El líder, me pide meter entradas
-Nodo_0 23:37:07.274947 raft.go:428: Op Recibida:
-	entrada[ 8 ] 
-Nodo_0 23:37:13.121822 raft.go:206: El líder no me contesta, empiezo candidatura
-Nodo_0 23:37:15.126669 raft.go:281: El nodo 1 no ha contestado a tiempo
-Nodo_0 23:37:15.126669 raft.go:281: El nodo 2 no ha contestado a tiempo
+Nodo_0 20:41:17.841173 raft.go:715: logger initialized
+Nodo_0 20:41:19.843656 raft.go:173: Intento contactar con el nodo 1
+Nodo_0 20:41:20.145830 raft.go:177: Exito en el contacto con el nodo 1
+Nodo_0 20:41:20.146333 raft.go:173: Intento contactar con el nodo 2
+Nodo_0 20:41:20.447790 raft.go:177: Exito en el contacto con el nodo 2
+Nodo_0 20:41:23.344448 raft.go:233: El líder no me contesta, empiezo candidatura
+Nodo_0 20:41:25.345776 raft.go:291: El nodo 1 me ha dicho true
+Nodo_0 20:41:25.345776 raft.go:324: Me convierto en líder
+Nodo_0 20:41:25.345776 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:25.345776 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:25.447172 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:25.447968 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:25.548998 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:25.548998 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:25.649917 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:25.650751 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:25.752315 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:25.752315 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:25.854475 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:25.854475 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:25.955109 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:25.955109 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:26.056681 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:26.056750 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:26.156988 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:26.156988 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:26.257530 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:26.257530 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:26.358856 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:26.358856 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:26.459173 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:26.459275 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:26.559608 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:26.559608 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:26.660590 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:26.660773 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:26.761665 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:26.761932 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:26.863093 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:26.863169 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:26.963747 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:26.963747 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:27.064051 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:27.064119 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:27.164676 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:27.164676 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:27.265748 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:27.265791 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:27.366603 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:27.366603 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:27.467331 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:27.467400 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:27.567905 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:27.568036 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:27.669044 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:27.669107 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:27.769888 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:27.769980 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:27.871537 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:27.871537 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:27.971978 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:27.971978 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:28.072195 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:28.072419 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:28.173321 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:28.173445 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:28.273529 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:28.273577 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:28.374710 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:28.374710 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:28.475334 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:28.475587 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:28.576697 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:28.576961 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:28.677643 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:28.677681 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:28.779065 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:28.779290 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:28.879866 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:28.879866 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:28.980470 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:28.980571 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:29.080997 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:29.081180 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:29.181967 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:29.182196 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:29.282569 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:29.282671 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:29.383426 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:29.383655 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:29.484639 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:29.484660 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:29.585526 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:29.585526 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:29.686702 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:29.686702 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:29.787499 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:29.787499 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:29.888645 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:29.888645 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:29.989699 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:29.989699 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:30.090437 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:30.090437 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:30.191357 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:30.191593 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:30.292576 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:30.292796 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:30.343319 raft.go:416: Intento someter:  pp
+Nodo_0 20:41:30.393334 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:30.393334 raft.go:534: El nodo 0 tiene -1 entradas y vamos por la 0
+Nodo_0 20:41:30.393334 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:30.393888 raft.go:534: El nodo 1 tiene -1 entradas y vamos por la 0
+Nodo_0 20:41:30.495017 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:30.495017 raft.go:596: Se compromete la entrada número 0
+Nodo_0 20:41:30.495017 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:30.596802 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:30.596802 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:30.696957 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:30.696957 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:30.798570 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:30.798570 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:30.898900 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:30.898900 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:31.000612 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:31.000612 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:31.100707 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:31.100707 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:31.201294 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:31.201294 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:31.302379 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:31.302379 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:31.402687 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:31.402938 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:31.504243 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:31.504470 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:31.605606 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:31.605606 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:31.706533 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:31.706652 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:31.807582 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:31.807582 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:31.909061 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:31.909061 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:32.010423 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:32.010579 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:32.111556 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:32.111779 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:32.212306 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:32.212572 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:32.313237 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:32.313237 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:32.414424 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:32.414424 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:32.514885 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:32.515137 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:32.616404 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:32.616404 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:32.717456 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:32.717456 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:32.818330 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:32.818330 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:32.919055 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:32.919055 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:33.021424 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:33.021424 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:33.122382 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:33.122382 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:33.222505 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:33.222505 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:33.323261 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:33.323261 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:33.424149 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:33.424220 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:33.524839 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:33.524945 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:33.626421 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:33.626635 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:33.727324 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:33.727324 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:33.828289 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:33.828289 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:33.929096 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:33.929096 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:34.030512 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:34.030717 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:34.131405 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:34.131512 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:34.232057 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:34.232057 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:34.333279 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:34.333500 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:34.434510 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:34.434510 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:34.534514 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:34.534557 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:34.635747 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:34.635747 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:34.736288 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:34.736288 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:34.837133 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:34.837133 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:34.938183 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:34.938183 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:35.039011 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:35.039011 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:35.140587 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:35.140587 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:35.240952 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:35.240952 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:35.341657 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:35.341657 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:35.442537 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:35.442582 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:35.544061 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:35.544061 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:35.644102 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:35.644155 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:35.745194 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:35.745194 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:35.846782 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:35.846826 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:35.947359 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:35.947610 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:36.048759 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:36.048759 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:36.048759 raft.go:552: -| ComLatido: La posicion del vector 1 ha fallado
+Nodo_0 20:41:36.149457 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:36.149457 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:36.250724 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:36.250724 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:36.350896 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:36.350896 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:36.451837 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:36.451837 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:36.553386 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:36.553386 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:36.653533 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:36.653660 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:36.754786 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:36.754786 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:36.854794 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:36.854794 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:36.954993 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:36.955072 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:37.056066 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:37.056066 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:37.156795 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:37.156848 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:37.257708 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:37.257708 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:37.358528 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:37.358528 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:37.460917 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:37.460917 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:37.561775 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:37.561838 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:37.662565 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:37.662832 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:37.763519 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:37.763612 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:37.865165 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:37.865165 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:37.965252 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:37.965328 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:38.066985 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:38.066985 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:38.169927 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:38.170197 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:38.270648 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:38.270648 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:38.371851 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:38.371851 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:38.415703 raft.go:416: Intento someter:  n1
+Nodo_0 20:41:38.453359 raft.go:173: Intento contactar con el nodo 2
+Nodo_0 20:41:38.472560 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:38.472871 raft.go:534: El nodo 0 tiene 0 entradas y vamos por la 1
+Nodo_0 20:41:38.472871 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:38.573730 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:38.573730 raft.go:596: Se compromete la entrada número 1
+Nodo_0 20:41:38.573730 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:38.674820 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:38.674820 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:38.775504 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:38.775611 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:38.876331 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:38.876444 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:38.977574 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:38.977574 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:39.078145 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:39.078145 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:39.178319 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:39.178319 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:39.278818 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:39.278818 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:39.379920 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:39.379920 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:39.481108 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:39.481315 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:39.582278 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:39.582278 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:39.682318 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:39.682318 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:39.783125 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:39.783352 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:39.884333 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:39.884333 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:39.984797 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:39.984797 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:40.086308 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:40.086308 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:40.186385 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:40.186385 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:40.286920 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:40.287092 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:40.389002 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:40.389002 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:40.489575 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:40.489575 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:40.589903 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:40.589903 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:40.690877 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:40.690877 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:40.758322 raft.go:177: Exito en el contacto con el nodo 2
+Nodo_0 20:41:40.791782 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:40.791782 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:40.993718 raft.go:552: -| ComLatido: La posicion del vector 1 ha fallado
+Nodo_0 20:41:41.093775 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:41.093873 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:41.395152 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:41.395152 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:41.695927 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:41.695927 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:41.996226 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:41.996226 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:42.296894 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:42.296894 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:42.598226 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:42.598226 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:42.899789 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:42.899789 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:43.201477 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:43.201477 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:43.502523 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:43.502523 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:43.760196 raft.go:173: Intento contactar con el nodo 2
+Nodo_0 20:41:43.803849 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:43.803849 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:44.061148 raft.go:177: Exito en el contacto con el nodo 2
+Nodo_0 20:41:44.104892 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:44.104892 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:44.305333 raft.go:552: -| ComLatido: La posicion del vector 1 ha fallado
+Nodo_0 20:41:44.405974 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:44.406048 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:44.706940 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:44.707023 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:45.008452 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:45.008452 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:45.309631 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:45.309631 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:45.495039 raft.go:416: Intento someter:  feo
+Nodo_0 20:41:45.611183 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:45.611442 raft.go:534: El nodo 0 tiene 1 entradas y vamos por la 2
+Nodo_0 20:41:45.611442 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:45.645105 raft.go:534: El nodo 1 tiene -1 entradas y vamos por la 2
+Nodo_0 20:41:45.745899 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:45.746017 raft.go:596: Se compromete la entrada número 2
+Nodo_0 20:41:45.746017 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:45.746017 raft.go:534: El nodo 1 tiene 0 entradas y vamos por la 2
+Nodo_0 20:41:45.847434 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:45.847434 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:45.847434 raft.go:534: El nodo 1 tiene 1 entradas y vamos por la 2
+Nodo_0 20:41:45.947918 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:45.947977 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:46.048352 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:46.048352 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:46.149695 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:46.149819 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:46.251224 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:46.251224 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:46.351365 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:46.351451 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:46.452841 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:46.453001 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:46.553160 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:46.553375 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:46.654145 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:46.654145 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:46.754937 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:46.754937 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:46.856354 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:46.856483 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:46.956659 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:46.956659 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:47.058339 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:47.058339 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:47.061991 raft.go:173: Intento contactar con el nodo 2
+Nodo_0 20:41:47.158340 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:47.158340 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:47.259780 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:47.259780 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:47.360435 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:47.360435 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:47.364056 raft.go:177: Exito en el contacto con el nodo 2
+Nodo_0 20:41:47.461542 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:47.461832 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:47.563220 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:47.563220 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:47.664084 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:47.664301 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:47.764345 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:47.764474 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:47.865279 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:47.865519 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:47.966370 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:47.966607 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:48.067352 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:48.067409 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:48.168156 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:48.168156 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:48.269196 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:48.269196 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:48.370052 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:48.370224 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:48.471000 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:48.471000 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:48.572246 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:48.572492 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:48.673474 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:48.673535 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:48.774044 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:48.774403 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:48.875334 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:48.875334 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:48.977334 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:48.977334 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:49.077420 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:49.077420 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:49.179213 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:49.179213 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:49.279643 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:49.279643 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:49.381629 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:49.381629 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:49.481912 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:49.481912 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:49.582436 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:49.582559 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:49.683525 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:49.683798 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:49.784818 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:49.784980 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:49.886022 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:49.886022 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:49.987959 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:49.987959 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:50.088507 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:50.088507 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:50.189572 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:50.189572 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:50.290208 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:50.290208 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:50.391077 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:50.391077 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:50.492136 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:50.492299 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:50.592351 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:50.592351 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:50.692423 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:50.692599 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:50.793745 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:50.793745 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:50.894759 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:50.894828 raft.go:519:  >> Envío latido a 1
+Nodo_0 20:41:50.995405 raft.go:519:  >> Envío latido a 0
+Nodo_0 20:41:50.995458 raft.go:519:  >> Envío latido a 1

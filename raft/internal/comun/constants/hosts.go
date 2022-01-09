@@ -19,7 +19,12 @@ var MachinesSSH = [...]Machine{
 	{"lab102-196.cps.unizar.es", "155.210.154.196:29420"},
 	{"lab102-197.cps.unizar.es", "155.210.154.197:29420"}}
 
-//
-//{"lab102-198.cps.unizar.es", "155.210.154.198:29420"},
-//{"lab102-199.cps.unizar.es", "155.210.154.199:29420"}
-//
+var MachinesKubernetesPods = [...]Machine{
+	{"", "nr1.conexion.default.svc.cluster.local:7000"},
+	{"", "nr2.conexion.default.svc.cluster.local:7000"},
+	{"", "nr3.conexion.default.svc.cluster.local:7000"}}
+
+var MachinesKubernetesDeployment = [...]Machine{
+	{"", "192.168.0.1:7000"},
+	{"", "192.168.0.2:7000"},
+	{"", "192.168.0.3:7000"}}
