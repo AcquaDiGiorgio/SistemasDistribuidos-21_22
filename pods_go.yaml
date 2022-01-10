@@ -40,7 +40,7 @@ kind: Pod
 metadata:
   name: nr2
   labels:
-    app: conexions
+    app: conexion
 spec:
   hostname: nr2
   subdomain: conexion
